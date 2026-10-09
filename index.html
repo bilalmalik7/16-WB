@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rise of the Numberdar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Hind:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@500&display=swap">
+<style>
+/* Layout: one-column game console. Scene window framed in truck-art trim, dialogue + choices below, stat ledger above. Single dark "dusk at the Dera" look by design. */
+:root{
+  --night:#15111f; --panel:#1f1828; --panel-2:#291f33; --line:#3d2f48;
+  --gold:#e9b44c; --rose:#d4506a; --teal:#2fa38f; --parch:#f4e7cc; --muted:#b8a78f;
+  --izzat:#e9b44c; --khauf:#e0607a; --paisa:#8ccf73; --taluq:#5db3e2;
+  --f-display:'Rozha One', Georgia, 'Times New Roman', serif;
+  --f-body:'Hind', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-urdu:'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', serif;
+  --trim:repeating-linear-gradient(90deg,var(--gold) 0 14px,var(--rose) 14px 28px,var(--teal) 28px 42px,var(--parch) 42px 46px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:radial-gradient(1100px 560px at 50% -12%,#3b2342 0%,var(--night) 62%) var(--night);color:var(--parch);font-family:var(--f-body);font-size:16px;line-height:1.55}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.app{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:14px 32px;display:grid;gap:14px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,3vw,30px);margin:0;line-height:1.1;color:var(--gold);text-wrap:balance}
+.brand .ur{font-family:var(--f-urdu);font-size:15px;color:var(--muted);direction:rtl}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{font-size:12px;letter-spacing:.09em;text-transform:uppercase;padding:5px 11px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--muted);white-space:nowrap}
+.pill b{color:var(--parch);font-weight:600}
+.btn-s{cursor:pointer}
+.btn-s:hover{border-color:var(--gold);color:var(--parch)}
+
+/* stat ledger */
+.hud{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.stat{--c:var(--gold);position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px 10px;min-width:0}
+.stat .lbl{display:flex;justify-content:space-between;gap:6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.stat .lbl i{font-style:normal;font-family:var(--f-urdu);letter-spacing:0;text-transform:none;font-size:12px;line-height:1}
+.stat .val{font-family:var(--f-display);font-size:24px;color:var(--c);font-variant-numeric:tabular-nums;line-height:1.25}
+.bar{height:6px;background:#0007;border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--c);border-radius:3px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.delta{position:absolute;right:10px;top:26px;font-family:var(--f-display);font-size:20px;pointer-events:none;animation:floatUp 1.8s ease-out forwards}
+.delta.up{color:var(--paisa)} .delta.dn{color:var(--khauf)}
+.subhud{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+.subhud b{color:var(--parch);font-weight:500}
+.loy{display:inline-block;width:70px;height:5px;border-radius:3px;background:#0007;vertical-align:middle;margin-left:6px;overflow:hidden}
+.loy i{display:block;height:100%;background:var(--teal);transition:width .9s}
+
+/* scene window */
+.stage{position:relative;aspect-ratio:1200/560;max-width:100%;border-radius:14px;overflow:hidden;background:#0c0a12;box-shadow:0 0 0 2px var(--gold),0 0 0 6px var(--night),0 0 0 8px var(--teal),0 24px 60px #000a}
+.stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--trim);opacity:.9}
+.stage>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#world{transform-origin:0 0;transition:transform 1.8s cubic-bezier(.45,0,.2,1)}
+.loc{position:absolute;left:12px;top:12px;z-index:3;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:#0009;border:1px solid #fff2;padding:4px 10px;border-radius:99px;backdrop-filter:blur(4px);max-width:calc(100% - 24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rays{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:var(--ray,.5);background:linear-gradient(115deg,transparent 30%,#ffd9902a 42%,transparent 48%,#ffd99020 56%,transparent 64%);animation:rays 9s ease-in-out infinite alternate;transition:opacity 1.5s}
+.leaves{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.leaf{position:absolute;top:-5%;width:10px;height:6px;border-radius:0 70% 0 70%;background:#6f8f3a;animation:leafFall var(--t,9s) linear infinite,leafSpin 2.4s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+.fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .6s;z-index:4}
+.fade.on{opacity:1}
+.rain{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s;background:repeating-linear-gradient(105deg,transparent 0 9px,#cfe3ff30 9px 10px);background-size:120px 120px;animation:rain .35s linear infinite}
+.rain.on{opacity:1}
+
+/* svg actors */
+.sway{transform-box:fill-box;transform-origin:50% 100%;animation:sway 6s ease-in-out infinite}
+.bob{animation:bob 3.2s ease-in-out infinite}
+.cheer{animation:cheer .9s ease-in-out infinite}
+.scan{transform-box:fill-box;transform-origin:50% 100%;animation:scan 7s steps(1) infinite}
+.arm{transform-box:fill-box;transform-origin:50% 6%}
+.sip{animation:sip 5s ease-in-out infinite}
+.scrub{animation:scrub 1.1s ease-in-out infinite}
+.wave{animation:waveArm 1s ease-in-out infinite}
+.orate{animation:orate 2.6s ease-in-out infinite}
+.raise{animation:raise 1.6s ease-in-out 1}
+.flagw{transform-box:fill-box;transform-origin:0 100%;animation:flagw 1.2s ease-in-out infinite}
+.glint{opacity:0;animation:glint 5s ease-in-out infinite}
+.splash circle{opacity:0;animation:splash 1.1s ease-out infinite}
+.cross{animation:cross var(--t,40s) linear infinite;animation-delay:var(--d,0s)}
+.crossR{animation:crossR var(--t,40s) linear infinite;animation-delay:var(--d,0s)}
+.patrol{animation:patrol 16s ease-in-out infinite alternate}
+.run{animation:runBob .35s ease-in-out infinite}
+.blink{transform-box:fill-box;transform-origin:50% 50%;animation:blink 4.5s infinite}
+.twinkle{animation:twinkle 3s ease-in-out infinite}
+.pulse{animation:pulse 2s ease-in-out infinite}
+.set{transition:opacity .2s}
+.actor{animation:enter .8s ease-out both}
+#sun{transition:cy 2s ease,cx 2s ease,fill 1s}
+
+/* dialogue */
+.dialog{position:relative;display:grid;grid-template-columns:112px minmax(0,1fr);gap:18px;align-items:start;background:linear-gradient(180deg,var(--panel),#18121f);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;user-select:none}
+.dialog::before{content:"";position:absolute;left:14px;right:14px;top:-3px;height:5px;border-radius:3px;background:var(--trim)}
+.portrait{width:112px;height:112px;border-radius:50%;overflow:hidden;border:3px solid var(--gold);background:#2a2133;box-shadow:0 6px 22px #0008}
+.portrait svg{width:100%;height:100%;display:block}
+.portrait.talk .mouth{animation:talk .18s ease-in-out infinite}
+.mouth{transform-box:fill-box;transform-origin:50% 50%}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:2px}
+.who{font-family:var(--f-display);font-size:21px;color:var(--gold);line-height:1.2}
+.role{font-size:13px;color:var(--muted);margin-bottom:6px}
+.text{font-size:17.5px;line-height:1.6;max-width:68ch;min-height:4.8em}
+.text em{color:var(--gold);font-style:normal}
+.more{position:absolute;right:16px;bottom:10px;font-size:12px;color:var(--muted);letter-spacing:.08em;animation:nudge 1.2s ease-in-out infinite}
+
+/* choices */
+.choices{display:grid;gap:10px}
+.choices .ask{font-family:var(--f-display);font-size:19px;color:var(--parch)}
+.choice{display:grid;grid-template-columns:42px minmax(0,1fr);gap:14px;align-items:start;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;animation:rise .45s ease-out both}
+.choice:hover:not([disabled]),.choice:focus-visible{border-color:var(--gold);background:var(--panel-2);transform:translateY(-2px);outline:none}
+.choice .k{font-family:var(--f-display);font-size:22px;height:42px;display:grid;place-items:center;border-radius:9px;background:var(--gold);color:var(--night)}
+.choice b{display:block;font-size:16.5px;font-weight:600}
+.choice .d{display:block;color:var(--muted);font-size:14.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.chip{font-size:11.5px;padding:1px 9px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.chip.lock{color:var(--muted)}
+.choice[disabled]{opacity:.5;cursor:not-allowed}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:#000;overflow:hidden}
+.ov>svg{position:absolute;inset:0;width:100%;height:100%}
+.ov canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.lb{position:absolute;left:0;right:0;height:0;background:#000;z-index:3;transition:height 1.1s ease}
+.lb.t{top:0}.lb.b{bottom:0}
+.ov.on .lb{height:11vh}
+.cs-kicker{position:absolute;top:calc(11vh + 14px);left:16px;right:16px;text-align:center;z-index:4;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);opacity:.85}
+.cs-cap{position:absolute;left:16px;right:16px;bottom:calc(11vh + 64px);z-index:4;text-align:center;transition:opacity .8s,transform .8s}
+.cs-cap.out{opacity:0;transform:translateY(8px)}
+.cs-cap h2{font-family:var(--f-display);font-weight:400;font-size:clamp(24px,4vw,44px);margin:0 auto;max-width:24ch;line-height:1.15;text-shadow:0 2px 24px #000,0 0 2px #000;text-wrap:balance}
+.cs-cap p{margin:8px auto 0;max-width:60ch;font-size:clamp(14px,1.7vw,18px);font-style:italic;color:var(--parch);text-shadow:0 1px 12px #000}
+.cs-btn{position:absolute;z-index:5;right:16px;bottom:calc(11vh + 14px);background:#000a;border:1px solid var(--gold);color:var(--gold);border-radius:99px;padding:7px 16px;cursor:pointer;letter-spacing:.08em;font-size:13px}
+.cs-btn:hover{background:var(--gold);color:var(--night)}
+.card{position:relative;z-index:4;width:min(640px,100%);margin-inline:16px;background:linear-gradient(180deg,#221a2c,#140f1b);border:1px solid var(--line);border-radius:16px;padding:28px 24px 24px;box-shadow:0 30px 80px #000c;text-align:center;max-height:calc(100% - 32px);overflow:auto}
+.card::before{content:"";position:absolute;left:18px;right:18px;top:-3px;height:6px;border-radius:3px;background:var(--trim)}
+.card .ur{font-family:var(--f-urdu);font-size:22px;color:var(--gold);direction:rtl;line-height:2}
+.card h2{font-family:var(--f-display);font-weight:400;font-size:clamp(32px,6vw,52px);line-height:1.05;margin:4px 0 8px;color:var(--parch);text-wrap:balance}
+.card p{color:var(--muted);margin:0 auto 14px;max-width:52ch}
+.card label{display:block;text-align:left;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.card input{width:100%;background:#0006;border:1px solid var(--line);color:var(--parch);border-radius:10px;padding:11px 12px;font:inherit;font-size:17px}
+.card input:focus{border-color:var(--gold);outline:none}
+.row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+.big{background:var(--gold);color:var(--night);border:0;border-radius:99px;padding:12px 26px;font-family:var(--f-display);font-size:19px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.big:hover{transform:translateY(-2px);box-shadow:0 8px 24px #e9b44c55}
+.big.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.howto{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;text-align:left;margin-top:16px;font-size:13.5px;color:var(--muted)}
+.howto div{background:#0004;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.howto b{display:block;font-weight:600}
+.endstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 4px}
+.endstats div{background:#0005;border-radius:10px;padding:8px 4px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.endstats b{display:block;font-family:var(--f-display);font-size:22px;color:var(--parch);letter-spacing:0}
+.stagecard .num{font-family:var(--f-display);font-size:clamp(70px,14vw,150px);line-height:1;color:var(--gold);text-shadow:0 0 50px #e9b44c66}
+
+/* keyframes */
+@keyframes sway{0%,100%{transform:rotate(-.8deg)}50%{transform:rotate(1deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes scan{0%{transform:scaleX(1)}50%{transform:scaleX(-1)}}
+@keyframes sip{0%,62%,100%{transform:rotate(0)}72%,88%{transform:rotate(-125deg)}}
+@keyframes scrub{0%,100%{transform:rotate(-40deg)}50%{transform:rotate(-95deg)}}
+@keyframes waveArm{0%,100%{transform:rotate(-150deg)}50%{transform:rotate(-120deg)}}
+@keyframes orate{0%,100%{transform:rotate(-20deg)}40%{transform:rotate(-140deg)}60%{transform:rotate(-130deg)}}
+@keyframes raise{0%{transform:rotate(0)}25%,70%{transform:rotate(-160deg)}100%{transform:rotate(0)}}
+@keyframes flagw{0%,100%{transform:skewY(-6deg) scaleX(1)}50%{transform:skewY(6deg) scaleX(.85)}}
+@keyframes glint{0%,78%,100%{opacity:0}86%{opacity:.85}}
+@keyframes splash{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}100%{transform:translate(var(--dx,8px),-22px);opacity:0}}
+@keyframes cross{from{transform:translateX(-220px)}to{transform:translateX(1420px)}}
+@keyframes crossR{from{transform:translateX(1420px)}to{transform:translateX(-220px)}}
+@keyframes patrol{from{transform:translateX(0)}to{transform:translateX(190px)}}
+@keyframes runBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes twinkle{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes talk{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1.25)}}
+@keyframes enter{from{opacity:0;transform:translateY(10px)}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(6px)}15%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+@keyframes rays{from{transform:translateX(-4%)}to{transform:translateX(4%)}}
+@keyframes leafFall{0%{top:-5%;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:104%;opacity:0}}
+@keyframes leafSpin{from{transform:translateX(-14px) rotate(-30deg)}to{transform:translateX(18px) rotate(220deg)}}
+@keyframes rain{from{background-position:0 0}to{background-position:-30px 120px}}
+@keyframes meetL{0%,15%{transform:translateX(0)}70%,100%{transform:translateX(98px)}}
+@keyframes meetR{0%,15%{transform:translateX(0)}70%,100%{transform:translateX(-98px)}}
+@keyframes heli{from{transform:rotate(-5deg) scale(1.08)}to{transform:rotate(4deg) scale(1.28)}}
+@keyframes drive{from{transform:translateX(-700px)}to{transform:translateX(1500px)}}
+@keyframes walkUp{0%{transform:translate(600px,640px) scale(2.6)}100%{transform:translate(600px,352px) scale(1.05)}}
+@keyframes flash{0%,100%{opacity:0}4%{opacity:1}12%{opacity:0}}
+@keyframes glow{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes lean{0%,70%{transform:rotate(0)}100%{transform:rotate(6deg)}}
+@keyframes leanR{0%,70%{transform:rotate(0)}100%{transform:rotate(-6deg)}}
+
+@media (max-width:720px){
+  .hud{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dialog{grid-template-columns:72px minmax(0,1fr);gap:12px;padding:14px}
+  .portrait{width:72px;height:72px}
+  .text{font-size:16px}
+  .howto,.endstats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><h1>Rise of the Numberdar</h1><span class="ur">نمبردار کا عروج</span></div>
+    <div class="meta">
+      <span class="pill">Stage <b id="m-stage">1</b> · <b id="m-stagename">The Village Dera</b></span>
+      <span class="pill">Day <b id="m-day">1</b></span>
+      <button class="pill btn-s" id="b-sound" type="button" aria-pressed="false">Sound off</button>
+      <button class="pill btn-s" id="b-restart" type="button">New game</button>
+    </div>
+  </header>
+
+  <section class="hud" aria-label="Your standing">
+    <div class="stat" id="st-izzat" style="--c:var(--izzat)"><div class="lbl">Izzat · Respect <i>عزت</i></div><div class="val">0</div><div class="bar"><i></i></div></div>
+    <div class="stat" id="st-khauf" style="--c:var(--khauf)"><div class="lbl">Khauf · Fear <i>خوف</i></div><div class="val">0</div><div class="bar"><i></i></div></div>
+    <div class="stat" id="st-paisa" style="--c:var(--paisa)"><div class="lbl">Paisa · Wealth <i>پیسہ</i></div><div class="val">0</div><div class="bar"><i></i></div></div>
+    <div class="stat" id="st-taluqat" style="--c:var(--taluq)"><div class="lbl">Ta'aluqat · Connections <i>تعلقات</i></div><div class="val">0</div><div class="bar"><i></i></div></div>
+  </section>
+  <div class="subhud">
+    <span>Jatt Biradari <b id="l-jatt-t">Neutral</b><span class="loy"><i id="l-jatt"></i></span></span>
+    <span>Arain Biradari <b id="l-arain-t">Neutral</b><span class="loy"><i id="l-arain"></i></span></span>
+    <span>Rival <b>Malik Sher Afzal</b></span>
+    <span id="khauf-warn"></span>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" id="scene" aria-label="Scene"></svg>
+    <div class="rays" id="rays"></div>
+    <div class="rain" id="rain"></div>
+    <div class="leaves" id="leaves"></div>
+    <div class="loc" id="loc">Chak 47 Shumali</div>
+    <div class="fade" id="fade"></div>
+  </div>
+
+  <section class="dialog" id="dialog" tabindex="0" aria-live="polite">
+    <div class="portrait" id="portrait"></div>
+    <div style="min-width:0">
+      <div class="eyebrow" id="eyebrow">Faisla</div>
+      <div class="who" id="who">Narrator</div>
+      <div class="role" id="role"></div>
+      <div class="text" id="text"></div>
+    </div>
+    <div class="more" id="more">Click or press Space ▾</div>
+  </section>
+
+  <section class="choices" id="choices" aria-label="Your options"></section>
+</div>
+
+<div class="ov" id="cs" hidden>
+  <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" id="cs-svg"></svg>
+  <canvas id="cs-fx"></canvas>
+  <div class="lb t"></div><div class="lb b"></div>
+  <div class="cs-kicker" id="cs-kicker"></div>
+  <div class="cs-cap out" id="cs-cap"><h2></h2><p></p></div>
+  <button class="cs-btn" id="cs-btn" type="button">Skip ▸</button>
+</div>
+
+<div class="ov" id="menu" hidden style="background:#0b0910e6;backdrop-filter:blur(3px)">
+  <div class="card" id="menu-card"></div>
+</div>
+
+<script>
+/* ============ ART: people, portraits, vehicles, sets ============ */
+const $=s=>document.querySelector(s);
+const R=(a,b)=>a+Math.random()*(b-a);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const SKIN=['#c68a5e','#b07a4f','#9a6844','#d39b6c','#a8734a','#8c5a3a'];
+const CLOTH=['#e9e2d0','#cfc6ae','#a9b4a8','#8d9aa6','#c7a98a','#7d8c6e','#d8cfb8','#b9a27c','#9aa7b8'];
+const DUP=['#b8476a','#d9822b','#4f7f9e','#8a4fa0','#c9a227','#2f8a6f','#a33b3b'];
+const PARTY='#1d7a4c';
+
+function person(o){
+  const s=o.s||1, skin=o.skin||'#b07a4f', kam=o.kam||'#e9e2d0', sh=o.sh||kam, head=o.head||'none', hc=o.hc||'#f4f1e8';
+  const bottom=o.long?-6:-17;
+  let g=`<g transform="translate(${o.x||0} ${o.y||0}) scale(${o.flip?-s:s} ${s})"><g class="${o.anim||''}" style="animation-delay:${o.delay||0}s">`;
+  g+=`<ellipse cx="0" cy="1" rx="15" ry="3.2" fill="#000" opacity=".22"/>`;
+  if(!o.seated){
+    g+=`<path d="M-10,-20 L-11,-1 L-3,-1 L0,-13 L3,-1 L11,-1 L10,-20Z" fill="${sh}"/>`;
+    g+=`<rect x="-12.5" y="-2.5" width="9" height="3.5" rx="1.7" fill="${o.shoe||'#4a3322'}"/><rect x="3.5" y="-2.5" width="9" height="3.5" rx="1.7" fill="${o.shoe||'#4a3322'}"/>`;
+  }
+  if(head==='chador') g+=`<path d="M-11,-62 Q-12,-77 0,-77 Q12,-77 11,-62 L15,${bottom} L-15,${bottom}Z" fill="${hc}"/>`;
+  g+=`<g class="arm ${o.barm||''}" style="transform-origin:-13.8px -49px"><rect x="-17" y="-51" width="6.5" height="27" rx="3.2" fill="${kam}"/><circle cx="-13.8" cy="-23.5" r="3.2" fill="${skin}"/></g>`;
+  g+=`<path d="${o.long?'M-12,-52 Q-16,-30 -15,-6 L15,-6 Q16,-30 12,-52 Q0,-57 -12,-52Z':'M-12,-52 Q-15,-36 -14,-17 L14,-17 Q15,-36 12,-52 Q0,-57 -12,-52Z'}" fill="${head==='chador'?hc:kam}"/>`;
+  g+=`<path d="M0,-54 L0,-40" stroke="#0003" stroke-width="1.2"/>`;
+  if(o.long) for(let y=-50;y<-10;y+=7) g+=`<circle cx="0" cy="${y}" r="1" fill="#d8b04a"/>`;
+  if(o.vest) g+=`<path d="M-12.5,-52 Q-14.5,-40 -13.5,-31 L-2.5,-31 L-1.5,-53Z M12.5,-52 Q14.5,-40 13.5,-31 L2.5,-31 L1.5,-53Z" fill="${o.vest}"/>`;
+  if(o.uniform) g+=`<rect x="-14" y="-34" width="28" height="3" fill="#2a1f14"/><rect x="-9" y="-50" width="5" height="3" fill="#c9a227"/>`;
+  if(o.rifle) g+=`<path d="M-11,-52 L12,-22" stroke="#6b4a2a" stroke-width="3.2"/>`;
+  g+=`<rect x="-3" y="-58" width="6" height="6" fill="${skin}"/><circle cx="0" cy="-63" r="8" fill="${skin}"/>`;
+  if(!o.back){
+  if(o.beard) g+=`<path d="M-7.5,-63 Q-8,-52 0,-49 Q8,-52 7.5,-63 Q0,-58.5 -7.5,-63Z" fill="${o.beard}"/>`;
+  if(o.must) g+=`<path d="M-6,-59.6 Q0,-62.4 6,-59.6" stroke="${o.must}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  g+=`<circle cx="-3" cy="-64.5" r="1" fill="#1a1110"/><circle cx="3" cy="-64.5" r="1" fill="#1a1110"/>`;
+  if(o.shades) g+=`<rect x="-6.5" y="-66.5" width="13" height="3.6" rx="1.5" fill="#111"/>`;
+  } else g+=`<path d="M-8.3,-60 Q-9.5,-73.5 0,-73.5 Q9.5,-73.5 8.3,-60Z" fill="#120e0c"/>`;
+  const H={
+    turban:`<path d="M-9,-65 Q-10,-76 0,-76 Q10,-76 9,-65 Q0,-69 -9,-65Z" fill="${hc}"/><path d="M2,-75 L8,-86 L12,-82 L6,-73Z" fill="${hc}"/>`,
+    cap:`<path d="M-8,-67 Q-8,-74 0,-74 Q8,-74 8,-67Z" fill="${hc}"/>`,
+    hair:`<path d="M-8.3,-63 Q-9.5,-73.5 0,-73.5 Q9.5,-73.5 8.3,-63 Q6,-69 -8.3,-65Z" fill="${hc}"/>`,
+    chador:`<path d="M-11,-60 Q-12,-77 0,-77 Q12,-77 11,-60 Q9,-71 0,-71.5 Q-9,-71 -11,-60Z" fill="${hc}"/>`,
+    police:`<path d="M-9,-68 L-8,-75 L8,-75 L9,-68Z" fill="${hc}"/><path d="M-10,-68 L7,-68 L5,-66 L-10,-66Z" fill="#111"/>`,
+    beret:`<path d="M-9,-66 Q-11,-76 2,-77 Q11,-76 9,-68Z" fill="${hc}"/>`,
+    jinnah:`<path d="M-8.5,-67 L-8,-75 Q0,-77 8,-75 L8.5,-67Z" fill="${hc}"/><path d="M-8,-71 L8,-71" stroke="#0004"/>`
+  };
+  g+=H[head]||'';
+  if(o.bandage) g+=`<rect x="-8" y="-70" width="16" height="3.5" fill="#f1ece0"/><circle cx="3" cy="-68.5" r="1.4" fill="#a33"/>`;
+  g+=`<g class="arm ${o.arm||''}" style="transform-origin:13.8px -49px;animation-delay:${o.adelay||0}s"><rect x="10.5" y="-51" width="6.5" height="27" rx="3.2" fill="${head==='chador'?hc:kam}"/><circle cx="13.8" cy="-23.5" r="3.2" fill="${skin}"/>`;
+  if(o.cup) g+=`<path d="M10.5,-27 h6.5 l-1,6 h-4.5z" fill="#b5653a"/>`;
+  if(o.kettle) g+=`<path d="M9,-25 q5,-7 10,0 v6 h-10z" fill="#262626"/><path d="M19,-22 l5,-4" stroke="#262626" stroke-width="2"/>`;
+  if(o.mic) g+=`<rect x="12" y="-31" width="3.6" height="9" rx="1.6" fill="#1a1a1a"/><circle cx="13.8" cy="-31" r="2.6" fill="#555"/>`;
+  if(o.rag) g+=`<rect x="10" y="-25" width="9" height="5" rx="1" fill="#e2d6b0"/>`;
+  if(o.flag) g+=`<g class="flagw" style="animation-delay:${o.adelay||0}s"><line x1="13.8" y1="-22" x2="13.8" y2="-52" stroke="#e8e0cc" stroke-width="1.1"/><path d="M13.8,-52 h13 v8.5 h-13z" fill="${o.flag}"/><path d="M13.8,-52 h3.5 v8.5 h-3.5z" fill="#fff"/></g>`;
+  g+='</g>';
+  if(o.rifle) g+=`<path d="M-9,-26 L9,-60" stroke="#222" stroke-width="3.2" stroke-linecap="round"/><path d="M-9,-26 L-4,-34" stroke="#6a4424" stroke-width="5" stroke-linecap="round"/>`;
+  return g+'</g></g>';
+}
+
+function villager(x,y,s,extra){
+  const woman=Math.random()<.22;
+  const o={x,y,s,skin:pick(SKIN),kam:pick(CLOTH),anim:'bob',delay:R(0,3)};
+  if(woman){o.head='chador';o.hc=pick(DUP);}
+  else{
+    const h=Math.random();
+    if(h<.35){o.head='turban';o.hc=pick(['#f4f1e8','#efe8d5','#e9d9a8'])}
+    else if(h<.6){o.head='cap';o.hc=pick(['#f1ece0','#3a3a3a','#7a2a2a'])}
+    else {o.head='hair';o.hc='#1b1512'}
+    if(Math.random()<.5) o.beard=pick(['#1b1512','#e8e6e0','#c4541f','#6c6a66']);
+    else if(Math.random()<.6) o.must='#1b1512';
+  }
+  return person(Object.assign(o,extra||{}));
+}
+
+/* ---- portraits ---- */
+const CH={
+  nar:{name:'The Dera',role:'Narrator',emblem:1},
+  rafiq:{name:'Master Rafiq',role:'Your munshi, keeper of the ledger',skin:'#c08a5f',kam:'#9aa3ad',head:'hair',hc:'#3a3532',glasses:1,must:'#3a3a3a',bg:'#3b4a5a'},
+  rasool:{name:'Chaudhry Ghulam Rasool',role:'Elder of the Jatt Biradari',skin:'#b5784c',kam:'#f2efe6',head:'turban',hc:'#ffffff',must:'#efefef',curl:1,stern:1,bg:'#6b2f2f'},
+  asif:{name:'Asif',role:"Ghulam Rasool's son",skin:'#b07a4f',kam:'#d9d2c2',head:'hair',hc:'#1b1512',must:'#1b1512',bandage:1,stern:1,bg:'#5a2a2a'},
+  ditta:{name:'Mehr Allah Ditta',role:'Elder of the Arain Biradari',skin:'#9a6844',kam:'#8d8f93',head:'cap',hc:'#f1ece0',beard:'#c4541f',bg:'#2f4f3f'},
+  yaqoob:{name:'Yaqoob',role:"Allah Ditta's son",skin:'#9a6844',kam:'#b9a27c',head:'hair',hc:'#1b1512',beard:'#1b1512',bg:'#2f4f3f'},
+  zainab:{name:'Zainab Bibi',role:"Allah Ditta's widowed granddaughter",skin:'#b98258',kam:'#1c1a20',head:'chador',hc:'#17151c',bg:'#3a3550'},
+  sho:{name:'Inspector Tariq Bhatti',role:'SHO, Thana Saddar',skin:'#a8734a',kam:'#2d3b4f',head:'police',hc:'#2d3b4f',must:'#151010',uniform:1,bg:'#22303f'},
+  sherm:{name:'Sher Muhammad',role:'Head of your guards',skin:'#a36a42',kam:'#b9a27c',head:'cap',hc:'#5a4a2e',beard:'#6c6a66',must:'#5a5a58',stern:1,scar:1,rifle:1,bg:'#4a3a24'},
+  afzal:{name:'Malik Sher Afzal',role:'Your rival landlord',skin:'#b07a4f',kam:'#18161c',vest:'#6e6a72',head:'hair',hc:'#0e0c0c',must:'#0e0c0c',curl:1,shades:1,stern:1,bg:'#3a1820'},
+  begum:{name:'Begum Shahnaz Durrani',role:'Chairperson, Pakistan Awami Ittehad',skin:'#d4a17a',kam:'#e8dcc0',head:'dupatta',hc:'#f0e4c8',hair:'#2a1a14',bg:'#2f5a4a'},
+  saima:{name:'Saima Qureshi',role:'Crime reporter, Khabar News',skin:'#c99068',kam:'#3a4e6a',head:'dupatta',hc:'#c9474e',hair:'#1a1210',bg:'#4a2030'},
+  general:{name:'General Raza Haider',role:'Corps Commander',skin:'#b98258',kam:'#7a7550',head:'beret',hc:'#6b2a2a',must:'#3a3632',uniform:1,stern:1,bg:'#3c3a26'},
+  envoy:{name:'Adil Rahimov',role:'Envoy, Caspian Development Fund',skin:'#e0b48e',kam:'#2b2b33',head:'hair',hc:'#6b6660',glasses:1,tie:1,bg:'#2a3a50'}
+};
+
+function portrait(c){
+  if(c.emblem) return `<svg viewBox="0 0 120 120"><rect width="120" height="120" fill="#21182a"/><circle cx="60" cy="60" r="44" fill="#e9b44c14"/><path d="M28,98 L28,58 Q60,18 92,58 L92,98" fill="none" stroke="#e9b44c" stroke-width="5"/><path d="M44,98 L44,66 Q60,46 76,66 L76,98" fill="#e9b44c22" stroke="#e9b44c" stroke-width="3"/><path d="M48,98 V70 M56,98 V62 M64,98 V62 M72,98 V70" stroke="#2fa38f" stroke-width="2.5"/><circle class="pulse" cx="60" cy="38" r="5" fill="#ffd27a"/><path d="M20,98 H100" stroke="#e9b44c" stroke-width="4"/></svg>`;
+  const sk=c.skin, k=c.kam, hc=c.hc;
+  let g=`<svg viewBox="0 0 120 120"><defs><radialGradient id="pg" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="${c.bg}"/><stop offset="1" stop-color="#140e18"/></radialGradient></defs><rect width="120" height="120" fill="url(#pg)"/>`;
+  if(c.head==='chador') g+=`<path d="M12,120 Q14,40 60,20 Q106,40 108,120Z" fill="${hc}"/>`;
+  if(c.head==='dupatta') g+=`<path d="M30,70 Q26,26 60,22 Q94,26 90,70 L96,120 L24,120Z" fill="${c.hair}"/>`;
+  g+=`<path d="M8,120 Q12,92 60,88 Q108,92 112,120Z" fill="${c.head==='chador'?hc:k}"/>`;
+  if(c.vest) g+=`<path d="M8,120 Q12,94 44,89 L54,120Z M112,120 Q108,94 76,89 L66,120Z" fill="${c.vest}"/>`;
+  if(c.uniform) g+=`<rect x="18" y="98" width="20" height="5" rx="2" fill="#c9a227"/><rect x="82" y="98" width="20" height="5" rx="2" fill="#c9a227"/><rect x="74" y="106" width="14" height="4" fill="#b8442e"/><rect x="74" y="111" width="14" height="4" fill="#2f6b4f"/>`;
+  if(c.tie) g+=`<path d="M52,90 L60,98 L68,90 L66,120 L54,120Z" fill="#f2f2f2"/><path d="M58,96 L62,96 L64,120 L56,120Z" fill="#7a1f2b"/>`;
+  if(c.rifle) g+=`<path d="M10,120 L40,92" stroke="#6b4a2a" stroke-width="7"/>`;
+  g+=`<path d="M50,76 L50,92 Q60,97 70,92 L70,76Z" fill="${sk}"/>`;
+  if(c.head!=='chador') g+=`<ellipse cx="37" cy="58" rx="4" ry="7" fill="${sk}"/><ellipse cx="83" cy="58" rx="4" ry="7" fill="${sk}"/>`;
+  g+=`<ellipse cx="60" cy="56" rx="23" ry="27" fill="${sk}"/>`;
+  if(c.beard) g+=`<path d="M37,56 Q37,92 60,96 Q83,92 83,56 Q80,74 60,77 Q40,74 37,56Z" fill="${c.beard}"/>`;
+  g+= c.stern ? `<path d="M43,45 L55,48.5 M65,48.5 L77,45" stroke="#22150e" stroke-width="3" stroke-linecap="round"/>` : `<path d="M44,47 Q50,43.5 55,46.5 M65,46.5 Q70,43.5 76,47" stroke="#22150e" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  g+=`<g class="blink"><ellipse cx="50" cy="54" rx="4.4" ry="2.9" fill="#f6efe3"/><ellipse cx="70" cy="54" rx="4.4" ry="2.9" fill="#f6efe3"/><circle cx="50.6" cy="54" r="2.1" fill="#2a1a10"/><circle cx="70.6" cy="54" r="2.1" fill="#2a1a10"/></g>`;
+  g+=`<path d="M60,56 Q56.5,66 59.5,68 Q63,68.5 64.5,66" stroke="#0004" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  if(c.scar) g+=`<path d="M80,52 L72,74" stroke="#7a3a2a" stroke-width="1.8" opacity=".8"/>`;
+  g+=`<ellipse class="mouth" cx="60" cy="76" rx="5.5" ry="2.3" fill="#5a2a22"/>`;
+  if(c.must) g+=`<path d="M46,72 Q60,64 74,72 Q66,70.5 60,72.5 Q54,70.5 46,72Z" fill="${c.must}"/>` + (c.curl?`<path d="M47,71.5 q-6,-1 -5,-7 M73,71.5 q6,-1 5,-7" stroke="${c.must}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`:'');
+  if(c.glasses) g+=`<g fill="none" stroke="#1d1d1d" stroke-width="2"><circle cx="50" cy="54" r="7.5"/><circle cx="70" cy="54" r="7.5"/><path d="M57.5,54 h5 M42.5,53 L37,51 M77.5,53 L83,51"/></g>`;
+  if(c.shades) g+=`<path d="M40,48 h17 q0,11 -8.5,11 q-8.5,0 -8.5,-11Z M63,48 h17 q0,11 -8.5,11 q-8.5,0 -8.5,-11Z M57,50 h6" fill="#0d0d0f" stroke="#0d0d0f" stroke-width="1.5"/>`;
+  if(c.bandage) g+=`<path d="M36,38 Q60,28 84,38 L84,46 Q60,36 36,46Z" fill="#f2ede1"/><circle cx="69" cy="39" r="3.2" fill="#a3313a" opacity=".85"/>`;
+  const HG={
+    turban:`<path d="M34,46 Q30,15 60,13 Q90,15 86,46 Q60,35 34,46Z" fill="${hc}"/><path d="M40,36 Q60,26 80,36 M44,26 Q60,19 76,26" stroke="#0002" stroke-width="2" fill="none"/><path d="M64,17 L80,-4 L94,7 L74,24Z" fill="${hc}"/>`,
+    cap:`<path d="M37,39 Q37,21 60,21 Q83,21 83,39 Q60,33 37,39Z" fill="${hc}"/><path d="M40,33 Q60,28 80,33" stroke="#0002" stroke-width="2" fill="none" stroke-dasharray="3 3"/>`,
+    hair:`<path d="M36,54 Q31,19 60,19 Q89,19 84,54 Q82,36 72,31 Q58,37 41,33 Q37,42 36,54Z" fill="${hc}"/>`,
+    chador:`<path d="M31,66 Q29,21 60,19 Q91,21 89,66 Q87,33 60,31 Q33,33 31,66Z" fill="${hc}"/>`,
+    dupatta:`<path d="M37,46 Q40,30 60,30 Q80,30 83,46 Q72,36 60,37 Q48,36 37,46Z" fill="${c.hair}"/><path d="M27,72 Q24,22 60,20 Q96,22 93,72 Q90,34 76,28 Q60,24 44,28 Q30,34 27,72Z" fill="${hc}"/>`,
+    police:`<path d="M34,40 L36,21 Q60,13 84,21 L86,40Z" fill="${hc}"/><path d="M31,40 L89,40 L84,47 L36,47Z" fill="#111"/><circle cx="60" cy="30" r="5" fill="#c9a227"/>`,
+    beret:`<path d="M33,43 Q26,21 56,17 Q92,15 88,41 Q60,34 33,43Z" fill="${hc}"/><circle cx="74" cy="30" r="4.5" fill="#c9a227"/>`,
+    jinnah:`<path d="M38,39 L39,17 Q60,11 81,17 L82,39 Q60,33 38,39Z" fill="${hc}"/><path d="M40,27 Q60,22 80,27" stroke="#0003" stroke-width="2" fill="none"/>`
+  };
+  g+=HG[c.head]||'';
+  return g+'</svg>';
+}
+function bodyOf(id,extra){const c=CH[id];return person(Object.assign({skin:c.skin,kam:c.kam,head:c.head==='dupatta'?'chador':c.head,hc:c.hc,beard:c.beard,must:c.must,vest:c.vest,shades:c.shades,bandage:c.bandage,uniform:c.uniform,rifle:c.rifle},extra));}
+
+/* ---- vehicles ---- */
+function car(x,y,o){
+  const c=o.color, t=o.tint||'#15171d', s=o.s||1;
+  let g=`<g transform="translate(${x} ${y}) scale(${o.flip?-s:s} ${s})"><ellipse cx="56" cy="1" rx="58" ry="4" fill="#000" opacity=".3"/>`;
+  if(o.kind==='vigo'){
+    g+=`<path d="M2,-10 L2,-25 Q4,-30 12,-31 L26,-32 L36,-49 Q38,-51 42,-51 L68,-51 Q71,-51 72,-48 L74,-32 L110,-32 L110,-10Z" fill="${c}"/><path d="M40,-47 L32,-34 L52,-34 L52,-47Z M55,-47 L55,-34 L71,-34 L69,-47Z" fill="${t}"/><path d="M80,-32 L82,-46 L104,-46 L106,-32" fill="none" stroke="#2a2a2a" stroke-width="2.6"/>`;
+    if(o.flag) g+=`<line x1="106" y1="-32" x2="106" y2="-80" stroke="#bbb" stroke-width="1.2"/><g class="flagw"><path d="M106,-80 h20 v13 h-20z" fill="${o.flag}"/><path d="M106,-80 h5 v13 h-5z" fill="#fff"/></g>`;
+  } else {
+    const h=o.kind==='lc'?-55:-51;
+    g+=`<path d="M2,-10 L2,-26 Q4,-31 12,-32 L26,-33 L37,${h+1} Q39,${h} 43,${h} L102,${h} Q107,${h} 108,${h+5} L110,-26 L110,-10Z" fill="${c}"/><path d="M41,${h+4} L32,-35 L60,-35 L60,${h+4}Z M63,${h+4} L63,-35 L84,-35 L84,${h+4}Z M87,${h+4} L87,-35 L104,-35 L104,${h+4}Z" fill="${t}"/><rect x="42" y="${h-3}" width="58" height="2.6" rx="1" fill="#666"/>`;
+    if(o.siren) g+=`<rect x="58" y="${h-8}" width="8" height="5" fill="#e33" class="pulse"/><rect x="66" y="${h-8}" width="8" height="5" fill="#36f" class="pulse" style="animation-delay:1s"/>`;
+  }
+  g+=`<rect x="0" y="-24" width="5" height="9" rx="1" fill="#d9d9d9"/><rect x="5" y="-27.5" width="8" height="4" rx="1.6" fill="#fff6c9"/><rect x="0" y="-13" width="112" height="4" rx="2" fill="#0006"/><path d="M61,-34 L61,-12" stroke="#0005"/>`;
+  for(const wx of [24,88]) g+=`<circle cx="${wx}" cy="-9" r="10" fill="#121212"/><circle cx="${wx}" cy="-9" r="5.2" fill="#a0a0a0"/><circle cx="${wx}" cy="-9" r="1.7" fill="#333"/>`;
+  g+=`<path class="glint" style="animation-delay:${o.gd||0}s" d="M46,-48 L52,-48 L42,-36 L36,-36Z" fill="#fff"/>`;
+  return g+'</g>';
+}
+function buffalo(){
+  return `<g><ellipse cx="0" cy="-22" rx="28" ry="13" fill="#1e1c1f"/><rect x="-22" y="-14" width="6" height="15" fill="#1e1c1f"/><rect x="-10" y="-14" width="6" height="15" fill="#1e1c1f"/><rect x="10" y="-14" width="6" height="15" fill="#1e1c1f"/><rect x="20" y="-14" width="6" height="15" fill="#1e1c1f"/><ellipse cx="32" cy="-24" rx="10" ry="8" fill="#262327"/><path d="M28,-30 Q22,-40 30,-38 M36,-30 Q44,-40 36,-38" stroke="#5a554e" stroke-width="3" fill="none"/><path d="M-28,-24 q-6,6 -3,14" stroke="#1e1c1f" stroke-width="2" fill="none"/></g>`;
+}
+
+/* ---- scene sets ---- */
+function trees(){let g='';for(let i=0;i<16;i++){const x=i*80+R(-20,20),y=R(298,312),w=R(26,44);g+=`<path d="M${x},${y+28} L${x+2},${y} M${x-w},${y} Q${x},${y-R(18,30)} ${x+w},${y} Q${x},${y+6} ${x-w},${y}Z" style="fill:var(--far);stroke:var(--far)" stroke-width="2"/>`;}return g;}
+function stars(){let g='';for(let i=0;i<70;i++)g+=`<circle class="twinkle" style="animation-delay:${R(0,3)}s" cx="${R(0,1200)}" cy="${R(0,230)}" r="${R(.6,1.7)}" fill="#fff"/>`;return g;}
+
+function setDera(){
+  let m='',fg='',gl='';
+  // wall
+  m+=`<rect x="110" y="232" width="980" height="108" fill="#e6dccb"/><rect x="104" y="226" width="992" height="9" fill="#cfc3ad"/>`;
+  for(let x=110;x<1090;x+=28) m+=`<rect x="${x}" y="214" width="14" height="13" fill="#e6dccb"/>`;
+  m+=`<rect x="110" y="326" width="980" height="14" fill="#9b5a3c"/>`;
+  for(let x=110;x<1090;x+=18) m+=`<path d="M${x},326 v14" stroke="#7a4430"/>`;
+  // gate
+  m+=`<rect x="520" y="196" width="160" height="144" fill="#efe6d4"/><rect x="514" y="190" width="172" height="10" fill="#d8ccb4"/><path d="M548,340 L548,262 Q600,212 652,262 L652,340Z" fill="#2a2430"/>`;
+  for(let x=554;x<650;x+=8) m+=`<path d="M${x},340 V${Math.max(246,262-Math.min(x-548,652-x)*.9)}" stroke="#2f6b4f" stroke-width="2.6"/>`;
+  m+=`<path d="M548,262 Q600,212 652,262" stroke="#d9a93a" stroke-width="4" fill="none"/><path d="M548,298 H652" stroke="#2f6b4f" stroke-width="3"/><circle cx="600" cy="298" r="7" fill="#d9a93a"/>`;
+  m+=`<rect x="560" y="201" width="80" height="22" rx="2" fill="#f8f3e8" stroke="#c99a3a" stroke-width="1.5"/><text x="600" y="217" text-anchor="middle" font-family="Noto Nastaliq Urdu, serif" font-size="9" fill="#6b4a2a">حویلی نمبردار</text>`;
+  m+=`<rect x="526" y="246" width="8" height="12" fill="#3a2a1a"/><rect x="666" y="246" width="8" height="12" fill="#3a2a1a"/>`;
+  gl+=`<circle cx="530" cy="252" r="22" fill="url(#lamp)" class="pulse" style="opacity:var(--lamp)"/><circle cx="670" cy="252" r="22" fill="url(#lamp)" class="pulse" style="opacity:var(--lamp)"/>`;
+  // buffalo + farmer crossing on the path
+  m+=`<g class="cross" style="--t:52s;--d:-14s"><g transform="translate(0 368)">${person({x:-50,y:0,s:.7,kam:'#cfc6ae',head:'turban',hc:'#efe8d5',beard:'#e8e6e0',anim:'run'})}<path d="M-40,-24 L10,-26" stroke="#7a6a4a" stroke-width="1"/>${buffalo()}</g></g>`;
+  // banyan
+  m+=`<path d="M150,470 C162,400 150,330 176,288 L216,288 C236,330 226,400 242,470Z" fill="#5a4330"/>`;
+  for(const x of [96,122,262,290,312]) m+=`<path d="M${x},280 Q${x+R(-6,6)},380 ${x+R(-4,4)},${R(430,470)}" stroke="#6b5240" stroke-width="2.2" fill="none"/>`;
+  m+=`<g class="sway">`;
+  for(const e of [[195,232,155,82,'#3f5e2c'],[88,262,92,56,'#4a6b33'],[306,252,102,60,'#35512a'],[205,178,112,60,'#55773a'],[128,200,72,46,'#4f7036'],[278,198,82,48,'#45662f'],[220,280,120,30,'#36542a']]) m+=`<ellipse cx="${e[0]}" cy="${e[1]}" rx="${e[2]}" ry="${e[3]}" fill="${e[4]}"/>`;
+  m+=`</g>`;
+  // charpais with seated elders
+  const charpai=(x,y,w)=>`<rect x="${x}" y="${y}" width="${w}" height="11" fill="url(#weave)" stroke="#6a4a2a" stroke-width="3"/><rect x="${x}" y="${y+11}" width="5" height="14" fill="#6a4a2a"/><rect x="${x+w-5}" y="${y+11}" width="5" height="14" fill="#6a4a2a"/>`;
+  [[70,442,130],[214,466,118]].forEach(([x,y,w])=>{for(let i=0;i<3;i++) m+=villager(x+22+i*(w-30)/2,y+15,.85,{seated:1,cup:Math.random()<.7,arm:'sip',adelay:R(0,5)});m+=charpai(x,y,w);});
+  // crowd waiting
+  for(let r=0;r<2;r++) for(let i=0;i<7;i++) m+=villager(318+i*30+R(-6,6)+r*14,392+r*26,.82+r*.06,{cup:Math.random()<.4,arm:Math.random()<.4?'sip':'',adelay:R(0,5)});
+  // guards
+  [[500,0],[536,1.5],[664,3],[700,4.5]].forEach(([x,d],i)=>m+=person({x,y:346,s:i%3?1:1.08,skin:pick(SKIN),kam:'#b9a27c',head:'cap',hc:'#4a3a22',must:'#151010',beard:i===3?'#6c6a66':null,rifle:1,anim:'scan',delay:d}));
+  // fleet
+  m+=car(752,378,{kind:'prado',color:'#141419',s:.9,gd:0})+car(872,378,{kind:'lc',color:'#0c0c10',s:.92,gd:1.8})+car(992,378,{kind:'prado',color:'#16161b',s:.9,gd:3.1});
+  m+=person({x:905,y:410,s:.9,skin:'#d39b6c',kam:'#7d8c6e',head:'hair',hc:'#b4462a',beard:'#b4462a',flip:1,arm:'scrub',rag:1});
+  m+=`<path d="M930,410 l-3,-14 h14 l-3,14z" fill="#3b6ea5"/><g class="splash">`;
+  for(let i=0;i<6;i++) m+=`<circle cx="${884+R(-6,10)}" cy="${380+R(-6,6)}" r="${R(1.2,2.4)}" fill="#cfe8ff" style="--dx:${R(-14,10)}px;animation-delay:${R(0,1.1)}s"/>`;
+  m+=`</g>`;
+  m+=car(740,420,{kind:'vigo',color:'#f1f1ee',s:.95,flag:PARTY,gd:2.2})+car(1010,420,{kind:'vigo',color:'#ecece8',s:.95,flag:PARTY,gd:4,flip:0});
+  // tea boy
+  m+=`<g class="patrol">${person({x:312,y:448,s:.62,kam:'#d9c79f',head:'hair',hc:'#1b1512',kettle:1})}</g>`;
+  // your seat
+  m+=`<rect x="512" y="498" width="176" height="24" fill="#7a1f2b" stroke="#d9a93a" stroke-width="2"/><path d="M520,506 H680 M520,514 H680" stroke="#d9a93a" stroke-dasharray="4 5" opacity=".7"/>`;
+  m+=`<path d="M570,508 L570,436 Q600,410 630,436 L630,508Z" fill="#5a3320" stroke="#c99a3a" stroke-width="2.5"/><circle cx="600" cy="430" r="5" fill="#d9a93a"/>`;
+  m+=person({x:600,y:514,s:1.32,seated:1,skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c',arm:'nd-arm'});
+  m+=`<rect x="568" y="490" width="64" height="12" rx="3" fill="#6b3a24"/><rect x="646" y="474" width="22" height="24" fill="#4a2a1a"/><path d="M650,474 h14 l-2,-7 h-10z" fill="#f4f1ea"/>`;
+  // children running in front
+  fg+=`<g class="crossR" style="--t:19s">`;
+  [0,34,70].forEach((dx,i)=>fg+=person({x:dx,y:552,s:.55,kam:pick(['#d9822b','#4f7f9e','#e9e2d0']),head:'hair',hc:'#1b1512',anim:'run',delay:i*.12}));
+  fg+=`<path d="M-26,520 l14,-4" stroke="#8a6a3a" stroke-width="3"/></g>`;
+  return {m,fg,gl};
+}
+
+function setJalsa(){
+  let m='',fg='',gl='';
+  for(let i=0;i<14;i++){const x=i*90+R(-10,10),h=R(40,110);m+=`<rect x="${x}" y="${330-h}" width="${R(60,86)}" height="${h}" style="fill:var(--far)"/>`;for(let j=0;j<3;j++) gl+=`<rect x="${x+10+j*20}" y="${340-h+R(5,20)}" width="8" height="10" fill="#ffd27a" opacity="${R(.3,.8)}" class="pulse" style="animation-delay:${R(0,2)}s"/>`;}
+  // bunting
+  for(const [y0,dy,c0] of [[70,40,0],[40,30,2]]){m+=`<path d="M0,${y0} Q600,${y0+dy*2} 1200,${y0}" stroke="#ddd" stroke-width="1" fill="none"/>`;for(let i=0;i<=30;i++){const t=i/30,x=1200*t,y=y0+2*t*(1-t)*dy*2;m+=`<path d="M${x-9},${y} L${x+9},${y} L${x},${y+16}Z" fill="${[PARTY,'#e9b44c','#fff','#d4506a','#2fa38f'][(i+c0)%5]}"/>`;}}
+  // stage + backdrop
+  m+=`<rect x="378" y="108" width="444" height="156" rx="6" fill="${PARTY}" stroke="#e9b44c" stroke-width="5"/><rect x="390" y="120" width="420" height="132" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="6 4" opacity=".5"/>`;
+  m+=`<circle cx="462" cy="186" r="52" fill="#f4e7cc" stroke="#e9b44c" stroke-width="4"/><circle cx="462" cy="176" r="22" fill="#c08458"/><path d="M440,172 Q440,148 462,148 Q484,148 484,172 Q474,160 450,164Z" fill="#120e0c"/><path d="M450,184 Q462,178 474,184" stroke="#120e0c" stroke-width="4" fill="none"/><path d="M426,236 Q430,206 462,204 Q494,206 498,236Z" fill="#2b2a30"/>`;
+  m+=`<text x="650" y="178" text-anchor="middle" font-family="Noto Nastaliq Urdu, serif" font-size="28" fill="#fff">نمبردار زندہ باد</text><text x="650" y="224" text-anchor="middle" font-family="Hind, sans-serif" font-weight="600" letter-spacing="3" font-size="16" fill="#e9b44c">VOTE THE TUBEWELL</text><path d="M760,236 v-24 h10 v24 M752,236 h26 M765,212 q8,-10 18,-4" stroke="#e9b44c" stroke-width="3" fill="none"/>`;
+  m+=`<rect x="330" y="262" width="540" height="74" fill="#2a1d14"/><rect x="330" y="300" width="540" height="36" fill="url(#trimP)"/>`;
+  for(const x of [336,824]) m+=`<rect x="${x}" y="200" width="40" height="64" fill="#111"/><circle cx="${x+20}" cy="218" r="9" fill="#333"/><circle cx="${x+20}" cy="246" r="12" fill="#333"/>`;
+  m+=`<path d="M340,96 H860" stroke="#444" stroke-width="5"/>`;
+  for(let x=380;x<=820;x+=88){m+=`<rect x="${x-7}" y="96" width="14" height="12" fill="#222"/>`;gl+=`<path d="M${x-7},108 L${x-70},330 L${x+70},330 L${x+7},108Z" fill="#fff3c4" opacity=".07" class="pulse"/><circle cx="${x}" cy="108" r="12" fill="url(#lamp)" class="pulse"/>`;}
+  m+=person({x:600,y:300,s:1.3,skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c',arm:'orate nd-arm',mic:1});
+  m+=`<path d="M570,302 L577,262 L623,262 L630,302Z" fill="${PARTY}" stroke="#e9b44c" stroke-width="2"/><circle cx="600" cy="280" r="7" fill="#e9b44c"/>`;
+  // crowd
+  for(let r=0;r<5;r++){const y=372+r*40,s=.82+r*.12;for(let x=-10+(r%2)*22;x<1220;x+=44+r*4){const f=Math.random()<.55;m+=villager(x+R(-6,6),y+R(-4,4),s,{anim:'cheer',delay:R(0,.9),flag:f?PARTY:null,arm:f?'wave':(Math.random()<.3?'wave':''),adelay:R(0,1)});}}
+  return {m,fg,gl};
+}
+
+function setIsb(){
+  let m='',fg='',gl='';
+  m+=`<path d="M0,300 L80,250 L170,270 L260,214 L380,252 L470,226 L600,262 L720,220 L840,250 L960,206 L1080,246 L1200,226 L1200,330 L0,330Z" style="fill:var(--far)"/>`;
+  m+=`<rect x="320" y="186" width="560" height="146" fill="#e9e6df"/><rect x="310" y="178" width="580" height="12" fill="#f5f3ee"/><rect x="520" y="140" width="160" height="40" fill="#f2f0ea"/><rect x="514" y="134" width="172" height="8" fill="#fafafa"/>`;
+  for(let x=336;x<870;x+=26) m+=`<rect x="${x}" y="200" width="11" height="116" fill="#faf9f6"/><rect x="${x+11}" y="200" width="15" height="116" fill="#cfccc4"/>`;
+  m+=`<rect x="320" y="316" width="560" height="16" fill="#d8d4ca"/><line x1="600" y1="134" x2="600" y2="70" stroke="#ccc" stroke-width="3"/><g class="flagw"><rect x="600" y="70" width="50" height="32" fill="#0b6b3a"/><rect x="600" y="70" width="12" height="32" fill="#fff"/><circle cx="634" cy="86" r="9" fill="#fff"/><circle cx="637" cy="84" r="8" fill="#0b6b3a"/><path d="M640,80 l1.5,3 3,.4 -2.2,2 .6,3 -2.9,-1.5 -2.7,1.5 .5,-3 -2.2,-2 3,-.4z" fill="#fff"/></g>`;
+  for(let x=350;x<860;x+=52) gl+=`<rect x="${x}" y="212" width="16" height="24" fill="#ffe6a6" opacity="${R(.25,.6)}"/>`;
+  m+=`<rect x="0" y="388" width="1200" height="58" fill="#24262c"/><path d="M0,417 H1200" stroke="#d8cf9a" stroke-width="2" stroke-dasharray="26 22"/>`;
+  for(const x of [110,350,850,1090]){m+=`<path d="M${x},388 V300 q0,-8 14,-8" stroke="#555" stroke-width="4" fill="none"/>`;gl+=`<circle cx="${x+16}" cy="296" r="40" fill="url(#lamp)" class="pulse"/><ellipse cx="${x+16}" cy="392" rx="50" ry="8" fill="#ffd27a" opacity=".18"/>`;}
+  m+=`<g class="cross" style="--t:24s">${car(-130,430,{kind:'prado',color:'#e8e8e8',flip:1,s:.8,siren:1})}${[0,1,2,3].map(i=>car(-260-i*125,430,{kind:i%2?'prado':'lc',color:'#0c0c10',flip:1,s:.85,gd:i})).join('')}</g>`;
+  m+=person({x:600,y:532,s:1.5,skin:'#c08458',kam:'#17151b',long:1,head:'jinnah',hc:'#5d5a57',must:'#120e0c',arm:'nd-arm',shoe:'#0c0c0c'});
+  return {m,fg,gl};
+}
+
+/* ============ ENGINE ============ */
+const MOOD={
+  dawn:{s1:'#3c4f7a',s2:'#e9a27a',s3:'#f6d6a0',g1:'#b49a6c',g2:'#7d6545',far:'#5d6b4f',sun:[880,240],sunc:'#ffe2a0',ray:.55,tint:'#ffd0a0',tinta:.22,lamp:.35},
+  noon:{s1:'#5f9fd0',s2:'#a9d1ea',s3:'#eadfc4',g1:'#c9ad7c',g2:'#9a7f55',far:'#6d8050',sun:[990,70],sunc:'#fff6d8',ray:.22,tint:'#ffffff',tinta:0,lamp:0},
+  golden:{s1:'#6a5a8a',s2:'#f0a35c',s3:'#ffd59a',g1:'#c39a62',g2:'#86643c',far:'#6a5a40',sun:[300,230],sunc:'#ffcf7a',ray:.7,tint:'#ffb060',tinta:.24,lamp:.4},
+  dusk:{s1:'#2a2350',s2:'#b4506a',s3:'#f08a4a',g1:'#7a5a48',g2:'#463040',far:'#3d2e40',sun:[230,300],sunc:'#ff9a5a',ray:.4,tint:'#9a4a7a',tinta:.38,lamp:.9},
+  night:{s1:'#0b0d22',s2:'#1c1d3d',s3:'#2c2a4a',g1:'#3a3040',g2:'#1d1825',far:'#1a1a2c',sun:[1050,80],sunc:'#e8ecff',ray:.06,tint:'#3040a0',tinta:.55,lamp:1,stars:1},
+  storm:{s1:'#2c3440',s2:'#56606a',s3:'#7b8088',g1:'#6a6152',g2:'#3e3a33',far:'#454c48',sun:[900,-120],sunc:'#cccccc',ray:0,tint:'#506070',tinta:.38,lamp:.6,rain:1},
+  isb:{s1:'#060a1c',s2:'#14204a',s3:'#2a3a6a',g1:'#2a2f3a',g2:'#15161d',far:'#0f1a24',sun:[1020,90],sunc:'#eef2ff',ray:.05,tint:'#2a3a90',tinta:.45,lamp:1,stars:1}
+};
+const CAM={wide:[1,600,280],faisla:[1.32,600,440],gate:[1.5,600,330],cars:[1.55,900,380],stage:[1.18,600,300],crowd:[1.3,420,420],road:[1.25,600,420]};
+const SLOT={L1:[452,534],L2:[404,542],R1:[748,534],R2:[796,542],R3:[844,548]};
+const STAGE={1:{name:'The Village Dera',ur:'گاؤں کا ڈیرہ',d:'Hold faislas. Handle the SHO. Build your base in Chak 47 Shumali.'},2:{name:'The MNA Campaign',ur:'ایم این اے کی مہم',d:'Forty days to polling. Jalsas, party tickets, and Malik Sher Afzal across the canal.'},3:{name:'The Presidency',ur:'ایوانِ صدر کا راستہ',d:'Islamabad. Coalitions, generals, foreign money, and the electoral college.'}};
+const KEY='numberdar.save.v1';
+const DEF=()=>({name:'Chaudhry Jahangir Ahmed',izzat:45,khauf:30,paisa:8,taluqat:20,jatt:50,arain:50,stage:1,day:1,ev:'water',flags:{}});
+let S=DEF(), curSet=null, castKey='', lastWho=null, adv=null, typing=null, busy=false, soundOn=false, AC=null;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const clamp=v=>Math.max(0,Math.min(100,Math.round(v)));
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function fill(t){if(typeof t==='function')t=t(S);return String(t).replace(/\{N\}/g,S.name);}
+function money(c){const a=Math.abs(c),sg=c<0?'−':'';return a>=1?`${sg}Rs ${(+a.toFixed(2))} Cr`:`${sg}Rs ${Math.round(a*100)} lakh`;}
+
+function buildScene(){
+  const D=setDera(),J=setJalsa(),I=setIsb(),SETS={dera:D,jalsa:J,isb:I};
+  let h=`<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--s1)"/><stop offset=".62" style="stop-color:var(--s2)"/><stop offset="1" style="stop-color:var(--s3)"/></linearGradient><linearGradient id="gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient><radialGradient id="sunglow"><stop offset="0" stop-color="#fff3c4" stop-opacity=".85"/><stop offset=".25" stop-color="#ffd27a" stop-opacity=".45"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient><radialGradient id="lamp"><stop offset="0" stop-color="#ffe7a8" stop-opacity=".95"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient><pattern id="weave" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#c9a66a"/><path d="M0,0 L6,6 M6,0 L0,6" stroke="#8a6a3a" stroke-width="1.2"/></pattern><pattern id="trimP" width="42" height="36" patternUnits="userSpaceOnUse"><rect width="14" height="36" fill="#e9b44c"/><rect x="14" width="14" height="36" fill="#d4506a"/><rect x="28" width="14" height="36" fill="#2fa38f"/></pattern></defs>`;
+  h+=`<g id="world"><rect width="1200" height="560" fill="url(#sky)"/><g style="opacity:var(--stars)">${stars()}</g><circle id="sunglow" cx="880" cy="240" r="150" fill="url(#sunglow)"/><circle id="sun" cx="880" cy="240" r="32"/><rect y="296" width="1200" height="40" style="fill:var(--far)" opacity=".45"/>${trees()}<rect y="330" width="1200" height="230" fill="url(#gnd)"/>`;
+  for(const k in SETS) h+=`<g class="set" data-set="${k}" style="display:none">${SETS[k].m}</g>`;
+  h+=`<g id="actors"></g>`;
+  for(const k in SETS) h+=`<g class="set" data-set="${k}" style="display:none">${SETS[k].fg}</g>`;
+  h+=`<rect width="1200" height="560" pointer-events="none" style="fill:var(--tint);opacity:var(--tinta);mix-blend-mode:multiply"/>`;
+  for(const k in SETS) h+=`<g class="set" data-set="${k}" style="display:none">${SETS[k].gl}</g>`;
+  $('#scene').innerHTML=h+'</g>';
+}
+function leaves(){let h='';for(let i=0;i<12;i++)h+=`<span class="leaf" style="left:${R(2,34)}%;--t:${R(7,13)}s;--d:${-R(0,12)}s;background:${pick(['#6f8f3a','#8aa04a','#a8873a'])}"></span>`;$('#leaves').innerHTML=h;}
+function cam(k){const [z,fx,fy]=CAM[k]||CAM.wide;const tx=Math.min(0,Math.max(1200-1200*z,600-fx*z)),ty=Math.min(0,Math.max(560-560*z,280-fy*z));$('#world').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;}
+function cast(c){
+  const key=JSON.stringify(c||{});if(key===castKey)return;castKey=key;
+  let h='',i=0;for(const id in (c||{})){const [x,y]=SLOT[c[id]];h+=`<g class="actor" style="animation-delay:${(i++)*.12}s">${bodyOf(id,{x,y,s:1.42,flip:x>600,anim:'bob',delay:R(0,2)})}</g>`;}
+  $('#actors').innerHTML=h;
+}
+async function setScene(ev){
+  const set=ev.set||'dera',m=MOOD[ev.mood||'dawn'],sv=$('#scene'),changing=set!==curSet;
+  if(changing&&curSet){$('#fade').classList.add('on');await wait(650);}
+  sv.querySelectorAll('.set').forEach(g=>g.style.display=g.dataset.set===set?'':'none');curSet=set;
+  for(const k of ['s1','s2','s3','g1','g2','far','tint'])sv.style.setProperty('--'+k,m[k]);
+  sv.style.setProperty('--tinta',m.tinta);sv.style.setProperty('--lamp',m.lamp);sv.style.setProperty('--stars',m.stars?1:0);
+  for(const id of ['#sun','#sunglow']){const c=$(id);c.setAttribute('cx',m.sun[0]);c.setAttribute('cy',m.sun[1]);}
+  $('#sun').style.fill=m.sunc;
+  $('#rays').style.setProperty('--ray',m.ray);$('#rain').classList.toggle('on',!!m.rain);
+  $('#leaves').style.display=set==='dera'&&!m.rain?'':'none';
+  $('#loc').textContent=fill(ev.loc||'');
+  cam(ev.cam||'wide');cast(ev.cast);
+  if(changing){await wait(120);$('#fade').classList.remove('on');}
+}
+
+/* ---- HUD ---- */
+function loyName(v){return v<30?'Hostile':v<45?'Uneasy':v<60?'Neutral':v<78?'Loyal':'Devoted';}
+function renderHUD(){
+  for(const k of ['izzat','khauf','taluqat']){const el=$('#st-'+k);el.querySelector('.val').textContent=S[k];el.querySelector('.bar i').style.width=S[k]+'%';}
+  const p=$('#st-paisa');p.querySelector('.val').textContent=money(S.paisa);p.querySelector('.bar i').style.width=Math.max(0,Math.min(100,S.paisa/16*100))+'%';
+  for(const b of ['jatt','arain']){$('#l-'+b).style.width=S[b]+'%';$('#l-'+b+'-t').textContent=loyName(S[b]);}
+  $('#m-stage').textContent=S.stage;$('#m-stagename').textContent=STAGE[S.stage].name;$('#m-day').textContent=S.day;
+  const w=$('#khauf-warn');w.textContent=S.khauf>=65?'The village is restless. Khauf is high.':'';w.style.color='var(--khauf)';
+}
+function delta(k,txt,up){const el=$('#st-'+k);if(!el)return;const d=document.createElement('span');d.className='delta '+(up?'up':'dn');d.textContent=txt;el.appendChild(d);setTimeout(()=>d.remove(),1900);}
+function applyFx(fx){
+  if(!fx)return;if(typeof fx==='function')fx=fx(S);
+  for(const k in fx){const v=fx[k];if(!v)continue;
+    if(k==='paisa'){S.paisa=+(S.paisa+v).toFixed(2);delta('paisa',(v>0?'+':'')+money(v),v>0);}
+    else{S[k]=clamp(S[k]+v);if(k!=='jatt'&&k!=='arain')delta(k,(v>0?'+':'−')+Math.abs(v),v>0);}
+  }
+  renderHUD();
+}
+
+/* ---- dialogue ---- */
+function say(l){
+  return new Promise(res=>{
+    const c=CH[l.who]||CH.nar,pt=$('#portrait'),el=$('#text');
+    if(lastWho!==l.who){pt.innerHTML=portrait(c);lastWho=l.who;}
+    $('#who').textContent=c.name;$('#role').textContent=c.role;
+    const full=fill(l.t);el.textContent='';$('#more').hidden=true;
+    if(!c.emblem)pt.classList.add('talk');
+    let i=0;
+    const done=()=>{clearInterval(typing);typing=null;el.textContent=full;pt.classList.remove('talk');$('#more').hidden=false;};
+    if(reduced())done();else typing=setInterval(()=>{i+=2;el.textContent=full.slice(0,i);if(i%8===0)blip();if(i>=full.length)done();},22);
+    adv=()=>{if(typing){done();return;}adv=null;res();};
+  });
+}
+async function lines(arr){for(const x of (arr||[])){const l=Array.isArray(x)?{who:x[0],t:x[1],when:x[2]}:x;if(l.when&&!l.when(S))continue;await say(l);}}
+const CHIP={izzat:['Izzat','var(--izzat)'],khauf:['Khauf','var(--khauf)'],taluqat:["Ta'aluqat",'var(--taluq)'],jatt:['Jatts','var(--teal)'],arain:['Arains','var(--teal)']};
+function chips(ch,ok){
+  let h=ok?'':`<span class="chip lock">Needs ${ch.rt}</span>`;
+  if(typeof ch.fx==='function')return h+`<span class="chip lock">Outcome depends on your record</span>`;
+  for(const k in (ch.fx||{})){const v=ch.fx[k];if(!v)continue;
+    if(k==='paisa'){h+=`<span class="chip" style="color:var(--paisa)">Paisa ${v>0?'+':''}${money(v)}</span>`;continue;}
+    const a=v>0?'▲':'▼';h+=`<span class="chip" style="color:${CHIP[k][1]}">${CHIP[k][0]} ${Math.abs(v)>=12?a+a:a}</span>`;}
+  return h;
+}
+function showChoices(ev){
+  const box=$('#choices');box.innerHTML=`<div class="ask">${esc(fill(ev.ask||'What is your faisla, Numberdar Sahib?'))}</div>`;
+  ev.choices.forEach((ch,i)=>{
+    const ok=!ch.req||ch.req(S),b=document.createElement('button');
+    b.className='choice';b.type='button';b.disabled=!ok;b.style.animationDelay=(i*.09)+'s';
+    b.innerHTML=`<span class="k">${'ABCD'[i]}</span><span style="min-width:0"><b>${esc(fill(ch.l))}</b><span class="d">${esc(fill(ch.d||''))}</span><span class="chips">${chips(ch,ok)}</span></span>`;
+    b.onclick=()=>choose(ev,ch);box.appendChild(b);
+  });
+}
+function ndRaise(){document.querySelectorAll('.nd-arm').forEach(a=>{a.classList.add('raise');setTimeout(()=>a.classList.remove('raise'),1700);});}
+function gate(nx){
+  if(EV[nx]&&EV[nx].end)return nx;
+  if(S.paisa<0)return 'ruin_paisa';
+  if(S.izzat<=5)return 'ruin_izzat';
+  if(S.khauf>=80&&!S.flags['rebel'+S.stage]){S.flags['rebel'+S.stage]=1;S.flags.after=nx;return 'rebellion';}
+  return nx;
+}
+async function choose(ev,ch){
+  if(busy)return;busy=true;$('#choices').innerHTML='';chime();ndRaise();
+  applyFx(ch.fx);if(ch.flag)S.flags[ch.flag]=1;S.day+=ch.days||1+Math.floor(Math.random()*3);renderHUD();
+  await lines(ch.r);
+  if(ch.cut)await cutscene(ch.cut);
+  let nx=ch.next||ev.next;if(typeof nx==='function')nx=nx(S);
+  busy=false;runEvent(gate(nx));
+}
+async function runEvent(id){
+  const ev=EV[id];S.ev=id;
+  if(ev.stage&&ev.stage!==S.stage){S.stage=ev.stage;renderHUD();save();await stageCard(ev.stage);}else save();
+  $('#eyebrow').textContent=ev.title||'';
+  await setScene(ev);
+  if(ev.cut)await cutscene(ev.cut);
+  await lines(ev.lines);
+  if(ev.end)return ending(ev);
+  showChoices(ev);
+}
+
+/* ---- sound ---- */
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}return AC;}
+function tone(f,t0,dur,type,vol,f2){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+dur+.05);}
+function blip(){if(!soundOn||!AC)return;tone(R(480,560),AC.currentTime,.035,'triangle',.025);}
+function chime(){if(!soundOn||!ac())return;const t=AC.currentTime;tone(880,t,.6,'sine',.1);tone(1320,t+.08,.7,'sine',.06);}
+function dhol(bars){if(!soundOn||!ac())return;const t=AC.currentTime+.05,pat=[2,0,1,1,0,1,2,1];for(let b=0;b<bars;b++)pat.forEach((h,i)=>{const tt=t+(b*8+i)*.17;if(h===2)tone(85,tt,.3,'sine',.55,45);else if(h===1)tone(150,tt,.16,'sine',.25,95);else tone(340,tt,.05,'triangle',.07,200);});}
+function fanfare(){if(!soundOn||!ac())return;const t=AC.currentTime+.05;[[392,0,.32],[523,.34,.32],[659,.68,.32],[784,1.02,1],[659,2.1,.28],[784,2.4,.28],[1047,2.7,1.8]].forEach(([f,d,l])=>{tone(f,t+d,l,'square',.035);tone(f/2,t+d,l,'triangle',.09);});[262,330,392,523].forEach(f=>tone(f,t+2.7,2.4,'triangle',.05));dhol(3);}
+
+/* ---- cutscenes ---- */
+function particles(kind){
+  if(!kind||reduced())return()=>{};
+  const cv=$('#cs-fx'),ctx=cv.getContext('2d'),dp=devicePixelRatio||1;let W=cv.width=innerWidth*dp,H=cv.height=innerHeight*dp;
+  const conf=['#e9b44c','#d4506a','#2fa38f','#ffffff','#1d7a4c'],pet=['#d4325a','#e8506e','#b81f45','#f07a8e'],gold=['#ffd27a','#fff3c4'];
+  const mk=init=>{const k=kind==='mixed'?pick(['p','p','c']):kind==='confetti'?'c':kind==='gold'?'g':'p';return{x:Math.random()*W,y:init?Math.random()*H:-20,vx:R(-.4,.4)*dp,vy:R(.6,1.9)*dp*(k==='g'?.5:1),r:R(4,9)*dp,a:R(0,6.28),va:R(-.06,.06),k,c:pick(k==='c'?conf:k==='g'?gold:pet)};};
+  const P=Array.from({length:kind==='gold'?80:150},()=>mk(1));let on=true,t=0;
+  (function loop(){if(!on)return;t++;ctx.clearRect(0,0,W,H);for(const p of P){p.x+=p.vx+Math.sin((t+p.r*10)/40)*.6;p.y+=p.vy;p.a+=p.va;if(p.y>H+20)Object.assign(p,mk(0));ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;
+    if(p.k==='p'){ctx.beginPath();ctx.ellipse(0,0,p.r,p.r*.55,0,0,6.28);ctx.fill();}else if(p.k==='c'){ctx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);}else{ctx.globalAlpha=.5+.5*Math.sin(t/10+p.r);ctx.beginPath();ctx.arc(0,0,p.r*.28,0,6.28);ctx.fill();}
+    ctx.restore();}requestAnimationFrame(loop);})();
+  return()=>{on=false;ctx.clearRect(0,0,W,H);};
+}
+function cutscene(kind){
+  const d=typeof kind==='string'?CS[kind]():kind;
+  return new Promise(res=>{
+    const ov=$('#cs'),cap=$('#cs-cap'),btn=$('#cs-btn'),timers=[];
+    $('#cs-svg').innerHTML=d.svg;$('#cs-kicker').textContent=d.kicker||'';cap.classList.add('out');btn.textContent='Skip ▸';
+    ov.hidden=false;ov.classList.remove('on');void ov.offsetWidth;ov.classList.add('on');
+    const stop=particles(d.fx);if(d.music)d.music();
+    d.caps.forEach((c,i)=>timers.push(setTimeout(()=>{cap.classList.add('out');timers.push(setTimeout(()=>{cap.querySelector('h2').textContent=fill(c[0]);cap.querySelector('p').textContent=fill(c[1]||'');cap.classList.remove('out');if(i===d.caps.length-1)btn.textContent='Continue ▸';},i?700:50));},c[2])));
+    const close=()=>{btn.onclick=null;timers.forEach(clearTimeout);stop();ov.classList.remove('on');setTimeout(()=>{ov.hidden=true;$('#cs-svg').innerHTML='';res();},450);};
+    btn.onclick=close;if(d.auto)timers.push(setTimeout(close,d.auto));
+    btn.focus({preventScroll:true});
+  });
+}
+function stageCard(n){
+  const t=STAGE[n];let stripes='';for(let x=0;x<1200;x+=42)stripes+=`<rect x="${x}" y="350" width="14" height="8" fill="#e9b44c"/><rect x="${x+14}" y="350" width="14" height="8" fill="#d4506a"/><rect x="${x+28}" y="350" width="14" height="8" fill="#2fa38f"/>`;
+  return cutscene({kicker:`Stage ${n} of 3`,fx:'gold',auto:5600,music:()=>dhol(2),
+    svg:`<rect width="1200" height="600" fill="#120d18"/><text x="600" y="330" text-anchor="middle" font-family="Rozha One, Georgia, serif" font-size="330" fill="#e9b44c" opacity=".13">${n}</text><text x="600" y="250" text-anchor="middle" font-family="Noto Nastaliq Urdu, serif" font-size="44" fill="#e9b44c">${t.ur}</text>${stripes}`,
+    caps:[[t.name,t.d,250]]});
+}
+
+/* ---- menus & endings ---- */
+function menu(html){$('#menu-card').innerHTML=html;$('#menu').hidden=false;}
+function titleScreen(){
+  const sv=load(),canCont=sv&&sv.ev&&EV[sv.ev]&&!EV[sv.ev].end;
+  menu(`<div class="ur">نمبردار کا عروج</div><h2>Rise of the Numberdar</h2><p>From the Dera in Chak 47 Shumali to the President House in Islamabad. Hold faislas, keep the Biradaris loyal, outplay Malik Sher Afzal, and climb.</p>
+  <label for="nm">Your name, Numberdar Sahib</label><input id="nm" maxlength="40" autocomplete="off" value="${esc((sv&&sv.name)||'Chaudhry Jahangir Ahmed')}">
+  <div class="row"><button class="big" id="go" type="button">Open the Dera gates</button>${canCont?`<button class="big ghost" id="cont" type="button">Continue · Day ${sv.day}</button>`:''}</div>
+  <div class="howto"><div><b style="color:var(--izzat)">Izzat</b>Wins votes and loyalty. If it hits zero the Dera empties.</div><div><b style="color:var(--khauf)">Khauf</b>Silences rivals. Push it past 80 and the village rises.</div><div><b style="color:var(--paisa)">Paisa</b>Pays for tubewells, jalsas and tickets. Below zero, you are finished.</div><div><b style="color:var(--taluq)">Ta'aluqat</b>The SHO, the party, Islamabad. Unlocks bigger moves.</div></div>`);
+  $('#go').onclick=()=>{S=DEF();S.name=$('#nm').value.trim()||'Chaudhry Jahangir Ahmed';beginGame();};
+  if(canCont)$('#cont').onclick=()=>{S=Object.assign(DEF(),sv);beginGame();};
+}
+function beginGame(){$('#menu').hidden=true;busy=false;adv=null;lastWho=null;castKey='';$('#choices').innerHTML='';renderHUD();runEvent(S.ev);}
+function ending(ev){
+  const e=ev.end;save();
+  menu(`<div class="ur">${e.ur||''}</div><div class="eyebrow">Ending · Day ${S.day}</div><h2>${esc(fill(e.title))}</h2><p>${esc(fill(e.text))}</p>
+  <div class="endstats"><div>Izzat<b>${S.izzat}</b></div><div>Khauf<b>${S.khauf}</b></div><div>Paisa<b>${money(S.paisa)}</b></div><div>Ta'aluqat<b>${S.taluqat}</b></div></div>
+  <div class="row"><button class="big" id="again" type="button">Play again</button></div>`);
+  $('#again').onclick=()=>{try{localStorage.removeItem(KEY)}catch(x){}S=DEF();titleScreen();};
+}
+function bind(){
+  $('#dialog').addEventListener('click',()=>adv&&adv());
+  document.addEventListener('keydown',e=>{
+    if(!$('#menu').hidden||!$('#cs').hidden||e.target.tagName==='INPUT')return;
+    if((e.key===' '||e.key==='Enter')&&adv){e.preventDefault();adv();return;}
+    const i='123'.indexOf(e.key)>=0?'123'.indexOf(e.key):'abc'.indexOf(e.key.toLowerCase());
+    if(i>=0){const b=$('#choices').querySelectorAll('.choice')[i];if(b&&!b.disabled)b.click();}
+  });
+  $('#b-sound').onclick=()=>{soundOn=!soundOn;const b=$('#b-sound');b.textContent=soundOn?'Sound on':'Sound off';b.setAttribute('aria-pressed',String(soundOn));if(soundOn){ac();AC&&AC.resume&&AC.resume();chime();}};
+  $('#b-restart').onclick=titleScreen;
+}
+
+/* ============ CINEMATICS ============ */
+const ND_WHITE={skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c'};
+const CS={
+  faisla:()=>{
+    let sil='';for(let x=40;x<1180;x+=46){if(x>400&&x<800)continue;sil+=person({x:x+R(-8,8),y:R(575,590),s:R(1.3,1.6),skin:'#1c0e18',kam:'#24121e',head:pick(['turban','cap','hair','chador']),hc:'#2a1424',anim:'bob',delay:R(0,3)});}
+    let cr='';for(let x=100;x<1100;x+=30)cr+=`<rect x="${x}" y="318" width="15" height="14" fill="#3a1a2a"/>`;
+    return{kicker:'Cutscene · The Perfect Faisla',fx:'petals',music:()=>dhol(4),
+      svg:`<defs><linearGradient id="cfs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1a3a"/><stop offset=".55" stop-color="#c4553a"/><stop offset="1" stop-color="#f6b54a"/></linearGradient><radialGradient id="cfg"><stop offset="0" stop-color="#fff1c0"/><stop offset=".3" stop-color="#ffc56a" stop-opacity=".8"/><stop offset="1" stop-color="#ff9a4a" stop-opacity="0"/></radialGradient></defs>
+      <rect width="1200" height="600" fill="url(#cfs)"/><circle cx="600" cy="390" r="330" fill="url(#cfg)" class="pulse"/><circle cx="600" cy="390" r="92" fill="#ffd98a"/>
+      ${cr}<path d="M100,330 H1100 V450 H100Z" fill="#3a1a2a"/><path d="M548,450 L548,372 Q600,322 652,372 L652,450Z" fill="#ffb86a" opacity=".55"/>
+      <g fill="#2a1220"><ellipse cx="180" cy="250" rx="170" ry="90"/><ellipse cx="80" cy="290" rx="100" ry="60"/><ellipse cx="300" cy="280" rx="110" ry="60"/><path d="M150,450 C160,380 150,320 175,290 L215,290 C235,330 225,380 240,450Z"/></g>
+      <rect y="445" width="1200" height="160" fill="#2a1420"/>
+      ${person(Object.assign({x:600,y:458,s:1.25},ND_WHITE))}
+      <g style="animation:meetL 5.5s ease-in-out .5s both"><g style="transform-box:fill-box;transform-origin:50% 100%;animation:lean 5.5s ease-in-out .5s both">${bodyOf('rasool',{x:470,y:560,s:2.1})}</g></g>
+      <g style="animation:meetR 5.5s ease-in-out .5s both"><g style="transform-box:fill-box;transform-origin:50% 100%;animation:leanR 5.5s ease-in-out .5s both">${bodyOf('ditta',{x:730,y:560,s:2.1,flip:1})}</g></g>
+      ${sil}<rect width="1200" height="600" fill="#ff9a4a" opacity=".1"/>`,
+      caps:[['Eleven years. Not one word between them.','Two old men cross the courtyard while the whole village holds its breath.',500],["Ghulam Rasool opens his arms first.","Allah Ditta's henna beard is wet. So is the Chaudhry's white moustache.",5200],['The Perfect Faisla','Sunset fills the Dera. Under the banyan tree, {N} smiles. The villagers will call it wisdom for a generation.',10200]]};
+  },
+  mna:()=>{
+    let f='';for(let i=0;i<14;i++)for(let j=0;j<8;j++)f+=`<rect x="${i*100-100}" y="${j*100-100}" width="98" height="98" fill="${pick(['#5d7a34','#6f8a3a','#8a9a44','#b39a4a','#4f6a2e','#a88a3e'])}"/>`;
+    let houses='';for(let x=-100;x<1300;x+=64)for(const y of [180,236,364,420]){houses+=`<rect x="${x}" y="${y}" width="56" height="44" fill="${pick(['#d9cdb4','#cbbd9f','#e6dccb','#bfae8c'])}" stroke="#8a7a5a" stroke-width="2"/>`;for(let k=0;k<3;k++)houses+=`<circle class="cheer" style="animation-delay:${R(0,.9)}s" cx="${x+10+k*16}" cy="${y+22+R(-8,8)}" r="5" fill="${pick(['#1b1512','#2a1d14','#3a2a20'])}"/>`;if(Math.random()<.6)houses+=`<g class="flagw"><rect x="${x+40}" y="${y+4}" width="16" height="10" fill="${PARTY}"/><rect x="${x+40}" y="${y+4}" width="4" height="10" fill="#fff"/></g>`;}
+    let crowd='';for(let x=-100;x<1300;x+=12)for(const y of [289,343])crowd+=`<circle class="cheer" style="animation-delay:${R(0,.9)}s" cx="${x+R(-3,3)}" cy="${y+R(-3,3)}" r="4" fill="${pick(['#e9e2d0','#b8476a','#d9822b','#1d7a4c','#f4f1e8'])}"/>`;
+    let cars='';for(let i=0;i<10;i++){const x=-i*76,c=i===0?'#f2f2f2':(i%3===2?'#efefea':'#0d0d11');cars+=`<g transform="translate(${x} 316)"><rect x="-30" y="-13" width="60" height="26" rx="7" fill="${c}"/><rect x="2" y="-10" width="14" height="20" rx="3" fill="#20242c"/><rect x="-22" y="-10" width="10" height="20" rx="3" fill="#20242c"/>${i===0?'<rect x="-6" y="-12" width="6" height="5" fill="#e33" class="pulse"/><rect x="-6" y="7" width="6" height="5" fill="#36f" class="pulse"/>':''}${i===1?'<circle cx="-4" cy="0" r="7" fill="#f6f3ea"/><circle cx="-4" cy="0" r="4" fill="#120e0c"/>':''}</g>`;}
+    return{kicker:'Cutscene · Results Night',fx:'mixed',music:()=>dhol(8),
+      svg:`<g style="transform-origin:600px 300px;animation:heli 16s ease-in-out infinite alternate"><g transform="rotate(-9 600 300)">${f}<rect x="-300" y="282" width="1800" height="68" fill="#6a6258"/><path d="M-300,316 H1500" stroke="#e9e2c4" stroke-width="3" stroke-dasharray="22 18"/>${crowd}${houses}<g style="animation:drive 15s linear infinite">${cars}</g></g></g><rect width="1200" height="600" fill="#ffb060" opacity=".14"/>`,
+      caps:[['Chak 47 Shumali · Results night','From the helicopter the convoy is a black river of Land Cruisers, Prados and Vigos, flags snapping in the wind.',500],['Every rooftop is dancing.','Dhol on every street. Your face on every flag. Rose petals fall like rain on the Land Cruiser roof.',5400],['{N}, MNA','Elected to the National Assembly. The crowd lifts you onto their shoulders and will not put you down.',10600]]};
+  },
+  oath:()=>{
+    let cols='';for(let i=0;i<5;i++){const w=34-i*5,h=420-i*48,xl=60+i*92,y=520-h-i*6;cols+=`<rect x="${xl}" y="${y}" width="${w}" height="${h}" fill="#e8dfcc"/><rect x="${1200-xl-w}" y="${y}" width="${w}" height="${h}" fill="#e8dfcc"/><rect x="${xl-4}" y="${y}" width="${w+8}" height="10" fill="#d9a93a"/><rect x="${1196-xl-w}" y="${y}" width="${w+8}" height="10" fill="#d9a93a"/>`;}
+    let dig='',fl='';for(let r=0;r<4;r++)for(let j=0;j<4;j++){const s=.75+r*.28,y=392+r*56,o=30+r*70+j*58*s;for(const x of [480-o,720+o])dig+=person({x,y,s,skin:pick(SKIN),kam:pick(['#1d1d24','#2a2a33','#efe9da','#3a2a2a']),head:pick(['hair','jinnah','hair','chador']),hc:pick(['#120e0c','#4a4542','#6b2a2a']),must:Math.random()<.5?'#120e0c':null});}
+    for(let i=0;i<22;i++)fl+=`<circle cx="${pick([R(60,420),R(780,1140)])}" cy="${R(330,560)}" r="${R(10,22)}" fill="#fff" style="opacity:0;animation:flash ${R(2,4)}s ${R(0,4)}s infinite"/>`;
+    return{kicker:'Cutscene · The Oath',fx:'gold',music:fanfare,
+      svg:`<defs><linearGradient id="hall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#140f1c"/><stop offset="1" stop-color="#3a2a22"/></linearGradient><linearGradient id="carp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a0f1c"/><stop offset="1" stop-color="#b0202f"/></linearGradient><radialGradient id="chand"><stop offset="0" stop-color="#fff6d8"/><stop offset=".4" stop-color="#ffd27a" stop-opacity=".6"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient></defs>
+      <rect width="1200" height="600" fill="url(#hall)"/><path d="M470,330 V170 Q600,90 730,170 V330Z" fill="#2a2030" stroke="#d9a93a" stroke-width="3"/>${cols}
+      ${[[380,70],[820,70],[600,40]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="80" fill="url(#chand)" style="animation:glow 3s ease-in-out infinite"/><path d="M${x-22},${y} L${x},${y+30} L${x+22},${y}Z" fill="#fff3c4" opacity=".8"/>`).join('')}
+      <path d="M540,336 L660,336 L1020,600 L180,600Z" fill="url(#carp)"/><path d="M540,336 L180,600 M660,336 L1020,600" stroke="#d9a93a" stroke-width="4"/>
+      <line x1="500" y1="336" x2="500" y2="230" stroke="#c9a227" stroke-width="3"/><g class="flagw"><rect x="500" y="230" width="56" height="36" fill="#0b6b3a"/><rect x="500" y="230" width="14" height="36" fill="#fff"/><circle cx="538" cy="248" r="10" fill="#fff"/><circle cx="541" cy="246" r="9" fill="#0b6b3a"/></g>
+      <rect x="566" y="282" width="68" height="56" fill="#4a2a18" stroke="#d9a93a" stroke-width="2"/><circle cx="600" cy="308" r="13" fill="none" stroke="#d9a93a" stroke-width="3"/><rect x="580" y="274" width="40" height="9" rx="2" fill="#0b6b3a" stroke="#d9a93a"/>
+      ${dig}${fl}
+      <g style="animation:walkUp 8.5s cubic-bezier(.3,.1,.3,1) both">${person({x:0,y:0,s:1,skin:'#c08458',kam:'#121016',long:1,head:'jinnah',hc:'#5d5a57',back:1,shoe:'#0c0c0c'})}</g>`,
+      caps:[['Aiwan-e-Sadr, Islamabad','A triumphant, nationalistic score plays. In an immaculate black sherwani, the Numberdar walks slowly up the red carpet.',500],['“I, {N}, do solemnly swear…”','His hand rests on the holy book. A hundred camera shutters fire at once.',6600],['President of Pakistan','From a charpai under a banyan tree in Chak 47 to the highest office in the land.',11800]]};
+  }
+};
+
+/* ============ STORY ============ */
+const EV={
+/* ---- Stage 1: The Village Dera ---- */
+water:{title:'Faisla · The Stolen Water',set:'dera',mood:'dawn',cam:'wide',loc:'Chak 47 Shumali · Dera courtyard · 7:12 AM',
+  cast:{rasool:'L1',asif:'L2',ditta:'R1',yaqoob:'R2',zainab:'R3'},
+  lines:[
+    ['nar','Fajr has passed. Sixty villagers wait under the banyan tree, sipping doodh-patti from clay cups. Gul Khan polishes the Land Cruiser\'s mirror for the third time. At the gate, Sher Muhammad sorts every face into ours and not ours.'],
+    ['nar','You step onto the veranda in starched white, a charcoal waistcoat and Peshawari chappals. The courtyard falls silent row by row. "Numberdar Sahib aa gaye."'],
+    ['rafiq','Sahib, a heavy matter today. Ghulam Rasool\'s people and Allah Ditta\'s people. Canal water. A little blood has been spilled. So far.'],
+    ['rasool','Last night was OUR wari at the mogha! Allah Ditta\'s sons broke our bund at 2 AM and hit my Asif with a dang. I want an FIR. I want them in the thana!'],
+    ['asif','Say the word, Numberdar Sahib, and I will settle this myself.'],
+    ['ditta','Allah is my witness, Sahib. For three years the Chaudhry has taken extra water. He paid the irrigation SDO to change the schedule. My wheat is dying.'],
+    ['zainab','Here is the warabandi schedule from 1998, Sahib. Our turn is the longer one. It is written.'],
+    ['rafiq','Jatts hold 2,200 votes here, Arains 1,400. Ghulam Rasool is close to Malik Sher Afzal. And SHO Tariq Bhatti is waiting to hear whose side you are on before he writes any FIR.']],
+  choices:[
+    {l:'The law of the document',d:'Restore Allah Ditta\'s wari by the 1998 schedule. His sons pay daand to Asif for the wound.',fx:{izzat:8,arain:20,jatt:-15},
+     r:[['rasool','So this is the Numberdar\'s justice. A piece of paper over a Jatt\'s blood.'],['ditta','May Allah keep your Dera full, Sahib.'],['rafiq','Sahib... Ghulam Rasool\'s car just turned toward Malik Sher Afzal\'s village.']]},
+    {l:'The generous patron',d:'Pay Rs 15 lakh from your own pocket for a new tubewell on Allah Ditta\'s land, then ask both elders to embrace.',fx:{paisa:-.15,izzat:15,jatt:8,arain:12},cut:'faisla',
+     r:[['rasool','A tubewell? Then there is no water left to fight over.'],['ditta','Eleven years, Ghulam Rasool. Eleven years we have not shared a hookah.']]},
+    {l:'The iron hand',d:'Phone SHO Bhatti in front of everyone: no FIR unless you say so. The next family to spill blood loses its water rights.',fx:{khauf:15,taluqat:8,izzat:-3},
+     r:[['sho','Ji, Numberdar Sahib. Whatever you say. No FIR.'],['nar','Asif drops his eyes. In the back row, an old man mutters something and spits into the dust.']]}],
+  next:'sho'},
+
+sho:{title:'The Thana Calls',set:'dera',mood:'noon',cam:'gate',loc:'Dera gate · 12:40 PM',cast:{sho:'L1',sherm:'R1'},
+  lines:[
+    ['nar','A police mobile rolls through the gate, siren off, lights on. Inspector Tariq Bhatti steps out, adjusts his cap, and accepts a glass of lassi before he says a word.'],
+    ['sho','Numberdar Sahib, a small thing. Kala Dogar, cattle thief, three FIRs in Bhalwal. My informer says he is sleeping at your tubewell on the canal road.'],
+    ['rafiq','Sahib, Kala Dogar is Haji Bashir\'s nephew. Haji Bashir brought 300 votes to your late father.'],
+    ['sho','The DPO is pressing me. Either I take him, or someone pays for the new mobile\'s tyres and I write that the informer was wrong. Your choice, of course.']],
+  choices:[
+    {l:'Hand him over',d:'Let the law take Kala Dogar. Tell Haji Bashir the Dera does not shelter thieves.',fx:{taluqat:12,izzat:5,khauf:-3,jatt:-5},
+     r:[['sho','Bahut meharbani. The DPO will hear your name today.'],['rafiq','Haji Bashir left without finishing his tea, Sahib.']]},
+    {l:'Pay for the "tyres"',d:'Rs 30 lakh to the SHO\'s tyre fund. Kala Dogar stays, and Haji Bashir owes you.',fx:{paisa:-.3,taluqat:6,khauf:5,jatt:6},
+     r:[['sho','The informer must have been mistaken.'],['nar','The envelope disappears into his uniform pocket. Sher Muhammad does not blink.']]},
+    {l:'Hold your own jirga',d:'Summon the cattle owners. If Kala Dogar returns the animals and pays, he walks free under your guarantee.',fx:{izzat:12,taluqat:-6},
+     r:[['nar','By Asr, eleven buffaloes walk back down the canal road. The farmers touch your knees.'],['sho','You are doing my job now, Numberdar Sahib. Some people at the thana will not like that.']]}],
+  next:'rumor'},
+
+rumor:{title:'Whispers in the Biradari',set:'dera',mood:'dusk',cam:'faisla',loc:'Dera courtyard · Maghrib',cast:{rafiq:'L1',sherm:'R1'},
+  lines:[
+    ['nar','Maghrib. The lanterns on the gate are lit. A cold wind moves through the banyan leaves.'],
+    ['sherm','Sahib. Malik Sher Afzal\'s men were at the Jatt chaupal last night. They are saying you sold the canal water to the sugar mill and kept the money.'],
+    ['rafiq','It is a lie, but it is moving fast. Three families have already taken down your poster.'],
+    ['sherm','Give me six men and two Vigos. By morning nobody in that chaupal will remember the rumor.']],
+  choices:[
+    {l:'Hold a jalsa in the chowk',d:'Bring the mill records, the canal schedule and a sound system. Answer the lie in public.',fx:{paisa:-.5,izzat:12,jatt:8},
+     r:[['nar','Two thousand people. You read the sugar mill\'s payment ledger aloud, line by line. By the end, the Jatt elders are nodding.']]},
+    {l:'Send Sher Muhammad',d:'The Vigos roll out at midnight. No blood. Just a message.',fx:{khauf:20,izzat:-6,jatt:-4},
+     r:[['nar','Headlights sweep the Jatt chaupal at 2 AM. Doors stay shut. By sunrise the rumor has stopped. So has the chatter in your own courtyard.']]},
+    {l:'Invite Sher Afzal to dinner',d:'Seat your rival at your own dastarkhwan, in front of the whole village.',fx:{izzat:6,taluqat:8,khauf:-5},
+     r:[['afzal','Numberdar, your biryani is better than your politics.'],['nar','He laughs. He eats. With two hundred witnesses watching, the rumor has nowhere left to stand.']]}],
+  next:'flood'},
+
+flood:{title:'The Monsoon Breaks',set:'dera',mood:'storm',cam:'crowd',loc:'Chak 47 · Third day of rain',cast:{rafiq:'L1',zainab:'R1'},
+  lines:[
+    ['nar','Three days of rain. The distributary bursts near the low basti. Mud houses are going under. Women carry children on their shoulders through waist-deep water.'],
+    ['rafiq','Sahib, 400 families. And the embankment by your own sugarcane is weak too. We have men and tractors for one place, not both.'],
+    ['zainab','Numberdar Sahib, the basti school roof has fallen. The children are on the mosque roof.']],
+  choices:[
+    {l:'Open the Dera',d:'Turn the Dera into a relief camp. Tractors to the basti, deghs of daal on the fire, all from your own pocket.',fx:{paisa:-1,izzat:18,arain:10,jatt:5},
+     r:[['nar','By night, 1,100 people sleep under your banyan tree. Gul Khan drives the Land Cruiser through floodwater with nine children in the back.']]},
+    {l:'Call in Islamabad',d:'Ring the sitting MNA and the Deputy Commissioner. Get army boats and relief funds here, with your name on the banner.',fx:{taluqat:12,izzat:6},req:s=>s.taluqat>=25,rt:"Ta'aluqat 25",
+     r:[['nar','At dawn, two army boats arrive. The relief banners read: "Courtesy of Numberdar Sahib."']]},
+    {l:'Save your fields',d:'The cane pays for the Dera. Hold your embankment. The basti can wait for the government.',fx:{paisa:.6,izzat:-14,khauf:6,arain:-12},
+     r:[['nar','Your cane survives. A photo of children huddled on the mosque roof under plastic sheets is shared 40,000 times.']]}],
+  next:'politician'},
+
+politician:{title:'A Guest from Lahore',set:'dera',mood:'golden',cam:'faisla',loc:'Dera courtyard · Golden hour',cast:{begum:'L1',rafiq:'R1'},
+  lines:[
+    ['nar','A line of white Land Cruisers kicks up dust on the canal road. Dhol players start up at the gate. Begum Shahnaz Durrani, chairperson of the Pakistan Awami Ittehad, steps out in a cream dupatta.'],
+    ['begum','Numberdar Sahib. From Sargodha to Lahore, people say one thing: the road to this National Assembly seat runs through your Dera.'],
+    ['begum','The party needs a winner here. The ticket can be yours. The party also has expenses. Two crore to the party fund, and your Biradari\'s full support.'],
+    ['rafiq','Sahib, without a ticket we fight Malik Sher Afzal and the party machine at the same time.']],
+  choices:[
+    {l:'Pay for the ticket',d:'Rs 2 crore to the party fund. The PAI machine is yours.',fx:{paisa:-2,taluqat:20},flag:'ticket',
+     r:[['begum','Welcome to the PAI family. The notification will be out by Friday.']]},
+    {l:'Offer votes, not cash',d:'Promise 40,000 Biradari votes across three constituencies. Not one rupee.',fx:{taluqat:15,izzat:5},flag:'ticket',req:s=>s.izzat>=55,rt:'Izzat 55',
+     r:[['begum','A Numberdar who bargains with votes instead of cash. Fine. The ticket is yours.']]},
+    {l:'Run independent',d:'Thank her, refuse, and tell the village you belong to no one but them.',fx:{izzat:12,taluqat:-8},
+     r:[['begum','Independents usually come to us after they win, Numberdar Sahib. We will be waiting.']]}],
+  next:'jalsa'},
+
+/* ---- Stage 2: The MNA Campaign ---- */
+jalsa:{stage:2,title:'The First Jalsa',set:'jalsa',mood:'dusk',cam:'stage',loc:'Company Bagh ground, Sargodha · 40 days to polling',
+  lines:[
+    ['nar','The stage is up: twelve speaker stacks, light rigs, and a banner of your face eighteen feet tall. Your election symbol is the tubewell.'],
+    ['rafiq','Sahib, a problem. Malik Sher Afzal has hired 70 buses for his own jalsa across the canal, at the same hour. Half our chairs are empty.']],
+  ask:'How do you fill the ground?',
+  choices:[
+    {l:'Buses and biryani',d:'Rs 1.5 crore: ninety buses and a degh of biryani for every union council.',fx:{paisa:-1.5,izzat:10,jatt:5},
+     r:[['nar','By 9 PM the ground is packed. Half the crowd is still eating when you take the microphone.']]},
+    {l:'Speak about water',d:'Forget the chairs. Talk about the 1998 warabandi, the bribed SDO, and a tubewell for every village.',fx:{izzat:14,arain:10},
+     r:[['nar','Phones go up. Someone live-streams it. By midnight the clip has 300,000 views, and the empty chairs are not in it.']]},
+    {l:'Bring a star singer',d:'Rs 80 lakh for a famous Punjabi folk singer. They come for the music and stay for you.',fx:{paisa:-.8,izzat:8,khauf:-3},
+     r:[['nar','The dhol runs until 2 AM. Old men dance in their chadors. Between songs, the crowd chants your name.']]}],
+  next:'media'},
+
+media:{title:'Breaking News',set:'dera',mood:'noon',cam:'faisla',loc:'Dera courtyard · 26 days to polling',cast:{saima:'L1',rafiq:'R1'},
+  lines:[
+    ['nar','A white Suzuki with a channel logo stops at the gate. Saima Qureshi, the most-watched crime reporter in Punjab, walks in with a cameraman.'],
+    {who:'saima',t:'I have a video, Numberdar Sahib. Your Vigos at the Jatt chaupal, 2 AM. Do you want to comment before it airs at nine?',when:s=>s.khauf>=45},
+    {who:'saima',t:'I have documents saying your family\'s land records were altered in 2009. Do you want to comment before it airs at nine?',when:s=>s.khauf<45}],
+  choices:[
+    {l:'Sit for a full interview',d:'Answer every question on camera. No edits, no conditions.',fx:{izzat:10,khauf:-6},
+     r:[['saima','I have interviewed forty politicians. You are the first one who did not ask me to switch the camera off.']]},
+    {l:'Buy the bulletin',d:'Rs 1 crore of "advertising" for the channel. The story disappears.',fx:{paisa:-1,taluqat:6,izzat:-5},
+     r:[['nar','At nine, the channel runs a cooking segment. Saima Qureshi posts one line: "Some stories are expensive."']]},
+    {l:'Make a call',d:'Have a friend in the ministry ask about the channel\'s licence renewal.',fx:{khauf:12,taluqat:4,izzat:-4},req:s=>s.taluqat>=40,rt:"Ta'aluqat 40",
+     r:[['nar','The story is pulled. Saima is moved to the weather desk. Every reporter in the district now has your number saved.']]}],
+  next:'rigging'},
+
+rigging:{title:'Election Eve',set:'dera',mood:'night',cam:'gate',loc:'Dera gate · The night before polling',cast:{sho:'L1',sherm:'R1'},
+  lines:[
+    ['nar','Generators hum. Your workers stack voter slips and pack lunch boxes for 214 polling stations.'],
+    ['sho','I am here as a friend, Numberdar Sahib. Sher Afzal\'s men will try to stuff boxes at Stations 112 and 113 after 3 PM. My constables are posted there. They can look the other way, for him or for you.'],
+    ['sherm','Sahib, we can have forty men at 112 by sunrise.']],
+  choices:[
+    {l:'Agents and cameras',d:'Rs 50 lakh for trained polling agents, lawyers and phone cameras at every station.',fx:{paisa:-.5,izzat:10},
+     r:[['nar','At 3:20 PM, a video from Station 112 shows Sher Afzal\'s men with a sack of stamped ballots. Every channel has it by four.']]},
+    {l:"Accept the SHO's help",d:'Let his constables look the other way, in your direction.',fx:{taluqat:10,izzat:-10,khauf:8},flag:'rigged',
+     r:[['sho','Consider it done. Remember who your friends were tonight.']]},
+    {l:'Go to the Returning Officer',d:'Drive to the RO at midnight with the press and demand Rangers at the sensitive stations.',fx:{izzat:8,taluqat:5,khauf:-4},req:s=>s.taluqat>=30,rt:"Ta'aluqat 30",
+     r:[['nar','The RO signs the order at 1:40 AM. Rangers take positions at 112 and 113 before dawn.']]}],
+  next:'count'},
+
+count:{title:'Results Night',set:'jalsa',mood:'night',cam:'wide',loc:'Your constituency · Polls closed at 5 PM',
+  lines:[
+    ['nar','Every television in the Dera is on. Unofficial results arrive station by station.'],
+    {who:'nar',t:'One channel is running footage of constables stepping aside at Station 113. The Election Commission has asked for the tapes.',when:s=>s.flags.rigged},
+    ['rafiq','180 of 214 stations counted, Sahib. It is close. Very close.']],
+  ask:'The last 34 stations are being counted.',
+  choices:[{l:'Wait for the final count',d:'Nothing left to do but sit on your chair and drink your tea.',
+    next:s=>(s.izzat+s.taluqat*.5+(s.flags.ticket?12:0)+(s.jatt+s.arain-100)/5-(s.flags.rigged?12:0)-(s.khauf>70?10:0))>=95?'mna_win':'mna_lose'}]},
+
+mna_win:{title:'Victory',set:'jalsa',mood:'night',cam:'stage',loc:'Your constituency · Results night',cut:'mna',
+  lines:[['rafiq','Sahib... you won by 23,418 votes. Malik Sher Afzal has gone home without speaking to the press.'],['nar','The notification arrives at 3 AM. Gul Khan has already washed the Land Cruiser for Islamabad.']],
+  ask:'Islamabad is waiting.',
+  choices:[{l:'Leave for Islamabad',d:'Take the oath as MNA and enter the National Assembly.',fx:{izzat:10,taluqat:10},next:'isb'}]},
+
+mna_lose:{title:'Defeat by 3,112 Votes',set:'dera',mood:'dusk',cam:'faisla',loc:'Dera courtyard · The morning after',cast:{rafiq:'L1'},
+  lines:[['nar','The courtyard is half empty. The tea boy pours cups nobody drinks.'],['rafiq','Sahib, Malik Sher Afzal won by 3,112 votes. There were problems at nine stations. We could petition.']],
+  choices:[
+    {l:'Petition and fight again',d:'File an election petition. When the court orders a re-poll, campaign from the first jalsa.',fx:{paisa:-1,izzat:5},next:'jalsa'},
+    {l:'Accept defeat with grace',d:'Congratulate Sher Afzal publicly, rebuild trust, and run again in the by-election.',fx:{izzat:12,khauf:-8},next:'jalsa'},
+    {l:'Retire to the Dera',d:'Islamabad can keep its politics. Chak 47 is yours.',next:'end_village'}]},
+
+/* ---- Stage 3: The Presidency ---- */
+isb:{stage:3,title:'The Coalition',set:'isb',mood:'isb',cam:'road',loc:'Islamabad · Parliament Lodges',cast:{begum:'L1',rafiq:'R1'},
+  lines:[
+    ['nar','Islamabad. The Margalla Hills are dark against the sky. Your Land Cruiser is now one of forty black vehicles outside Parliament, and none of their drivers are impressed.'],
+    {who:'begum',t:'The coalition is two seats short. You have quietly gathered eight independents who listen to you. The party needs them, Numberdar Sahib.',when:s=>s.flags.ticket},
+    {who:'begum',t:'We said independents come to us after they win. The coalition is two seats short, and you have quietly gathered eight members who listen to you.',when:s=>!s.flags.ticket},
+    ['rafiq','Sahib, they are offering the Ministry of Water and Power.']],
+  choices:[
+    {l:'Take the ministry',d:'Join the coalition as Federal Minister for Water and Power.',fx:{taluqat:20,izzat:4},flag:'minister',
+     r:[['begum','Minister Sahib. The oath is at the President House on Monday.']]},
+    {l:'Stay in opposition',d:'Sit on the opposition benches and become the loudest voice for farmers and water.',fx:{izzat:15,taluqat:-5},
+     r:[['nar','Your first speech in the Assembly runs eleven minutes. The farmers\' unions play it in every village square.']]},
+    {l:'Form your own bloc',d:'Turn your eight into a forward bloc. Every close vote now passes through your Dera.',fx:{taluqat:15,khauf:8,izzat:5},flag:'bloc',req:s=>s.taluqat>=50,rt:"Ta'aluqat 50",
+     r:[['begum','You learned fast, Numberdar Sahib. Too fast for some people.']]}],
+  next:'general'},
+
+general:{title:'Tea at Army House',set:'isb',mood:'golden',cam:'road',loc:'Rawalpindi · A private invitation',cast:{general:'L1'},
+  lines:[
+    ['nar','An invitation arrives on thick cream card. No agenda. A staff car is sent for you instead of your own.'],
+    ['general','Numberdar Sahib, the country needs stable people. People who understand that some files are better left closed.'],
+    ['general','There is talk of you for higher office. Stability would help that talk. Instability would not.']],
+  choices:[
+    {l:'Pledge cooperation',d:'Assure him that you are a stable man.',fx:{taluqat:20,izzat:-8},r:[['general','Good. We understand each other.']]},
+    {l:'Civilian supremacy, politely',d:'Tell him the Constitution decides who rises, and you will defend it in Parliament.',fx:{izzat:15,taluqat:-10},r:[['general','Brave. Let us see whether it is also wise.']]},
+    {l:'Find a middle path',d:'Propose a joint civil-military committee on water security, chaired by you.',fx:{taluqat:12,izzat:6},req:s=>s.izzat>=60,rt:'Izzat 60',
+     r:[['general','Water. Yes. Everyone agrees on water. Send me the draft.']]}],
+  next:'diplomacy'},
+
+diplomacy:{title:'The Dam Deal',set:'isb',mood:'isb',cam:'wide',loc:'Islamabad · Foreign Office',cast:{envoy:'L1',rafiq:'R1'},
+  lines:[
+    ['nar','A foreign development fund offers six billion dollars for a new dam on the Indus. The signing is in four days, and the whole capital is watching who steers it.'],
+    ['envoy','The money is ready, Minister. We ask only for thirty years of management rights over the hydropower revenue.'],
+    ['rafiq','Sahib, the farmers\' unions will say you sold the river.']],
+  choices:[
+    {l:'Sign as written',d:'Six billion dollars, a ribbon-cutting, and thirty years of foreign management.',fx:{taluqat:15,izzat:-10},r:[['envoy','A historic day, Minister. My government will remember your name.']]},
+    {l:'Renegotiate hard',d:'Cut management rights to twelve years and guarantee canal water for farmers first.',fx:{izzat:12,taluqat:6},req:s=>s.izzat>=50,rt:'Izzat 50',
+     r:[['envoy','You negotiate like a village elder. I mean that as a compliment. Twelve years.']]},
+    {l:'Reject it publicly',d:'Announce that the Indus is not for lease.',fx:{izzat:15,taluqat:-12},r:[['nar','The farmers cheer. The finance ministry does not return your calls for a week.']]}],
+  next:'scandal'},
+
+scandal:{title:'The Tapes',set:'isb',mood:'isb',cam:'road',loc:'Senate of Pakistan · Live session',cast:{afzal:'L1',saima:'R1'},
+  lines:[
+    ['nar','Malik Sher Afzal, now a Senator, holds up a USB stick on the Senate floor.'],
+    ['afzal','Recordings from the Numberdar\'s own Dera. Let the nation hear how he really rules.'],
+    {who:'nar',t:'Some of those recordings are of midnight trips by your Vigos.',when:s=>s.khauf>=50},
+    {who:'nar',t:'Most of those recordings are of tubewells, compensation, and two old men embracing.',when:s=>s.khauf<50},
+    ['saima','Every channel is waiting for your response, Numberdar Sahib. I can give you the 9 PM slot, live.']],
+  choices:[
+    {l:'Release every tape yourself',d:'Put all 400 hours of Dera recordings online. Let the people judge.',fx:s=>s.khauf<50?{izzat:18}:{izzat:-6,khauf:-10},
+     r:[{who:'nar',t:'The nation watches you settle water disputes, pay for tubewells and turn away bribes. Sher Afzal\'s gamble backfires.',when:s=>s.khauf<50},{who:'nar',t:'The tapes are ugly in places. But nobody can say you hid them.',when:s=>s.khauf>=50}]},
+    {l:'Go live with Saima',d:'One hour, live, every question answered.',fx:{izzat:10},r:[['saima','That was the highest-rated hour in the channel\'s history.']]},
+    {l:'Make the tapes disappear',d:'Rs 2 crore and a few calls. The USB stick is "lost" by the Senate secretariat.',fx:{paisa:-2,taluqat:8,izzat:-8},r:[['nar','The stick vanishes. The rumor does not.']]}],
+  next:'vote'},
+
+vote:{title:'The Electoral College',set:'isb',mood:'isb',cam:'wide',loc:'Parliament House · Presidential election',cast:{begum:'L1',rafiq:'R1'},
+  lines:[
+    ['nar','The President\'s term has ended. The electoral college gathers: the Senate, the National Assembly, and the four provincial assemblies.'],
+    ['begum','The coalition will nominate you if the numbers hold. Some members want assurances. Some want envelopes.'],
+    ['rafiq','Sahib, this is the last faisla. After this, the Dera is the whole country.']],
+  ask:'How do you win the vote?',
+  choices:[
+    {l:'Win them with your record',d:'Ask for every vote on what you did: the tubewells, the flood, the water.',fx:{izzat:8}},
+    {l:'Distribute envelopes',d:'Rs 3 crore across the provincial assemblies.',fx:{paisa:-3,taluqat:10,izzat:-8}},
+    {l:'Call in every favour',d:'The SHO\'s DPO, the party, the general, the envoy. Every debt comes due today.',fx:{taluqat:12,khauf:5}}],
+  next:s=>(s.izzat+s.taluqat+(s.flags.bloc?10:0)+(s.flags.minister?8:0)-(s.khauf>70?15:0))>=150?'oath':'end_kingmaker'},
+
+/* ---- events & endings ---- */
+rebellion:{title:'Trouble at the Gate',set:'dera',mood:'dusk',cam:'gate',loc:'Dera gate',cast:{sherm:'R1',rafiq:'L1'},
+  lines:[['nar','Two hundred villagers stand at the Dera gate, chanting. They are tired of Vigos at midnight and men who lower their eyes.'],['sherm','Sahib. Say the word.'],['rafiq','Sahib, if this spreads, the Biradaris will not stand with us.']],
+  choices:[
+    {l:'Walk out alone and listen',d:'No guards. Sit on the ground with them and hear every complaint.',fx:{khauf:-25,izzat:8}},
+    {l:'Pay compensation',d:'Rs 50 lakh to every family with a grievance.',fx:{paisa:-.5,khauf:-15,izzat:3}},
+    {l:'Break it up',d:'Sher Muhammad clears the gate.',fx:{khauf:10,izzat:-15,taluqat:-5}}],
+  next:s=>s.flags.after||'sho'},
+
+oath:{title:'The Oath',set:'isb',mood:'golden',cam:'wide',loc:'Aiwan-e-Sadr, Islamabad',cut:'oath',lines:[['nar','The anthem ends. Somewhere in Chak 47, Gul Khan is crying and polishing a Land Cruiser nobody will drive today.']],
+  end:{ur:'صدرِ پاکستان',title:'President {N}',text:'You rose from a charpai under a banyan tree to the President House. Chak 47 Shumali celebrates for nine days.'}},
+end_kingmaker:{title:'The Kingmaker',set:'isb',mood:'isb',cam:'wide',loc:'Parliament House',lines:[['nar','The numbers fall short by eleven votes. But the man who wins needed your bloc to get that close, and everyone in Islamabad knows it.']],
+  end:{ur:'بادشاہ گر',title:'The Kingmaker',text:'You did not take the oath, but no government in Islamabad will form without a visit to your Dera.'}},
+end_village:{title:'Lord of Chak 47',set:'dera',mood:'golden',cam:'faisla',loc:'Chak 47 Shumali',lines:[['nar','You go back to your chair under the banyan tree. The faislas continue. The village prospers.']],
+  end:{ur:'چک 47 کا مالک',title:'Lord of Chak 47',text:'Islamabad forgets your name. Chak 47 never does.'}},
+ruin_paisa:{title:'Bankrupt',set:'dera',mood:'storm',cam:'cars',loc:'Dera courtyard',lines:[['nar','The bank sends men for the Land Cruiser. Gul Khan hands over the keys and walks home on foot.']],
+  end:{ur:'دیوالیہ',title:'The Empty Garage',text:'Your Paisa ran out. Without money, a Numberdar is just a man with a big house.'}},
+ruin_izzat:{title:'The Empty Dera',set:'dera',mood:'dusk',cam:'faisla',loc:'Dera courtyard',lines:[['nar','One morning nobody comes. The charpais under the banyan tree stay empty. The tea goes cold.']],
+  end:{ur:'خالی ڈیرہ',title:'The Empty Dera',text:'Your Izzat is gone. The village has found another chair to sit in front of.'}}
+};
+
+/* ============ BOOT ============ */
+function boot(d){
+  buildScene();leaves();bind();
+  if(d&&d.S)S=Object.assign(DEF(),d.S);
+  renderHUD();setScene(EV[S.ev]||EV.water);
+  $('#portrait').innerHTML=portrait(CH.nar);$('#who').textContent=CH.nar.name;$('#role').textContent=CH.nar.role;
+  $('#text').textContent='Sixty villagers are waiting at the Dera. Open the gates to begin.';
+  if(d&&d.S&&EV[S.ev]&&!EV[S.ev].end)beginGame();else titleScreen();
+}
+try{window.claude?.hot?.snapshot?.(()=>({S}));}catch(e){}
+window.claude?.hot?.ready?window.claude.hot.ready(boot):boot(window.claude?.hot?.data??{});
+</script>
+</body>
+</html>
