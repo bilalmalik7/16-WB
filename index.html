@@ -72,7 +72,7 @@ button{font:inherit;color:inherit}
 .bob{animation:bob 3.2s ease-in-out infinite}
 .cheer{animation:cheer .9s ease-in-out infinite}
 .scan{transform-box:fill-box;transform-origin:50% 100%;animation:scan 7s steps(1) infinite}
-.arm{transform-box:fill-box;transform-origin:50% 6%}
+.arm,.leg,.lg{transform-box:view-box}
 .sip{animation:sip 5s ease-in-out infinite}
 .scrub{animation:scrub 1.1s ease-in-out infinite}
 .wave{animation:waveArm 1s ease-in-out infinite}
@@ -121,17 +121,17 @@ button{font:inherit;color:inherit}
 
 /* overlays */
 .ov{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:#000;overflow:hidden}
-.ov>svg{position:absolute;inset:0;width:100%;height:100%}
+.ov>svg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 .ov canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
 .lb{position:absolute;left:0;right:0;height:0;background:#000;z-index:3;transition:height 1.1s ease}
 .lb.t{top:0}.lb.b{bottom:0}
 .ov.on .lb{height:11vh}
 .cs-kicker{position:absolute;top:calc(11vh + 14px);left:16px;right:16px;text-align:center;z-index:4;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);opacity:.85}
-.cs-cap{position:absolute;left:16px;right:16px;bottom:calc(11vh + 64px);z-index:4;text-align:center;transition:opacity .8s,transform .8s}
+.cs-cap{position:absolute;left:16px;right:16px;bottom:calc(11vh + 56px);z-index:4;text-align:center;padding:14px 12px;background:radial-gradient(ellipse at center,#000b 0%,#0007 45%,transparent 72%);transition:opacity .8s,transform .8s}
 .cs-cap.out{opacity:0;transform:translateY(8px)}
 .cs-cap h2{font-family:var(--f-display);font-weight:400;font-size:clamp(24px,4vw,44px);margin:0 auto;max-width:24ch;line-height:1.15;text-shadow:0 2px 24px #000,0 0 2px #000;text-wrap:balance}
 .cs-cap p{margin:8px auto 0;max-width:60ch;font-size:clamp(14px,1.7vw,18px);font-style:italic;color:var(--parch);text-shadow:0 1px 12px #000}
-.cs-btn{position:absolute;z-index:5;right:16px;bottom:calc(11vh + 14px);background:#000a;border:1px solid var(--gold);color:var(--gold);border-radius:99px;padding:7px 16px;cursor:pointer;letter-spacing:.08em;font-size:13px}
+.cs-btn{position:absolute;z-index:10;right:16px;bottom:calc(11vh + 14px);background:#000a;border:1px solid var(--gold);color:var(--gold);border-radius:99px;padding:7px 16px;cursor:pointer;letter-spacing:.08em;font-size:13px}
 .cs-btn:hover{background:var(--gold);color:var(--night)}
 .card{position:relative;z-index:4;width:min(640px,100%);margin-inline:16px;background:linear-gradient(180deg,#221a2c,#140f1b);border:1px solid var(--line);border-radius:16px;padding:28px 24px 24px;box-shadow:0 30px 80px #000c;text-align:center;max-height:calc(100% - 32px);overflow:auto}
 .card::before{content:"";position:absolute;left:18px;right:18px;top:-3px;height:6px;border-radius:3px;background:var(--trim)}
@@ -192,6 +192,78 @@ button{font:inherit;color:inherit}
 @keyframes lean{0%,70%{transform:rotate(0)}100%{transform:rotate(6deg)}}
 @keyframes leanR{0%,70%{transform:rotate(0)}100%{transform:rotate(-6deg)}}
 
+/* v2: atmosphere, walking, horses, gunfights */
+.stage::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(120% 95% at 50% 42%,transparent 58%,#000a 100%)}
+#amb{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.loc-title{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);z-index:3;text-align:center;pointer-events:none;opacity:0;width:min(90%,640px)}
+.loc-title.go{animation:locIn 4.4s ease both}
+.loc-title small{display:block;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);text-shadow:0 1px 8px #000}
+.loc-title span{display:block;font-family:var(--f-display);font-size:clamp(22px,3.6vw,40px);color:#fff;text-shadow:0 2px 18px #000,0 0 2px #000;line-height:1.1}
+.sub{font-size:14.5px;color:var(--muted);font-style:italic;max-width:68ch;margin-top:4px}
+.tribe{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.tribe.enemy b{color:var(--khauf)}
+.tribe.enemy .loy i{background:var(--khauf)}
+.walk .leg{animation:legSwing .42s ease-in-out infinite alternate}
+.walk .leg-r{animation-direction:alternate-reverse}
+.walk .arm{animation:armSwing .42s ease-in-out infinite alternate!important}
+.walk .arm.fr{animation-direction:alternate-reverse!important}
+.actor-in{animation:walkIn 1.7s cubic-bezier(.3,.6,.4,1) both}
+.speaking .arm.fr{animation:gesture 1.6s ease-in-out infinite}
+.speaking>g>g{animation:speakBob .7s ease-in-out infinite}
+.drift{animation:drift var(--t,120s) linear infinite;animation-delay:var(--d,0s)}
+.flow{stroke-dasharray:18 14;animation:flowDash 1.2s linear infinite}
+.smoke circle{transform-box:fill-box;transform-origin:50% 50%;animation:smoke 4s ease-out infinite;opacity:0}
+.fire{animation:fire .22s steps(2) infinite}
+.peck{transform-box:fill-box;transform-origin:30% 90%;animation:peck 2.2s ease-in-out infinite}
+.sweep{transform-box:fill-box;transform-origin:50% 0;animation:sweep 5s ease-in-out infinite alternate}
+.rise-water{animation:riseW 10s ease-in-out both}
+.typing-line{transform-box:fill-box;transform-origin:0 50%;animation:typeLine 1.6s steps(12) infinite}
+.blinkdot{animation:twinkle 1.2s ease-in-out infinite}
+.fly{animation:flyAway 6s ease-in 1s both}
+.sceneA{animation:sceneOut 1s ease 4.6s both}
+.sceneB{animation:sceneIn 1s ease 4.6s both}
+.rainfall{animation:rainfall .35s linear infinite}
+.lflash{animation:flash 5s 1.2s infinite;opacity:0}
+.gallop .lg{animation:gallopLeg .48s ease-in-out infinite}
+.gallop .lg2{animation-delay:-.1s}.gallop .lg3{animation-delay:-.24s}.gallop .lg4{animation-delay:-.34s}
+.gallop .hb{animation:hbob .24s ease-in-out infinite alternate}
+.trot .lg{animation:gallopLeg 1s ease-in-out infinite}.trot .lg2,.trot .lg3{animation-delay:-.5s}
+.muzzle{opacity:0;transform-box:fill-box;transform-origin:0 50%;animation:muzzle var(--mt,.9s) steps(1) infinite;animation-delay:var(--md,0s)}
+.tracer{stroke-dasharray:30 600;animation:tracer var(--mt,.9s) linear infinite;animation-delay:var(--md,0s)}
+.spark{opacity:0;animation:spark var(--mt,1.1s) ease-out infinite;animation-delay:var(--md,0s)}
+.shake{animation:shake .18s steps(2) infinite}
+.zoomP{transform-box:fill-box;transform-origin:50% 50%;animation:zoomP 9s ease-out both}
+@keyframes locIn{0%{opacity:0;transform:translate(-50%,10px)}14%,76%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-6px)}}
+@keyframes legSwing{from{transform:rotate(-16deg)}to{transform:rotate(16deg)}}
+@keyframes armSwing{from{transform:rotate(-18deg)}to{transform:rotate(18deg)}}
+@keyframes walkIn{from{transform:translateX(var(--from,-300px))}to{transform:translateX(0)}}
+@keyframes gesture{0%,100%{transform:rotate(0)}30%{transform:rotate(-62deg)}55%{transform:rotate(-36deg)}75%{transform:rotate(-52deg)}}
+@keyframes speakBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.2px)}}
+@keyframes drift{from{transform:translateX(-420px)}to{transform:translateX(1500px)}}
+@keyframes flowDash{to{stroke-dashoffset:-64}}
+@keyframes smoke{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:.45}100%{transform:translate(18px,-90px) scale(2.6);opacity:0}}
+@keyframes fire{0%{opacity:1}50%{opacity:.55}}
+@keyframes peck{0%,60%,100%{transform:rotate(0)}70%,80%{transform:rotate(38deg)}}
+@keyframes sweep{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+@keyframes riseW{from{transform:translateY(90px)}to{transform:translateY(0)}}
+@keyframes typeLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes flyAway{from{transform:translate(0,0) rotate(-8deg)}to{transform:translate(900px,-420px) rotate(-14deg) scale(.35)}}
+@keyframes sceneOut{to{opacity:0;visibility:hidden}}
+@keyframes sceneIn{from{opacity:0}to{opacity:1}}
+@keyframes rainfall{from{transform:translate(0,-60px)}to{transform:translate(-14px,0)}}
+@keyframes gallopLeg{0%,100%{transform:rotate(32deg)}50%{transform:rotate(-38deg)}}
+@keyframes hbob{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+@keyframes muzzle{0%{opacity:1}8%{opacity:.6}16%,100%{opacity:0}}
+@keyframes tracer{from{stroke-dashoffset:30}to{stroke-dashoffset:-600}}
+@keyframes spark{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-14px)}}
+@keyframes shake{0%{transform:translate(1.5px,-1px)}50%{transform:translate(-1.5px,1px)}}
+@keyframes zoomP{from{transform:scale(1)}to{transform:scale(1.08)}}
+@keyframes sunUp{from{transform:translateY(150px)}}
+@keyframes pan{from{transform:scale(1.2) translate(-40px,-20px)}to{transform:scale(1) translate(0,0)}}
+@keyframes convoyIn{from{transform:translateX(-820px)}to{transform:translateX(0)}}
+@keyframes rideIn{from{transform:translateX(-900px)}to{transform:translateX(1500px)}}
+@keyframes dustPuff{0%{opacity:0;transform:scale(.4)}30%{opacity:.6}100%{opacity:0;transform:scale(2.2) translateX(-60px)}}
+
 @media (max-width:720px){
   .hud{grid-template-columns:repeat(2,minmax(0,1fr))}
   .dialog{grid-template-columns:72px minmax(0,1fr);gap:12px;padding:14px}
@@ -212,7 +284,8 @@ button{font:inherit;color:inherit}
     <div class="meta">
       <span class="pill">Stage <b id="m-stage">1</b> · <b id="m-stagename">The Village Dera</b></span>
       <span class="pill">Day <b id="m-day">1</b></span>
-      <button class="pill btn-s" id="b-sound" type="button" aria-pressed="false">Sound off</button>
+      <button class="pill btn-s" id="b-sound" type="button" aria-pressed="true">Sound on</button>
+      <button class="pill btn-s" id="b-subs" type="button" aria-pressed="true">English subs on</button>
       <button class="pill btn-s" id="b-restart" type="button">New game</button>
     </div>
   </header>
@@ -223,19 +296,15 @@ button{font:inherit;color:inherit}
     <div class="stat" id="st-paisa" style="--c:var(--paisa)"><div class="lbl">Paisa · Wealth <i>پیسہ</i></div><div class="val">0</div><div class="bar"><i></i></div></div>
     <div class="stat" id="st-taluqat" style="--c:var(--taluq)"><div class="lbl">Ta'aluqat · Connections <i>تعلقات</i></div><div class="val">0</div><div class="bar"><i></i></div></div>
   </section>
-  <div class="subhud">
-    <span>Jatt Biradari <b id="l-jatt-t">Neutral</b><span class="loy"><i id="l-jatt"></i></span></span>
-    <span>Arain Biradari <b id="l-arain-t">Neutral</b><span class="loy"><i id="l-arain"></i></span></span>
-    <span>Rival <b>Malik Sher Afzal</b></span>
-    <span id="khauf-warn"></span>
-  </div>
+  <div class="subhud"><span id="tribes"></span><span>Rival <b>Malik Tori</b></span><span id="khauf-warn"></span></div>
 
   <div class="stage" id="stage">
     <svg viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid slice" id="scene" aria-label="Scene"></svg>
     <div class="rays" id="rays"></div>
     <div class="rain" id="rain"></div>
     <div class="leaves" id="leaves"></div>
-    <div class="loc" id="loc">Chak 47 Shumali</div>
+    <div class="loc" id="loc">Chak 16 WB, Vehari</div>
+    <div class="loc-title" id="loctitle"><small></small><span></span></div>
     <div class="fade" id="fade"></div>
   </div>
 
@@ -246,6 +315,7 @@ button{font:inherit;color:inherit}
       <div class="who" id="who">Narrator</div>
       <div class="role" id="role"></div>
       <div class="text" id="text"></div>
+      <div class="sub" id="sub"></div>
     </div>
     <div class="more" id="more">Click or press Space ▾</div>
   </section>
@@ -279,16 +349,17 @@ const PARTY='#1d7a4c';
 function person(o){
   const s=o.s||1, skin=o.skin||'#b07a4f', kam=o.kam||'#e9e2d0', sh=o.sh||kam, head=o.head||'none', hc=o.hc||'#f4f1e8';
   const bottom=o.long?-6:-17;
-  let g=`<g transform="translate(${o.x||0} ${o.y||0}) scale(${o.flip?-s:s} ${s})"><g class="${o.anim||''}" style="animation-delay:${o.delay||0}s">`;
+  let g=`<g class="${o.cls||''}" transform="translate(${o.x||0} ${o.y||0}) scale(${o.flip?-s:s} ${s})"><g class="${o.anim||''}" style="animation-delay:${o.delay||0}s">`;
   g+=`<ellipse cx="0" cy="1" rx="15" ry="3.2" fill="#000" opacity=".22"/>`;
   if(!o.seated){
-    g+=`<path d="M-10,-20 L-11,-1 L-3,-1 L0,-13 L3,-1 L11,-1 L10,-20Z" fill="${sh}"/>`;
-    g+=`<rect x="-12.5" y="-2.5" width="9" height="3.5" rx="1.7" fill="${o.shoe||'#4a3322'}"/><rect x="3.5" y="-2.5" width="9" height="3.5" rx="1.7" fill="${o.shoe||'#4a3322'}"/>`;
+    const shoe=o.shoe||'#4a3322';
+    g+=`<g class="leg" style="transform-origin:-5px -20px"><path d="M-10,-20 L-11,-1 L-3,-1 L0,-14 L0,-20Z" fill="${sh}"/><rect x="-12.5" y="-2.5" width="9" height="3.5" rx="1.7" fill="${shoe}"/></g><g class="leg leg-r" style="transform-origin:5px -20px"><path d="M10,-20 L11,-1 L3,-1 L0,-14 L0,-20Z" fill="${sh}"/><rect x="3.5" y="-2.5" width="9" height="3.5" rx="1.7" fill="${shoe}"/></g>`;
   }
   if(head==='chador') g+=`<path d="M-11,-62 Q-12,-77 0,-77 Q12,-77 11,-62 L15,${bottom} L-15,${bottom}Z" fill="${hc}"/>`;
   g+=`<g class="arm ${o.barm||''}" style="transform-origin:-13.8px -49px"><rect x="-17" y="-51" width="6.5" height="27" rx="3.2" fill="${kam}"/><circle cx="-13.8" cy="-23.5" r="3.2" fill="${skin}"/></g>`;
   g+=`<path d="${o.long?'M-12,-52 Q-16,-30 -15,-6 L15,-6 Q16,-30 12,-52 Q0,-57 -12,-52Z':'M-12,-52 Q-15,-36 -14,-17 L14,-17 Q15,-36 12,-52 Q0,-57 -12,-52Z'}" fill="${head==='chador'?hc:kam}"/>`;
   g+=`<path d="M0,-54 L0,-40" stroke="#0003" stroke-width="1.2"/>`;
+  if(head!=='chador')g+=`<path d="M4,-55 Q13,-52 12.5,-40 Q14,-28 14,-17 L6,-17 Q8,-34 4,-55Z" fill="#000" opacity=".1"/><path d="M-4,-55 L0,-50 L4,-55" stroke="#0003" stroke-width="1" fill="none"/>`;
   if(o.long) for(let y=-50;y<-10;y+=7) g+=`<circle cx="0" cy="${y}" r="1" fill="#d8b04a"/>`;
   if(o.vest) g+=`<path d="M-12.5,-52 Q-14.5,-40 -13.5,-31 L-2.5,-31 L-1.5,-53Z M12.5,-52 Q14.5,-40 13.5,-31 L2.5,-31 L1.5,-53Z" fill="${o.vest}"/>`;
   if(o.uniform) g+=`<rect x="-14" y="-34" width="28" height="3" fill="#2a1f14"/><rect x="-9" y="-50" width="5" height="3" fill="#c9a227"/>`;
@@ -311,11 +382,13 @@ function person(o){
   };
   g+=H[head]||'';
   if(o.bandage) g+=`<rect x="-8" y="-70" width="16" height="3.5" fill="#f1ece0"/><circle cx="3" cy="-68.5" r="1.4" fill="#a33"/>`;
-  g+=`<g class="arm ${o.arm||''}" style="transform-origin:13.8px -49px;animation-delay:${o.adelay||0}s"><rect x="10.5" y="-51" width="6.5" height="27" rx="3.2" fill="${head==='chador'?hc:kam}"/><circle cx="13.8" cy="-23.5" r="3.2" fill="${skin}"/>`;
+  g+=`<g class="arm fr ${o.arm||''}" style="transform-origin:13.8px -49px;animation-delay:${o.adelay||0}s"><rect x="10.5" y="-51" width="6.5" height="27" rx="3.2" fill="${head==='chador'?hc:kam}"/><circle cx="13.8" cy="-23.5" r="3.2" fill="${skin}"/>`;
   if(o.cup) g+=`<path d="M10.5,-27 h6.5 l-1,6 h-4.5z" fill="#b5653a"/>`;
   if(o.kettle) g+=`<path d="M9,-25 q5,-7 10,0 v6 h-10z" fill="#262626"/><path d="M19,-22 l5,-4" stroke="#262626" stroke-width="2"/>`;
   if(o.mic) g+=`<rect x="12" y="-31" width="3.6" height="9" rx="1.6" fill="#1a1a1a"/><circle cx="13.8" cy="-31" r="2.6" fill="#555"/>`;
   if(o.rag) g+=`<rect x="10" y="-25" width="9" height="5" rx="1" fill="#e2d6b0"/>`;
+  if(o.stick) g+=`<path d="M13.8,-23.5 L13.8,-78" stroke="#7a5230" stroke-width="2.6" stroke-linecap="round"/>`;
+  if(o.gun) g+=`<path d="M10,-26 L40,-30" stroke="#1d1d1d" stroke-width="3.4" stroke-linecap="round"/><path d="M10,-26 L4,-22" stroke="#6a4424" stroke-width="5" stroke-linecap="round"/>`;
   if(o.flag) g+=`<g class="flagw" style="animation-delay:${o.adelay||0}s"><line x1="13.8" y1="-22" x2="13.8" y2="-52" stroke="#e8e0cc" stroke-width="1.1"/><path d="M13.8,-52 h13 v8.5 h-13z" fill="${o.flag}"/><path d="M13.8,-52 h3.5 v8.5 h-3.5z" fill="#fff"/></g>`;
   g+='</g>';
   if(o.rifle) g+=`<path d="M-9,-26 L9,-60" stroke="#222" stroke-width="3.2" stroke-linecap="round"/><path d="M-9,-26 L-4,-34" stroke="#6a4424" stroke-width="5" stroke-linecap="round"/>`;
@@ -348,7 +421,7 @@ const CH={
   zainab:{name:'Zainab Bibi',role:"Allah Ditta's widowed granddaughter",skin:'#b98258',kam:'#1c1a20',head:'chador',hc:'#17151c',bg:'#3a3550'},
   sho:{name:'Inspector Tariq Bhatti',role:'SHO, Thana Saddar',skin:'#a8734a',kam:'#2d3b4f',head:'police',hc:'#2d3b4f',must:'#151010',uniform:1,bg:'#22303f'},
   sherm:{name:'Sher Muhammad',role:'Head of your guards',skin:'#a36a42',kam:'#b9a27c',head:'cap',hc:'#5a4a2e',beard:'#6c6a66',must:'#5a5a58',stern:1,scar:1,rifle:1,bg:'#4a3a24'},
-  afzal:{name:'Malik Sher Afzal',role:'Your rival landlord',skin:'#b07a4f',kam:'#18161c',vest:'#6e6a72',head:'hair',hc:'#0e0c0c',must:'#0e0c0c',curl:1,shades:1,stern:1,bg:'#3a1820'},
+  afzal:{name:'Malik Tori',role:'Your rival landlord',skin:'#b07a4f',kam:'#18161c',vest:'#6e6a72',head:'hair',hc:'#0e0c0c',must:'#0e0c0c',curl:1,shades:1,stern:1,bg:'#3a1820'},
   begum:{name:'Begum Shahnaz Durrani',role:'Chairperson, Pakistan Awami Ittehad',skin:'#d4a17a',kam:'#e8dcc0',head:'dupatta',hc:'#f0e4c8',hair:'#2a1a14',bg:'#2f5a4a'},
   saima:{name:'Saima Qureshi',role:'Crime reporter, Khabar News',skin:'#c99068',kam:'#3a4e6a',head:'dupatta',hc:'#c9474e',hair:'#1a1210',bg:'#4a2030'},
   general:{name:'General Raza Haider',role:'Corps Commander',skin:'#b98258',kam:'#7a7550',head:'beret',hc:'#6b2a2a',must:'#3a3632',uniform:1,stern:1,bg:'#3c3a26'},
@@ -368,7 +441,7 @@ function portrait(c){
   if(c.rifle) g+=`<path d="M10,120 L40,92" stroke="#6b4a2a" stroke-width="7"/>`;
   g+=`<path d="M50,76 L50,92 Q60,97 70,92 L70,76Z" fill="${sk}"/>`;
   if(c.head!=='chador') g+=`<ellipse cx="37" cy="58" rx="4" ry="7" fill="${sk}"/><ellipse cx="83" cy="58" rx="4" ry="7" fill="${sk}"/>`;
-  g+=`<ellipse cx="60" cy="56" rx="23" ry="27" fill="${sk}"/>`;
+  g+=`<ellipse cx="60" cy="56" rx="23" ry="27" fill="${sk}"/><path d="M60,29 Q83,31 83,56 Q83,80 60,83 Q75,70 75,56 Q75,38 60,29Z" fill="#000" opacity=".09"/><ellipse cx="46" cy="66" rx="5" ry="3" fill="#d0605a" opacity=".12"/><ellipse cx="74" cy="66" rx="5" ry="3" fill="#d0605a" opacity=".12"/>`;
   if(c.beard) g+=`<path d="M37,56 Q37,92 60,96 Q83,92 83,56 Q80,74 60,77 Q40,74 37,56Z" fill="${c.beard}"/>`;
   g+= c.stern ? `<path d="M43,45 L55,48.5 M65,48.5 L77,45" stroke="#22150e" stroke-width="3" stroke-linecap="round"/>` : `<path d="M44,47 Q50,43.5 55,46.5 M65,46.5 Q70,43.5 76,47" stroke="#22150e" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
   g+=`<g class="blink"><ellipse cx="50" cy="54" rx="4.4" ry="2.9" fill="#f6efe3"/><ellipse cx="70" cy="54" rx="4.4" ry="2.9" fill="#f6efe3"/><circle cx="50.6" cy="54" r="2.1" fill="#2a1a10"/><circle cx="70.6" cy="54" r="2.1" fill="#2a1a10"/></g>`;
@@ -444,6 +517,11 @@ function setDera(){
   // charpais with seated elders
   const charpai=(x,y,w)=>`<rect x="${x}" y="${y}" width="${w}" height="11" fill="url(#weave)" stroke="#6a4a2a" stroke-width="3"/><rect x="${x}" y="${y+11}" width="5" height="14" fill="#6a4a2a"/><rect x="${x+w-5}" y="${y+11}" width="5" height="14" fill="#6a4a2a"/>`;
   [[70,442,130],[214,466,118]].forEach(([x,y,w])=>{for(let i=0;i<3;i++) m+=villager(x+22+i*(w-30)/2,y+15,.85,{seated:1,cup:Math.random()<.7,arm:'sip',adelay:R(0,5)});m+=charpai(x,y,w);});
+  // chulha, chickens and Sultan the horse
+  m+=horse({x:268,y:372,s:.62,color:'#4a2a18',saddle:'#7a1f2b',decor:1});
+  m+=`<path d="M22,486 q16,-24 32,0z" fill="#8a5a3a"/><path class="fire" d="M30,482 q8,-16 16,0z" fill="#ff9a3a"/><path d="M28,462 h20 l-2,8 h-16z" fill="#2a2a2a"/><g class="smoke">${[0,1,2].map(i=>`<circle cx="38" cy="456" r="5" fill="#bbb" style="animation-delay:${i*1.3}s"/>`).join('')}</g>`;
+  gl+=`<circle cx="38" cy="478" r="26" fill="url(#lamp)" class="pulse" opacity=".5"/>`;
+  m+=chicken(118,522,'#f1ece0')+chicken(150,532,'#a0522d')+chicken(486,512,'#e8e0d0');
   // crowd waiting
   for(let r=0;r<2;r++) for(let i=0;i<7;i++) m+=villager(318+i*30+R(-6,6)+r*14,392+r*26,.82+r*.06,{cup:Math.random()<.4,arm:Math.random()<.4?'sip':'',adelay:R(0,5)});
   // guards
@@ -482,6 +560,8 @@ function setJalsa(){
   for(const x of [336,824]) m+=`<rect x="${x}" y="200" width="40" height="64" fill="#111"/><circle cx="${x+20}" cy="218" r="9" fill="#333"/><circle cx="${x+20}" cy="246" r="12" fill="#333"/>`;
   m+=`<path d="M340,96 H860" stroke="#444" stroke-width="5"/>`;
   for(let x=380;x<=820;x+=88){m+=`<rect x="${x-7}" y="96" width="14" height="12" fill="#222"/>`;gl+=`<path d="M${x-7},108 L${x-70},330 L${x+70},330 L${x+7},108Z" fill="#fff3c4" opacity=".07" class="pulse"/><circle cx="${x}" cy="108" r="12" fill="url(#lamp)" class="pulse"/>`;}
+  for(const x of [380,820])gl+=`<path class="sweep" style="animation-delay:${x>600?-2.5:0}s" d="M${x-8},100 L${x-95},560 L${x+95},560 L${x+8},100Z" fill="#fff3c4" opacity=".1"/>`;
+  for(let i=0;i<60;i++)gl+=`<rect class="blinkdot" style="animation-delay:${R(0,1.2)}s" x="${R(0,1200)}" y="${R(370,540)}" width="3" height="5" fill="#cfefff" opacity=".8"/>`;
   m+=person({x:600,y:300,s:1.3,skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c',arm:'orate nd-arm',mic:1});
   m+=`<path d="M570,302 L577,262 L623,262 L630,302Z" fill="${PARTY}" stroke="#e9b44c" stroke-width="2"/><circle cx="600" cy="280" r="7" fill="#e9b44c"/>`;
   // crowd
@@ -503,6 +583,73 @@ function setIsb(){
   return {m,fg,gl};
 }
 
+/* ---- v2 art: clouds, fields, tractors, horses, chickens ---- */
+function clouds(){let g='';for(let i=0;i<6;i++){const y=R(30,200),s=R(.6,1.3);g+=`<g class="drift" style="--t:${R(110,190)}s;--d:${-R(0,190)}s"><g transform="translate(0 ${y}) scale(${s})" style="fill:var(--cloud)" opacity=".85"><ellipse cx="0" cy="0" rx="70" ry="18"/><ellipse cx="-30" cy="-10" rx="34" ry="20"/><ellipse cx="18" cy="-16" rx="40" ry="26"/><ellipse cx="50" cy="-4" rx="30" ry="16"/></g></g>`;}return g;}
+function chicken(x,y,c){return `<g transform="translate(${x} ${y})"><g class="peck" style="animation-delay:${R(0,2)}s"><ellipse cx="0" cy="-8" rx="9" ry="7" fill="${c}"/><path d="M-8,-10 L-14,-17 L-10,-5Z" fill="${c}"/><circle cx="7" cy="-15" r="4.5" fill="${c}"/><path d="M5,-20 l2,-3 2,3 2,-3 1,3z" fill="#c0392b"/><path d="M11,-15 l4,1 -4,1.5z" fill="#e0a030"/><circle cx="8" cy="-16" r=".9" fill="#111"/></g><path d="M-2,-2 v3 M2,-2 v3" stroke="#c08030" stroke-width="1.2"/></g>`;}
+function tractor(x,y,c,flip){return `<g transform="translate(${x} ${y}) scale(${flip?-1:1} 1)"><ellipse cx="0" cy="2" rx="48" ry="5" fill="#000" opacity=".25"/><rect x="-30" y="-40" width="44" height="22" rx="3" fill="${c}"/><path d="M-30,-40 L-22,-64 L6,-64 L10,-40" fill="none" stroke="#222" stroke-width="3"/><rect x="-24" y="-66" width="32" height="4" fill="#222"/><rect x="14" y="-34" width="30" height="16" rx="3" fill="${c}"/><rect x="40" y="-30" width="5" height="6" fill="#fff6c9"/><rect x="34" y="-58" width="4" height="24" fill="#333"/><g class="smoke">${[0,1,2].map(i=>`<circle cx="36" cy="-60" r="5" fill="#8a8a8a" style="animation-delay:${i*1.3}s"/>`).join('')}</g><circle cx="-14" cy="-16" r="20" fill="#1a1a1a"/><circle cx="-14" cy="-16" r="9" fill="#c9a227"/><circle cx="32" cy="-9" r="11" fill="#1a1a1a"/><circle cx="32" cy="-9" r="5" fill="#c9a227"/></g>`;}
+function horse(o){
+  const c=o.color||'#6b3f22',m=o.mane||'#1a1210',s=o.s||1;
+  const leg=(cls,x,shade)=>`<g class="lg ${cls}" style="transform-origin:${x}px -46px"><path d="M${x-5},-52 L${x+5},-52 L${x+3},-22 L${x+2.5},-4 L${x-1.5},-4 L${x-2.5},-22Z" fill="${c}"${shade?' opacity=".8"':''}/><rect x="${x-3}" y="-5" width="7" height="5" rx="1" fill="#222"/></g>`;
+  let g=`<g transform="translate(${o.x||0} ${o.y||0}) scale(${o.flip?-s:s} ${s})"><g class="${o.gait||''}"><ellipse cx="0" cy="1" rx="52" ry="5" fill="#000" opacity=".25"/>`;
+  g+=leg('lg2',-30,1)+leg('lg4',24,1)+`<g class="hb">`;
+  g+=`<path d="M-44,-68 Q-64,-62 -62,-24 Q-56,-40 -46,-54Z" fill="${m}"/><ellipse cx="-4" cy="-62" rx="47" ry="19" fill="${c}"/><path d="M-30,-72 Q0,-80 30,-72" stroke="#fff" stroke-opacity=".12" stroke-width="5" fill="none"/>`;
+  g+=`<path d="M24,-74 Q40,-104 58,-116 L70,-110 Q56,-92 46,-58Z" fill="${c}"/><path d="M56,-118 Q66,-125 87,-100 Q91,-94 85,-91 Q72,-94 62,-104Z" fill="${c}"/><path d="M60,-118 L57,-129 L65,-120Z" fill="${c}"/><path d="M58,-116 Q40,-100 30,-74 L25,-77 Q36,-103 53,-121Z" fill="${m}"/><circle cx="72" cy="-108" r="1.9" fill="#111"/><circle cx="85" cy="-95" r="1.2" fill="#111"/>`;
+  if(o.decor)g+=`<path d="M44,-84 Q56,-96 66,-104" stroke="#d9a93a" stroke-width="3" fill="none"/><circle cx="52" cy="-92" r="3.2" fill="#d4506a"/><path d="M-30,-48 Q-4,-40 22,-48" stroke="#d4506a" stroke-width="3" fill="none" stroke-dasharray="4 3"/>`;
+  if(o.saddle)g+=`<path d="M-16,-80 Q0,-87 16,-80 L13,-64 L-13,-64Z" fill="${o.saddle}"/><path d="M-13,-64 L13,-64" stroke="#d9a93a" stroke-width="2"/>`;
+  if(o.rider)g+=person(Object.assign({x:2,y:-64,s:.95,seated:1},o.rider));
+  if(o.lance)g+=`<path d="M14,-100 L124,-30" stroke="#5a3a20" stroke-width="2.6"/><path d="M124,-30 l10,6 -12,1z" fill="#ddd"/>`;
+  if(o.gun)g+=`<path d="M10,-104 L46,-112" stroke="#1d1d1d" stroke-width="3.4"/>`;
+  if(o.fire!=null)g+=`<path class="muzzle" style="--md:${o.fire}s;--mt:.8s" d="M46,-112 l16,-6 -5,6 7,5 -10,-2 -4,7z" fill="#fff2a0"/>`;
+  return g+`</g>`+leg('lg1',-20)+leg('lg3',32)+`</g></g>`;
+}
+function setFields(){
+  let m='',fg='',gl='';
+  m+=`<rect y="348" width="1200" height="28" fill="#4f7f94"/><path d="M0,357 H1200 M0,367 H1200" stroke="#cfe8f2" stroke-width="1.6" class="flow" opacity=".7"/><rect y="344" width="1200" height="5" fill="#7a6a4a"/><rect y="375" width="1200" height="5" fill="#7a6a4a"/>`;
+  for(const x of [210,250]) m+=`<g class="bob" style="animation-delay:${R(0,2)}s"><ellipse cx="${x}" cy="362" rx="16" ry="6" fill="#1e1c1f"/><ellipse cx="${x+14}" cy="358" rx="7" ry="5" fill="#262327"/><path d="M${x+10},354 q-6,-6 0,-6 M${x+18},354 q6,-6 0,-6" stroke="#5a554e" stroke-width="2" fill="none"/></g>`;
+  m+=`<rect x="530" y="340" width="140" height="40" fill="#b8a888"/><rect x="530" y="334" width="140" height="6" fill="#8a7a5a"/>`;for(let x=534;x<670;x+=14)m+=`<rect x="${x}" y="322" width="4" height="14" fill="#8a7a5a"/>`;m+=`<rect x="530" y="320" width="140" height="4" fill="#8a7a5a"/>`;
+  for(let r=0;r<9;r++){const y=382+r*20,h=7+r*1.4;m+=`<rect x="0" y="${y}" width="560" height="${h}" fill="${r%2?'#4f6a2e':'#5d7a34'}"/>`;for(let x=8;x<560;x+=20+r*2)m+=`<circle cx="${x+R(-3,3)}" cy="${y+R(0,h)}" r="${1.4+r*.25}" fill="#f4f1e8"/>`;m+=`<rect x="640" y="${y}" width="560" height="${h}" fill="${r%2?'#c9a54a':'#d8b65a'}"/>`;for(let x=650;x<1200;x+=14+r*2)m+=`<path d="M${x},${y+h} l2,-${6+r}" stroke="#b08a30" stroke-width="1.2"/>`;}
+  m+=`<path d="M585,380 L615,380 L720,560 L480,560Z" fill="#a88a5e"/>`;
+  m+=`<rect x="80" y="300" width="84" height="48" fill="#b0603e"/><path d="M76,300 H168" stroke="#7a3a24" stroke-width="5"/><rect x="104" y="318" width="18" height="30" fill="#3a2a20"/><rect x="164" y="326" width="24" height="7" fill="#555"/><path d="M188,329 q16,2 20,22" stroke="#cfe8ff" stroke-width="7" fill="none" class="flow"/><ellipse cx="208" cy="352" rx="22" ry="5" fill="#9fd0e8" opacity=".8"/>`;
+  gl+=`<circle cx="120" cy="302" r="26" fill="url(#lamp)" style="opacity:var(--lamp)" class="pulse"/>`;
+  m+=`<rect x="756" y="398" width="10" height="32" fill="#f2efe6"/><rect x="756" y="398" width="10" height="8" fill="#c0392b"/><rect x="456" y="404" width="10" height="28" fill="#f2efe6"/><rect x="456" y="404" width="10" height="7" fill="#c0392b"/>`;
+  m+=horse({x:1010,y:405,s:.7,color:'#5a3420',saddle:'#7a1f2b',decor:1,flip:1});
+  m+=tractor(300,486,'#2f5fa8',0)+tractor(880,470,'#c0392b',1);
+  for(let i=0;i<4;i++)m+=person({x:70+i*95,y:440+(i%2)*26,s:.78,skin:pick(SKIN),kam:pick(CLOTH),head:'chador',hc:pick(DUP),arm:'sip',adelay:R(0,4),anim:'bob',delay:R(0,3)});
+  m+=car(1080,540,{kind:'lc',color:'#0c0c10',flip:1,s:.95,gd:1});
+  gl+=`<path d="M1084,512 L1200,470 L1200,560Z" fill="#fff3c4" style="opacity:calc(var(--lamp) * .25)"/>`;
+  m+=person({x:600,y:532,s:1.45,skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c',arm:'nd-arm'});
+  return {m,fg,gl};
+}
+/* ---- ambient canvas: dust, fireflies, birds, lightning ---- */
+const AMB={cv:null,ctx:null,mood:'dawn',set:'dera',P:[],birds:[],flash:0,t:0};
+function ambInit(){
+  const cv=document.createElement('canvas');cv.id='amb';$('#stage').insertBefore(cv,$('#rays'));AMB.cv=cv;AMB.ctx=cv.getContext('2d');
+  const fit=()=>{const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=Math.max(1,r.width*d);cv.height=Math.max(1,r.height*d);};fit();addEventListener('resize',fit);
+  for(let i=0;i<46;i++)AMB.P.push({x:Math.random(),y:Math.random(),vx:R(-.0004,.0004),vy:R(-.0003,.0001),r:R(.6,2.2),ph:R(0,6.28)});
+  if(!reduced())requestAnimationFrame(ambLoop);
+}
+function ambMood(set,mood){AMB.set=set;AMB.mood=mood;}
+function ambLoop(){
+  requestAnimationFrame(ambLoop);if(document.hidden)return;
+  const {cv,ctx}=AMB,W=cv.width,H=cv.height,d=devicePixelRatio||1,m=AMB.mood,s=AMB.set;AMB.t++;ctx.clearRect(0,0,W,H);
+  const ff=(m==='night'||m==='dusk')&&(s==='dera'||s==='fields'),dust=['dawn','golden','noon'].includes(m)&&s!=='isb';
+  if(ff||dust)for(const p of AMB.P){
+    p.x+=p.vx+(ff?Math.sin(AMB.t/60+p.ph)*.0006:0);p.y+=p.vy+(ff?Math.cos(AMB.t/70+p.ph)*.0004:0);
+    if(p.x<0)p.x=1;if(p.x>1)p.x=0;if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+    const a=ff?Math.max(0,Math.sin(AMB.t/25+p.ph))*.9:.22+.18*Math.sin(AMB.t/40+p.ph),X=p.x*W,Y=(ff?.45+p.y*.55:p.y)*H;
+    ctx.fillStyle=ff?`rgba(210,255,120,${a})`:`rgba(255,236,190,${a})`;ctx.beginPath();ctx.arc(X,Y,p.r*d*(ff?1.3:1),0,6.28);ctx.fill();
+    if(ff&&a>.5){ctx.fillStyle=`rgba(210,255,120,${a*.15})`;ctx.beginPath();ctx.arc(X,Y,p.r*d*6,0,6.28);ctx.fill();}
+  }
+  if(['dawn','golden','noon','dusk'].includes(m)&&s!=='isb'){
+    if(!AMB.birds.length&&Math.random()<.005){const dir=Math.random()<.5?1:-1,y=R(.06,.26),n=4+Math.floor(R(0,5));for(let i=0;i<n;i++)AMB.birds.push({x:dir>0?-.05-i*.03:1.05+i*.03,y:y+(i%2?1:-1)*i*.008,v:.0016*dir*R(.9,1.1),ph:R(0,6)});}
+    ctx.strokeStyle=m==='noon'?'rgba(40,40,50,.8)':'rgba(30,20,30,.85)';ctx.lineWidth=1.6*d;
+    for(const b of AMB.birds){b.x+=b.v;const w=Math.sin(AMB.t/5+b.ph)*4*d,X=b.x*W,Y=b.y*H;ctx.beginPath();ctx.moveTo(X-7*d,Y-w);ctx.quadraticCurveTo(X-3*d,Y-2*d,X,Y);ctx.quadraticCurveTo(X+3*d,Y-2*d,X+7*d,Y-w);ctx.stroke();}
+    AMB.birds=AMB.birds.filter(b=>b.x>-.4&&b.x<1.4);
+  }else AMB.birds=[];
+  if(m==='storm'&&AMB.flash<=0&&Math.random()<.004){AMB.flash=1;if(live())thunder(now()+R(.2,.8));}
+  if(AMB.flash>0){ctx.fillStyle=`rgba(230,240,255,${AMB.flash*.55})`;ctx.fillRect(0,0,W,H);AMB.flash-=.06;}
+}
+
 /* ============ ENGINE ============ */
 const MOOD={
   dawn:{s1:'#3c4f7a',s2:'#e9a27a',s3:'#f6d6a0',g1:'#b49a6c',g2:'#7d6545',far:'#5d6b4f',sun:[880,240],sunc:'#ffe2a0',ray:.55,tint:'#ffd0a0',tinta:.22,lamp:.35},
@@ -513,12 +660,14 @@ const MOOD={
   storm:{s1:'#2c3440',s2:'#56606a',s3:'#7b8088',g1:'#6a6152',g2:'#3e3a33',far:'#454c48',sun:[900,-120],sunc:'#cccccc',ray:0,tint:'#506070',tinta:.38,lamp:.6,rain:1},
   isb:{s1:'#060a1c',s2:'#14204a',s3:'#2a3a6a',g1:'#2a2f3a',g2:'#15161d',far:'#0f1a24',sun:[1020,90],sunc:'#eef2ff',ray:.05,tint:'#2a3a90',tinta:.45,lamp:1,stars:1}
 };
-const CAM={wide:[1,600,280],faisla:[1.32,600,440],gate:[1.5,600,330],cars:[1.55,900,380],stage:[1.18,600,300],crowd:[1.3,420,420],road:[1.25,600,420]};
+Object.assign(MOOD.dawn,{cloud:'#f7d4c0',cloudo:.85});Object.assign(MOOD.noon,{cloud:'#ffffff',cloudo:.9});Object.assign(MOOD.golden,{cloud:'#ffd2a0',cloudo:.85});Object.assign(MOOD.dusk,{cloud:'#c98296',cloudo:.75});Object.assign(MOOD.night,{cloud:'#262b48',cloudo:.6});Object.assign(MOOD.storm,{cloud:'#3e4652',cloudo:1});Object.assign(MOOD.isb,{cloud:'#18224a',cloudo:.6});
+const CAM={wide:[1,600,280],faisla:[1.32,600,440],gate:[1.5,600,330],cars:[1.55,900,380],stage:[1.18,600,300],crowd:[1.3,420,420],road:[1.25,600,420],bridge:[1.3,600,400]};
 const SLOT={L1:[452,534],L2:[404,542],R1:[748,534],R2:[796,542],R3:[844,548]};
-const STAGE={1:{name:'The Village Dera',ur:'گاؤں کا ڈیرہ',d:'Hold faislas. Handle the SHO. Build your base in Chak 47 Shumali.'},2:{name:'The MNA Campaign',ur:'ایم این اے کی مہم',d:'Forty days to polling. Jalsas, party tickets, and Malik Sher Afzal across the canal.'},3:{name:'The Presidency',ur:'ایوانِ صدر کا راستہ',d:'Islamabad. Coalitions, generals, foreign money, and the electoral college.'}};
+const STAGE={1:{name:'The Village Dera',ur:'گاؤں کا ڈیرہ',d:'Hold faislas. Handle the SHO. Build your base in Chak 16 WB, Vehari.'},2:{name:'The MNA Campaign',ur:'ایم این اے کی مہم',d:'Forty days to polling. Jalsas, party tickets, and Malik Tori across the canal.'},3:{name:'The Presidency',ur:'ایوانِ صدر کا راستہ',d:'Islamabad. Coalitions, generals, foreign money, and the electoral college.'}};
 const KEY='numberdar.save.v1';
-const DEF=()=>({name:'Chaudhry Jahangir Ahmed',izzat:45,khauf:30,paisa:8,taluqat:20,jatt:50,arain:50,stage:1,day:1,ev:'water',flags:{}});
-let S=DEF(), curSet=null, castKey='', lastWho=null, adv=null, typing=null, busy=false, soundOn=false, AC=null;
+const TRIBES={jatt:'Jatt',arain:'Arain',rajput:'Rajput',joiya:'Joiya',kamboh:'Kamboh'};
+const DEF=()=>({name:'Chaudhry Jahangir Ahmed',izzat:45,khauf:30,paisa:8,taluqat:20,jatt:50,arain:50,rajput:55,joiya:28,kamboh:45,stage:1,day:1,ev:'water',flags:{}});
+let S=DEF(), curSet=null, castKey='', lastWho=null, adv=null, typing=null, busy=false, soundOn=true, subsOn=true;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const clamp=v=>Math.max(0,Math.min(100,Math.round(v)));
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -529,9 +678,9 @@ function fill(t){if(typeof t==='function')t=t(S);return String(t).replace(/\{N\}
 function money(c){const a=Math.abs(c),sg=c<0?'−':'';return a>=1?`${sg}Rs ${(+a.toFixed(2))} Cr`:`${sg}Rs ${Math.round(a*100)} lakh`;}
 
 function buildScene(){
-  const D=setDera(),J=setJalsa(),I=setIsb(),SETS={dera:D,jalsa:J,isb:I};
+  const SETS={dera:setDera(),jalsa:setJalsa(),isb:setIsb(),fields:setFields()};
   let h=`<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--s1)"/><stop offset=".62" style="stop-color:var(--s2)"/><stop offset="1" style="stop-color:var(--s3)"/></linearGradient><linearGradient id="gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient><radialGradient id="sunglow"><stop offset="0" stop-color="#fff3c4" stop-opacity=".85"/><stop offset=".25" stop-color="#ffd27a" stop-opacity=".45"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient><radialGradient id="lamp"><stop offset="0" stop-color="#ffe7a8" stop-opacity=".95"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient><pattern id="weave" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#c9a66a"/><path d="M0,0 L6,6 M6,0 L0,6" stroke="#8a6a3a" stroke-width="1.2"/></pattern><pattern id="trimP" width="42" height="36" patternUnits="userSpaceOnUse"><rect width="14" height="36" fill="#e9b44c"/><rect x="14" width="14" height="36" fill="#d4506a"/><rect x="28" width="14" height="36" fill="#2fa38f"/></pattern></defs>`;
-  h+=`<g id="world"><rect width="1200" height="560" fill="url(#sky)"/><g style="opacity:var(--stars)">${stars()}</g><circle id="sunglow" cx="880" cy="240" r="150" fill="url(#sunglow)"/><circle id="sun" cx="880" cy="240" r="32"/><rect y="296" width="1200" height="40" style="fill:var(--far)" opacity=".45"/>${trees()}<rect y="330" width="1200" height="230" fill="url(#gnd)"/>`;
+  h+=`<g id="world"><rect width="1200" height="560" fill="url(#sky)"/><g style="opacity:var(--stars)">${stars()}</g><circle id="sunglow" cx="880" cy="240" r="150" fill="url(#sunglow)"/><circle id="sun" cx="880" cy="240" r="32"/><g style="opacity:var(--cloudo)">${clouds()}</g><rect y="296" width="1200" height="40" style="fill:var(--far)" opacity=".45"/>${trees()}<rect y="330" width="1200" height="230" fill="url(#gnd)"/>`;
   for(const k in SETS) h+=`<g class="set" data-set="${k}" style="display:none">${SETS[k].m}</g>`;
   h+=`<g id="actors"></g>`;
   for(const k in SETS) h+=`<g class="set" data-set="${k}" style="display:none">${SETS[k].fg}</g>`;
@@ -540,33 +689,38 @@ function buildScene(){
   $('#scene').innerHTML=h+'</g>';
 }
 function leaves(){let h='';for(let i=0;i<12;i++)h+=`<span class="leaf" style="left:${R(2,34)}%;--t:${R(7,13)}s;--d:${-R(0,12)}s;background:${pick(['#6f8f3a','#8aa04a','#a8873a'])}"></span>`;$('#leaves').innerHTML=h;}
-function cam(k){const [z,fx,fy]=CAM[k]||CAM.wide;const tx=Math.min(0,Math.max(1200-1200*z,600-fx*z)),ty=Math.min(0,Math.max(560-560*z,280-fy*z));$('#world').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;}
+let curCam=CAM.wide;
+function camTo(z,fx,fy){const tx=Math.min(0,Math.max(1200-1200*z,600-fx*z)),ty=Math.min(0,Math.max(560-560*z,280-fy*z));$('#world').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;}
+function cam(k){curCam=CAM[k]||CAM.wide;camTo(...curCam);}
 function cast(c){
   const key=JSON.stringify(c||{});if(key===castKey)return;castKey=key;
-  let h='',i=0;for(const id in (c||{})){const [x,y]=SLOT[c[id]];h+=`<g class="actor" style="animation-delay:${(i++)*.12}s">${bodyOf(id,{x,y,s:1.42,flip:x>600,anim:'bob',delay:R(0,2)})}</g>`;}
+  let h='',i=0;for(const id in (c||{})){const sl=c[id],[x,y]=SLOT[sl],fr=x>600;h+=`<g class="actor-in" data-id="${id}" data-slot="${sl}" style="--from:${fr?460:-460}px;animation-delay:${i*.22}s">${bodyOf(id,{x,y,s:1.42,flip:fr,anim:'bob',delay:R(0,2),cls:'walk'})}</g>`;i++;}
   $('#actors').innerHTML=h;
+  if(h){sfx('steps');setTimeout(()=>document.querySelectorAll('#actors .walk').forEach(g=>g.classList.remove('walk')),1750+i*220);}
 }
 async function setScene(ev){
   const set=ev.set||'dera',m=MOOD[ev.mood||'dawn'],sv=$('#scene'),changing=set!==curSet;
-  if(changing&&curSet){$('#fade').classList.add('on');await wait(650);}
+  if(changing&&curSet){sfx('whoosh');$('#fade').classList.add('on');await wait(650);}
   sv.querySelectorAll('.set').forEach(g=>g.style.display=g.dataset.set===set?'':'none');curSet=set;
-  for(const k of ['s1','s2','s3','g1','g2','far','tint'])sv.style.setProperty('--'+k,m[k]);
-  sv.style.setProperty('--tinta',m.tinta);sv.style.setProperty('--lamp',m.lamp);sv.style.setProperty('--stars',m.stars?1:0);
+  for(const k of ['s1','s2','s3','g1','g2','far','tint','cloud'])sv.style.setProperty('--'+k,m[k]);
+  sv.style.setProperty('--tinta',m.tinta);sv.style.setProperty('--lamp',m.lamp);sv.style.setProperty('--stars',m.stars?1:0);sv.style.setProperty('--cloudo',m.cloudo??.8);
   for(const id of ['#sun','#sunglow']){const c=$(id);c.setAttribute('cx',m.sun[0]);c.setAttribute('cy',m.sun[1]);}
   $('#sun').style.fill=m.sunc;
   $('#rays').style.setProperty('--ray',m.ray);$('#rain').classList.toggle('on',!!m.rain);
   $('#leaves').style.display=set==='dera'&&!m.rain?'':'none';
   $('#loc').textContent=fill(ev.loc||'');
+  setAmbience(set,ev.mood||'dawn');ambMood(set,ev.mood||'dawn');
+  const lt=$('#loctitle');if(ev.loc&&lt.dataset.k!==ev.loc){lt.dataset.k=ev.loc;lt.querySelector('small').textContent=fill(ev.loc);lt.querySelector('span').textContent=ev.title||'';lt.classList.remove('go');void lt.offsetWidth;lt.classList.add('go');}
   cam(ev.cam||'wide');cast(ev.cast);
   if(changing){await wait(120);$('#fade').classList.remove('on');}
 }
 
 /* ---- HUD ---- */
-function loyName(v){return v<30?'Hostile':v<45?'Uneasy':v<60?'Neutral':v<78?'Loyal':'Devoted';}
+function loyName(v){return v<30?'Enemy':v<45?'Uneasy':v<60?'Neutral':v<78?'Loyal':'Devoted';}
 function renderHUD(){
   for(const k of ['izzat','khauf','taluqat']){const el=$('#st-'+k);el.querySelector('.val').textContent=S[k];el.querySelector('.bar i').style.width=S[k]+'%';}
   const p=$('#st-paisa');p.querySelector('.val').textContent=money(S.paisa);p.querySelector('.bar i').style.width=Math.max(0,Math.min(100,S.paisa/16*100))+'%';
-  for(const b of ['jatt','arain']){$('#l-'+b).style.width=S[b]+'%';$('#l-'+b+'-t').textContent=loyName(S[b]);}
+  $('#tribes').innerHTML=Object.keys(TRIBES).map(k=>`<span class="tribe${S[k]<30?' enemy':''}">${TRIBES[k]} <b>${loyName(S[k])}</b><span class="loy"><i style="width:${S[k]}%"></i></span></span>`).join('');
   $('#m-stage').textContent=S.stage;$('#m-stagename').textContent=STAGE[S.stage].name;$('#m-day').textContent=S.day;
   const w=$('#khauf-warn');w.textContent=S.khauf>=65?'The village is restless. Khauf is high.':'';w.style.color='var(--khauf)';
 }
@@ -575,9 +729,9 @@ function applyFx(fx){
   if(!fx)return;if(typeof fx==='function')fx=fx(S);
   for(const k in fx){const v=fx[k];if(!v)continue;
     if(k==='paisa'){S.paisa=+(S.paisa+v).toFixed(2);delta('paisa',(v>0?'+':'')+money(v),v>0);}
-    else{S[k]=clamp(S[k]+v);if(k!=='jatt'&&k!=='arain')delta(k,(v>0?'+':'−')+Math.abs(v),v>0);}
+    else{S[k]=clamp(S[k]+v);if(!TRIBES[k])delta(k,(v>0?'+':'−')+Math.abs(v),v>0);}
   }
-  renderHUD();
+  fxSound(fx);renderHUD();
 }
 
 /* ---- dialogue ---- */
@@ -586,16 +740,19 @@ function say(l){
     const c=CH[l.who]||CH.nar,pt=$('#portrait'),el=$('#text');
     if(lastWho!==l.who){pt.innerHTML=portrait(c);lastWho=l.who;}
     $('#who').textContent=c.name;$('#role').textContent=c.role;
-    const full=fill(l.t);el.textContent='';$('#more').hidden=true;
+    document.querySelectorAll('#actors .speaking').forEach(x=>x.classList.remove('speaking'));
+    const act=document.querySelector(`#actors [data-id="${l.who}"]`);
+    if(act){act.classList.add('speaking');const [ax,ay]=SLOT[act.dataset.slot];camTo(Math.max(curCam[0],1.3),ax*.6+240,ay-95);}else camTo(...curCam);
+    const full=fill(l.t);el.textContent='';$('#sub').textContent=l.en&&subsOn?fill(l.en):'';if(l.sfx)sfx(l.sfx);$('#more').hidden=true;
     if(!c.emblem)pt.classList.add('talk');
     let i=0;
     const done=()=>{clearInterval(typing);typing=null;el.textContent=full;pt.classList.remove('talk');$('#more').hidden=false;};
-    if(reduced())done();else typing=setInterval(()=>{i+=2;el.textContent=full.slice(0,i);if(i%8===0)blip();if(i>=full.length)done();},22);
+    if(reduced())done();else typing=setInterval(()=>{i+=2;el.textContent=full.slice(0,i);if(i%6===0&&!c.emblem)blip(VOICE[l.who]||200);if(i>=full.length)done();},22);
     adv=()=>{if(typing){done();return;}adv=null;res();};
   });
 }
-async function lines(arr){for(const x of (arr||[])){const l=Array.isArray(x)?{who:x[0],t:x[1],when:x[2]}:x;if(l.when&&!l.when(S))continue;await say(l);}}
-const CHIP={izzat:['Izzat','var(--izzat)'],khauf:['Khauf','var(--khauf)'],taluqat:["Ta'aluqat",'var(--taluq)'],jatt:['Jatts','var(--teal)'],arain:['Arains','var(--teal)']};
+async function lines(arr){for(const x of (arr||[])){const l=Array.isArray(x)?{who:x[0],t:x[1],en:x[2]}:x;if(l.when&&!l.when(S))continue;await say(l);}}
+const CHIP={izzat:['Izzat','var(--izzat)'],khauf:['Khauf','var(--khauf)'],taluqat:["Ta'aluqat",'var(--taluq)'],jatt:['Jatts','var(--teal)'],arain:['Arains','var(--teal)'],rajput:['Rajputs','var(--teal)'],joiya:['Joiyas','var(--teal)'],kamboh:['Kambohs','var(--teal)']};
 function chips(ch,ok){
   let h=ok?'':`<span class="chip lock">Needs ${ch.rt}</span>`;
   if(typeof ch.fx==='function')return h+`<span class="chip lock">Outcome depends on your record</span>`;
@@ -622,8 +779,8 @@ function gate(nx){
   return nx;
 }
 async function choose(ev,ch){
-  if(busy)return;busy=true;$('#choices').innerHTML='';chime();ndRaise();
-  applyFx(ch.fx);if(ch.flag)S.flags[ch.flag]=1;S.day+=ch.days||1+Math.floor(Math.random()*3);renderHUD();
+  if(busy)return;busy=true;$('#choices').innerHTML='';sfx('gavel');chime();ndRaise();
+  applyFx(ch.fx);if(ch.flag)[].concat(ch.flag).forEach(f=>S.flags[f]=1);S.day+=ch.days||1+Math.floor(Math.random()*3);renderHUD();
   await lines(ch.r);
   if(ch.cut)await cutscene(ch.cut);
   let nx=ch.next||ev.next;if(typeof nx==='function')nx=nx(S);
@@ -633,30 +790,128 @@ async function runEvent(id){
   const ev=EV[id];S.ev=id;
   if(ev.stage&&ev.stage!==S.stage){S.stage=ev.stage;renderHUD();save();await stageCard(ev.stage);}else save();
   $('#eyebrow').textContent=ev.title||'';
-  await setScene(ev);
+  await setScene(ev);music(S.stage);if(EVSFX[id])sfx(EVSFX[id]);
   if(ev.cut)await cutscene(ev.cut);
   await lines(ev.lines);
   if(ev.end)return ending(ev);
   showChoices(ev);
 }
 
-/* ---- sound ---- */
-function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}return AC;}
-function tone(f,t0,dur,type,vol,f2){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+dur+.05);}
-function blip(){if(!soundOn||!AC)return;tone(R(480,560),AC.currentTime,.035,'triangle',.025);}
-function chime(){if(!soundOn||!ac())return;const t=AC.currentTime;tone(880,t,.6,'sine',.1);tone(1320,t+.08,.7,'sine',.06);}
-function dhol(bars){if(!soundOn||!ac())return;const t=AC.currentTime+.05,pat=[2,0,1,1,0,1,2,1];for(let b=0;b<bars;b++)pat.forEach((h,i)=>{const tt=t+(b*8+i)*.17;if(h===2)tone(85,tt,.3,'sine',.55,45);else if(h===1)tone(150,tt,.16,'sine',.25,95);else tone(340,tt,.05,'triangle',.07,200);});}
-function fanfare(){if(!soundOn||!ac())return;const t=AC.currentTime+.05;[[392,0,.32],[523,.34,.32],[659,.68,.32],[784,1.02,1],[659,2.1,.28],[784,2.4,.28],[1047,2.7,1.8]].forEach(([f,d,l])=>{tone(f,t+d,l,'square',.035);tone(f/2,t+d,l,'triangle',.09);});[262,330,392,523].forEach(f=>tone(f,t+2.7,2.4,'triangle',.05));dhol(3);}
+/* ---- sound engine ---- */
+const AU={ctx:null,beds:[],key:'',mood:'',set:'',stage:0,next:0,bc:0,mel:4};
+const VOICE={nar:175,rafiq:265,rasool:150,asif:235,ditta:170,yaqoob:215,zainab:390,sho:195,sherm:128,afzal:160,begum:345,saima:410,general:140,envoy:245,bashiran:330,patwari:250,hamza:255,danish:225};
+function ac(){
+  if(AU.ctx)return AU.ctx;
+  try{
+    const c=new (window.AudioContext||window.webkitAudioContext)();AU.ctx=c;
+    AU.master=c.createGain();AU.master.gain.value=soundOn?.85:0;AU.master.connect(c.destination);
+    AU.fx=c.createGain();AU.fx.connect(AU.master);
+    AU.amb=c.createGain();AU.amb.gain.value=.55;AU.amb.connect(AU.master);
+    AU.mu=c.createGain();AU.mu.gain.value=.4;AU.mu.connect(AU.master);
+    AU.lp=c.createBiquadFilter();AU.lp.type='lowpass';AU.lp.frequency.value=1700;AU.lp.connect(AU.mu);
+    const n=c.sampleRate*2,b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;AU.nb=b;
+    setInterval(audioTick,200);
+  }catch(e){AU.ctx=null;}
+  return AU.ctx;
+}
+const now=()=>AU.ctx.currentTime;
+const live=()=>soundOn&&AU.ctx&&AU.ctx.state==='running';
+function tone(f,t0,dur,type,vol,f2,dest){const c=AU.ctx;if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+Math.min(.02,dur/3));g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(dest||AU.fx);o.start(t0);o.stop(t0+dur+.05);}
+function nz(t0,dur,vol,type,freq,q,f2,dest,att){const c=AU.ctx;if(!c)return;const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain(),a=Math.min(att||.01,dur*.8);s.buffer=AU.nb;s.loop=true;f.type=type||'lowpass';f.frequency.setValueAtTime(freq||1000,t0);if(f2)f.frequency.exponentialRampToValueAtTime(f2,t0+dur);f.Q.value=q||.7;g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+a);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);s.connect(f).connect(g).connect(dest||AU.fx);s.start(t0,Math.random());s.stop(t0+dur+.05);}
+function bed(type,freq,q,vol,lfo,depth){
+  const c=AU.ctx,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain(),t=now();
+  s.buffer=AU.nb;s.loop=true;f.type=type;f.frequency.value=freq;f.Q.value=q;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+2);
+  s.connect(f).connect(g).connect(AU.amb);s.start(t,Math.random());
+  let l=null;if(lfo){l=c.createOscillator();const lg=c.createGain();l.frequency.value=lfo;lg.gain.value=depth;l.connect(lg).connect(g.gain);l.start(t);}
+  return{stop(){const t2=now();g.gain.cancelScheduledValues(t2);g.gain.setValueAtTime(g.gain.value,t2);g.gain.linearRampToValueAtTime(0,t2+1.5);s.stop(t2+1.6);if(l)l.stop(t2+1.6);}};
+}
+function setAmbience(set,mood){
+  AU.set=set;AU.mood=mood;if(!AU.ctx)return;const k=set+'|'+mood;if(AU.key===k)return;AU.key=k;
+  AU.beds.forEach(b=>b.stop());AU.beds=[];const B=(...a)=>AU.beds.push(bed(...a));
+  B('lowpass',mood==='storm'?900:420,.5,.05,.13,.03);
+  if(mood==='storm'){B('lowpass',3800,.3,.3);B('highpass',5500,.4,.07);}
+  if(mood==='noon'&&set!=='isb')B('bandpass',5200,9,.03,37,.03);
+  if(set==='jalsa'){B('bandpass',650,.6,.16,.25,.06);B('bandpass',1500,.9,.05,.4,.03);}
+  if(set==='isb')B('lowpass',170,.7,.2,.07,.06);
+  if(set==='fields'&&mood!=='storm')B('bandpass',2400,1.5,.025,.3,.015);
+}
+function cheer(t,dur,vol){nz(t,dur,vol,'bandpass',1000,.6,1500,AU.amb,dur*.35);for(let i=0;i<7;i++)tone(R(300,600),t+R(0,dur*.5),R(.3,.7),'sawtooth',.006,R(500,950),AU.amb);}
+function thunder(t){nz(t,.18,.45,'highpass',2200,.7,null,AU.fx);nz(t+.05,3.4,.75,'lowpass',420,.7,55,AU.fx,.08);tone(48,t+.05,2.2,'sine',.35,30);}
+function heli(t,dur){const c=AU.ctx,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain(),m=c.createGain(),l=c.createOscillator(),lg=c.createGain();s.buffer=AU.nb;s.loop=true;f.type='lowpass';f.frequency.value=420;g.gain.value=0;l.frequency.value=11;lg.gain.value=.25;l.connect(lg).connect(g.gain);m.gain.setValueAtTime(.0001,t);m.gain.exponentialRampToValueAtTime(1,t+1.5);m.gain.setValueAtTime(1,t+dur-2);m.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(f).connect(g).connect(m).connect(AU.fx);s.start(t);l.start(t);s.stop(t+dur);l.stop(t+dur);}
+function audioTick(){
+  if(!live())return;const m=AU.mood,s=AU.set,r=Math.random,t=now()+.05,A=AU.amb;
+  if(['dawn','golden','noon'].includes(m)&&s!=='isb'&&r()<(m==='dawn'?.13:.06)){const f=R(2300,3600),n=2+Math.floor(r()*3);for(let i=0;i<n;i++)tone(f*R(.95,1.05),t+i*.11,.08,'sine',.035,f*R(1.15,1.4),A);}
+  if(m==='noon'&&s!=='isb'&&r()<.015)for(let i=0;i<2;i++){nz(t+i*.32,.22,.07,'bandpass',900,5,600,A);tone(540,t+i*.32,.2,'sawtooth',.012,430,A);}
+  if((m==='night'||m==='dusk'||(m==='isb'&&s!=='isb'))&&r()<.3){const f=R(4300,5000);for(let i=0;i<3;i++)tone(f,t+i*.045,.03,'sine',.018,null,A);}
+  if(s==='isb'&&r()<.025)nz(t,2.4,.1,'lowpass',260,1,1100,A,1.1);
+  if(s==='isb'&&r()<.006){tone(415,t,.3,'square',.03,null,A);tone(523,t,.3,'square',.025,null,A);}
+  if(s==='jalsa'&&r()<.02)cheer(t,2.6,.2);
+  if((s==='dera'||s==='fields')&&m!=='storm'&&m!=='night'&&r()<.005)tone(150,t,1.5,'sawtooth',.018,108,A);
+  if((s==='dera'||s==='fields')&&m==='night'&&r()<.006)for(let i=0;i<2;i++)nz(t+i*.26,.13,.14,'bandpass',750,3,420,A);
+  musicTick();
+}
+const KAFI=[0,2,3,5,7,9,10,12,14,15,17];
+function music(stage){AU.stage=stage;}
+function musicTick(){
+  if(!AU.stage)return;const t=now(),beat=.42;if(AU.next<t)AU.next=t+.05;
+  while(AU.next<t+.7){
+    const tt=AU.next,b=AU.bc++;
+    if(b%4===0){const f=[220,293.66,293.66,146.83][(b/4)%4];tone(f,tt,2.6,'sawtooth',.016,null,AU.lp);tone(f*2,tt,1.6,'sine',.006,null,AU.lp);}
+    if(AU.stage===2||AU.set==='jalsa'){const p=[2,0,1,1,0,1,2,1][b%8];if(p===2)tone(85,tt,.3,'sine',.22,45,AU.mu);else if(p===1)tone(150,tt,.15,'sine',.1,95,AU.mu);else tone(340,tt,.05,'triangle',.035,200,AU.mu);}
+    if(AU.stage!==2&&b%2===0&&Math.random()<.32){AU.mel=Math.max(0,Math.min(KAFI.length-1,AU.mel+Math.floor(R(-2,3))));const f=293.66*Math.pow(2,KAFI[AU.mel]/12),d=R(.4,1.1);tone(f,tt,d,'sine',.03,null,AU.lp);tone(f*2,tt,d*.7,'sine',.006,null,AU.lp);}
+    if(AU.stage===3&&b%16===0)[146.83,220,293.66].forEach(f=>tone(f,tt,6.5,'triangle',.012,null,AU.lp));
+    AU.next+=beat;
+  }
+}
+function duck(on){if(!AU.ctx)return;const t=now();AU.mu.gain.setTargetAtTime(on?.1:.4,t,.3);AU.amb.gain.setTargetAtTime(on?.15:.55,t,.3);}
+function sfx(n){
+  if(!live())return;const t=now()+.02;
+  const S={
+    click:()=>tone(1400,t,.03,'triangle',.05),
+    gavel:()=>{nz(t,.12,.35,'lowpass',500);tone(140,t,.25,'sine',.45,60);},
+    coin:()=>[1760,2350,2093].forEach((f,i)=>tone(f,t+i*.06,.18,'triangle',.06)),
+    cash:()=>{for(let i=0;i<5;i++)nz(t+i*.05,.04,.12,'highpass',3000);},
+    up:()=>[523,659,784].forEach((f,i)=>tone(f,t+i*.07,.25,'sine',.07)),
+    down:()=>[440,349,294].forEach((f,i)=>tone(f,t+i*.08,.3,'sine',.06)),
+    boom:()=>{tone(60,t,1.1,'sine',.5,32);nz(t,.9,.2,'lowpass',180);},
+    rooster:()=>[[520,880,.14],[880,700,.1],[700,1150,.22],[1150,560,.55]].reduce((tt,[a,b,d])=>{tone(a,tt,d,'sawtooth',.03,b);tone(a*2,tt,d,'sine',.015,b*2);return tt+d;},t),
+    siren:()=>{for(let i=0;i<3;i++){tone(700,t+i*.8,.4,'square',.025,1000);tone(1000,t+i*.8+.4,.4,'square',.025,700);}},
+    phone:()=>{for(let k=0;k<2;k++)for(let i=0;i<12;i++)tone(i%2?1100:880,t+k*1+i*.04,.04,'sine',.05);},
+    thunder:()=>thunder(t),
+    car:()=>{tone(45,t,2.4,'sawtooth',.05,70);nz(t,2.4,.1,'lowpass',250,1,600,null,.6);tone(415,t+1.8,.3,'square',.03);tone(523,t+1.8,.3,'square',.025);},
+    horn:()=>{tone(415,t,.45,'square',.05);tone(523,t,.45,'square',.04);},
+    engine:()=>{tone(38,t,4,'sawtooth',.06,44);nz(t,4,.08,'lowpass',200,1,null,null,.5);},
+    dhol:()=>dhol(2),
+    cheer:()=>cheer(t,3.5,.3),
+    whoosh:()=>nz(t,.7,.16,'bandpass',300,1.2,2400,null,.35),
+    shutter:()=>{nz(t,.03,.3,'highpass',2500);nz(t+.07,.04,.25,'highpass',2000);},
+    type:()=>{for(let i=0;i<14;i++)nz(t+i*R(.06,.1),.025,.12,'highpass',2500);},
+    ping:()=>{tone(1320,t,.25,'sine',.07);tone(1760,t+.1,.35,'sine',.06);},
+    plane:()=>nz(t,4.5,.25,'bandpass',250,.8,1400,null,2),
+    heli:()=>heli(t,10),
+    thump:()=>{for(let i=0;i<10;i++)nz(t+i*.13+R(0,.04),.08,.3,'lowpass',260);},
+    applause:()=>{for(let i=0;i<70;i++)nz(t+R(0,3),.03,R(.05,.14),'bandpass',R(1500,3500),1.5);},
+    rain:()=>nz(t,9,.25,'lowpass',3000,.4,null,null,1.2),
+    crowd:()=>nz(t,8,.16,'bandpass',700,.6,null,null,1.5),
+    steps:()=>{for(let i=0;i<6;i++)nz(t+i*.27,.06,.1,'lowpass',500);}
+  };
+  (S[n]||(()=>{}))();
+}
+function fxSound(fx){if(fx.paisa)sfx(fx.paisa>0?'coin':'cash');if(fx.izzat)setTimeout(()=>sfx(fx.izzat>0?'up':'down'),160);if(fx.khauf>=10)setTimeout(()=>sfx('boom'),320);}
+function blip(p){if(!live())return;const t=now();tone(p*R(.93,1.07),t,.05,'triangle',.03);tone(p*2.02,t,.035,'sine',.008);}
+function chime(){if(!live())return;const t=now();tone(880,t,.6,'sine',.08);tone(1320,t+.08,.7,'sine',.05);}
+function dhol(bars){if(!live())return;const t=now()+.05,pat=[2,0,1,1,0,1,2,1];for(let b=0;b<bars;b++)pat.forEach((h,i)=>{const tt=t+(b*8+i)*.17;if(h===2)tone(85,tt,.3,'sine',.5,45);else if(h===1)tone(150,tt,.16,'sine',.25,95);else tone(340,tt,.05,'triangle',.07,200);});}
+function fanfare(){if(!live())return;const t=now()+.05;[[392,0,.32],[523,.34,.32],[659,.68,.32],[784,1.02,1],[659,2.1,.28],[784,2.4,.28],[1047,2.7,1.8]].forEach(([f,d,l])=>{tone(f,t+d,l,'square',.03);tone(f/2,t+d,l,'triangle',.08);});[262,330,392,523].forEach(f=>tone(f,t+2.7,2.4,'triangle',.05));dhol(3);}
 
 /* ---- cutscenes ---- */
 function particles(kind){
   if(!kind||reduced())return()=>{};
   const cv=$('#cs-fx'),ctx=cv.getContext('2d'),dp=devicePixelRatio||1;let W=cv.width=innerWidth*dp,H=cv.height=innerHeight*dp;
   const conf=['#e9b44c','#d4506a','#2fa38f','#ffffff','#1d7a4c'],pet=['#d4325a','#e8506e','#b81f45','#f07a8e'],gold=['#ffd27a','#fff3c4'];
-  const mk=init=>{const k=kind==='mixed'?pick(['p','p','c']):kind==='confetti'?'c':kind==='gold'?'g':'p';return{x:Math.random()*W,y:init?Math.random()*H:-20,vx:R(-.4,.4)*dp,vy:R(.6,1.9)*dp*(k==='g'?.5:1),r:R(4,9)*dp,a:R(0,6.28),va:R(-.06,.06),k,c:pick(k==='c'?conf:k==='g'?gold:pet)};};
+  const mk=init=>{const k=kind==='snow'?'s':kind==='mixed'?pick(['p','p','c']):kind==='confetti'?'c':kind==='gold'?'g':'p';return{x:Math.random()*W,y:init?Math.random()*H:-20,vx:R(-.4,.4)*dp,vy:R(.6,1.9)*dp*(k==='g'||k==='s'?.45:1),r:R(4,9)*dp,a:R(0,6.28),va:R(-.06,.06),k,c:pick(k==='c'?conf:k==='g'?gold:pet)};};
   const P=Array.from({length:kind==='gold'?80:150},()=>mk(1));let on=true,t=0;
   (function loop(){if(!on)return;t++;ctx.clearRect(0,0,W,H);for(const p of P){p.x+=p.vx+Math.sin((t+p.r*10)/40)*.6;p.y+=p.vy;p.a+=p.va;if(p.y>H+20)Object.assign(p,mk(0));ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;
-    if(p.k==='p'){ctx.beginPath();ctx.ellipse(0,0,p.r,p.r*.55,0,0,6.28);ctx.fill();}else if(p.k==='c'){ctx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);}else{ctx.globalAlpha=.5+.5*Math.sin(t/10+p.r);ctx.beginPath();ctx.arc(0,0,p.r*.28,0,6.28);ctx.fill();}
+    if(p.k==='p'){ctx.beginPath();ctx.ellipse(0,0,p.r,p.r*.55,0,0,6.28);ctx.fill();}else if(p.k==='c'){ctx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);}else if(p.k==='s'){ctx.globalAlpha=.85;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,0,p.r*.32,0,6.28);ctx.fill();}else{ctx.globalAlpha=.5+.5*Math.sin(t/10+p.r);ctx.beginPath();ctx.arc(0,0,p.r*.28,0,6.28);ctx.fill();}
     ctx.restore();}requestAnimationFrame(loop);})();
   return()=>{on=false;ctx.clearRect(0,0,W,H);};
 }
@@ -666,9 +921,9 @@ function cutscene(kind){
     const ov=$('#cs'),cap=$('#cs-cap'),btn=$('#cs-btn'),timers=[];
     $('#cs-svg').innerHTML=d.svg;$('#cs-kicker').textContent=d.kicker||'';cap.classList.add('out');btn.textContent='Skip ▸';
     ov.hidden=false;ov.classList.remove('on');void ov.offsetWidth;ov.classList.add('on');
-    const stop=particles(d.fx);if(d.music)d.music();
+    let stop=()=>{};timers.push(setTimeout(()=>{stop=particles(d.fx);},d.fxDelay||0));sfx('whoosh');duck(1);if(d.music)d.music();(d.sfx||[]).forEach(([n,ms])=>timers.push(setTimeout(()=>sfx(n),ms)));
     d.caps.forEach((c,i)=>timers.push(setTimeout(()=>{cap.classList.add('out');timers.push(setTimeout(()=>{cap.querySelector('h2').textContent=fill(c[0]);cap.querySelector('p').textContent=fill(c[1]||'');cap.classList.remove('out');if(i===d.caps.length-1)btn.textContent='Continue ▸';},i?700:50));},c[2])));
-    const close=()=>{btn.onclick=null;timers.forEach(clearTimeout);stop();ov.classList.remove('on');setTimeout(()=>{ov.hidden=true;$('#cs-svg').innerHTML='';res();},450);};
+    const close=()=>{btn.onclick=null;timers.forEach(clearTimeout);stop();duck(0);ov.classList.remove('on');setTimeout(()=>{ov.hidden=true;$('#cs-svg').innerHTML='';res();},450);};
     btn.onclick=close;if(d.auto)timers.push(setTimeout(close,d.auto));
     btn.focus({preventScroll:true});
   });
@@ -684,14 +939,14 @@ function stageCard(n){
 function menu(html){$('#menu-card').innerHTML=html;$('#menu').hidden=false;}
 function titleScreen(){
   const sv=load(),canCont=sv&&sv.ev&&EV[sv.ev]&&!EV[sv.ev].end;
-  menu(`<div class="ur">نمبردار کا عروج</div><h2>Rise of the Numberdar</h2><p>From the Dera in Chak 47 Shumali to the President House in Islamabad. Hold faislas, keep the Biradaris loyal, outplay Malik Sher Afzal, and climb.</p>
+  menu(`<div class="ur">نمبردار کا عروج</div><h2>Rise of the Numberdar</h2><p>From the Dera in Chak 16 WB, Vehari to the President House in Islamabad. Hold faislas, win over five biradaris, ride in the neza bazi, survive the dushmani, outplay Malik Tori, and climb. Characters speak Punjabi with English subtitles.</p>
   <label for="nm">Your name, Numberdar Sahib</label><input id="nm" maxlength="40" autocomplete="off" value="${esc((sv&&sv.name)||'Chaudhry Jahangir Ahmed')}">
   <div class="row"><button class="big" id="go" type="button">Open the Dera gates</button>${canCont?`<button class="big ghost" id="cont" type="button">Continue · Day ${sv.day}</button>`:''}</div>
   <div class="howto"><div><b style="color:var(--izzat)">Izzat</b>Wins votes and loyalty. If it hits zero the Dera empties.</div><div><b style="color:var(--khauf)">Khauf</b>Silences rivals. Push it past 80 and the village rises.</div><div><b style="color:var(--paisa)">Paisa</b>Pays for tubewells, jalsas and tickets. Below zero, you are finished.</div><div><b style="color:var(--taluq)">Ta'aluqat</b>The SHO, the party, Islamabad. Unlocks bigger moves.</div></div>`);
   $('#go').onclick=()=>{S=DEF();S.name=$('#nm').value.trim()||'Chaudhry Jahangir Ahmed';beginGame();};
   if(canCont)$('#cont').onclick=()=>{S=Object.assign(DEF(),sv);beginGame();};
 }
-function beginGame(){$('#menu').hidden=true;busy=false;adv=null;lastWho=null;castKey='';$('#choices').innerHTML='';renderHUD();runEvent(S.ev);}
+function beginGame(){ac();if(AU.ctx&&AU.ctx.resume)AU.ctx.resume();$('#menu').hidden=true;busy=false;adv=null;lastWho=null;castKey='';$('#choices').innerHTML='';renderHUD();runEvent(S.ev);}
 function ending(ev){
   const e=ev.end;save();
   menu(`<div class="ur">${e.ur||''}</div><div class="eyebrow">Ending · Day ${S.day}</div><h2>${esc(fill(e.title))}</h2><p>${esc(fill(e.text))}</p>
@@ -704,10 +959,12 @@ function bind(){
   document.addEventListener('keydown',e=>{
     if(!$('#menu').hidden||!$('#cs').hidden||e.target.tagName==='INPUT')return;
     if((e.key===' '||e.key==='Enter')&&adv){e.preventDefault();adv();return;}
-    const i='123'.indexOf(e.key)>=0?'123'.indexOf(e.key):'abc'.indexOf(e.key.toLowerCase());
+    const i='1234'.indexOf(e.key)>=0?'1234'.indexOf(e.key):'abcd'.indexOf(e.key.toLowerCase());
     if(i>=0){const b=$('#choices').querySelectorAll('.choice')[i];if(b&&!b.disabled)b.click();}
   });
-  $('#b-sound').onclick=()=>{soundOn=!soundOn;const b=$('#b-sound');b.textContent=soundOn?'Sound on':'Sound off';b.setAttribute('aria-pressed',String(soundOn));if(soundOn){ac();AC&&AC.resume&&AC.resume();chime();}};
+  $('#b-sound').onclick=()=>{soundOn=!soundOn;const b=$('#b-sound');b.textContent=soundOn?'Sound on':'Sound off';b.setAttribute('aria-pressed',String(soundOn));ac();if(AU.ctx){AU.ctx.resume&&AU.ctx.resume();AU.master.gain.setTargetAtTime(soundOn?.85:0,AU.ctx.currentTime,.05);}if(soundOn)chime();};
+  $('#b-subs').onclick=()=>{subsOn=!subsOn;const b=$('#b-subs');b.textContent=subsOn?'English subs on':'English subs off';b.setAttribute('aria-pressed',String(subsOn));if(!subsOn)$('#sub').textContent='';};
+  document.addEventListener('pointerdown',()=>{ac();if(AU.ctx&&AU.ctx.state!=='running')AU.ctx.resume();},{passive:true});
   $('#b-restart').onclick=titleScreen;
 }
 
@@ -717,7 +974,7 @@ const CS={
   faisla:()=>{
     let sil='';for(let x=40;x<1180;x+=46){if(x>400&&x<800)continue;sil+=person({x:x+R(-8,8),y:R(575,590),s:R(1.3,1.6),skin:'#1c0e18',kam:'#24121e',head:pick(['turban','cap','hair','chador']),hc:'#2a1424',anim:'bob',delay:R(0,3)});}
     let cr='';for(let x=100;x<1100;x+=30)cr+=`<rect x="${x}" y="318" width="15" height="14" fill="#3a1a2a"/>`;
-    return{kicker:'Cutscene · The Perfect Faisla',fx:'petals',music:()=>dhol(4),
+    return{kicker:'Cutscene · The Perfect Faisla',fx:'petals',music:()=>{dhol(4);setTimeout(()=>sfx('cheer'),10200);},
       svg:`<defs><linearGradient id="cfs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1a3a"/><stop offset=".55" stop-color="#c4553a"/><stop offset="1" stop-color="#f6b54a"/></linearGradient><radialGradient id="cfg"><stop offset="0" stop-color="#fff1c0"/><stop offset=".3" stop-color="#ffc56a" stop-opacity=".8"/><stop offset="1" stop-color="#ff9a4a" stop-opacity="0"/></radialGradient></defs>
       <rect width="1200" height="600" fill="url(#cfs)"/><circle cx="600" cy="390" r="330" fill="url(#cfg)" class="pulse"/><circle cx="600" cy="390" r="92" fill="#ffd98a"/>
       ${cr}<path d="M100,330 H1100 V450 H100Z" fill="#3a1a2a"/><path d="M548,450 L548,372 Q600,322 652,372 L652,450Z" fill="#ffb86a" opacity=".55"/>
@@ -734,15 +991,15 @@ const CS={
     let houses='';for(let x=-100;x<1300;x+=64)for(const y of [180,236,364,420]){houses+=`<rect x="${x}" y="${y}" width="56" height="44" fill="${pick(['#d9cdb4','#cbbd9f','#e6dccb','#bfae8c'])}" stroke="#8a7a5a" stroke-width="2"/>`;for(let k=0;k<3;k++)houses+=`<circle class="cheer" style="animation-delay:${R(0,.9)}s" cx="${x+10+k*16}" cy="${y+22+R(-8,8)}" r="5" fill="${pick(['#1b1512','#2a1d14','#3a2a20'])}"/>`;if(Math.random()<.6)houses+=`<g class="flagw"><rect x="${x+40}" y="${y+4}" width="16" height="10" fill="${PARTY}"/><rect x="${x+40}" y="${y+4}" width="4" height="10" fill="#fff"/></g>`;}
     let crowd='';for(let x=-100;x<1300;x+=12)for(const y of [289,343])crowd+=`<circle class="cheer" style="animation-delay:${R(0,.9)}s" cx="${x+R(-3,3)}" cy="${y+R(-3,3)}" r="4" fill="${pick(['#e9e2d0','#b8476a','#d9822b','#1d7a4c','#f4f1e8'])}"/>`;
     let cars='';for(let i=0;i<10;i++){const x=-i*76,c=i===0?'#f2f2f2':(i%3===2?'#efefea':'#0d0d11');cars+=`<g transform="translate(${x} 316)"><rect x="-30" y="-13" width="60" height="26" rx="7" fill="${c}"/><rect x="2" y="-10" width="14" height="20" rx="3" fill="#20242c"/><rect x="-22" y="-10" width="10" height="20" rx="3" fill="#20242c"/>${i===0?'<rect x="-6" y="-12" width="6" height="5" fill="#e33" class="pulse"/><rect x="-6" y="7" width="6" height="5" fill="#36f" class="pulse"/>':''}${i===1?'<circle cx="-4" cy="0" r="7" fill="#f6f3ea"/><circle cx="-4" cy="0" r="4" fill="#120e0c"/>':''}</g>`;}
-    return{kicker:'Cutscene · Results Night',fx:'mixed',music:()=>dhol(8),
+    return{kicker:'Cutscene · Results Night',fx:'mixed',music:()=>{dhol(8);sfx('heli');sfx('cheer');},
       svg:`<g style="transform-origin:600px 300px;animation:heli 16s ease-in-out infinite alternate"><g transform="rotate(-9 600 300)">${f}<rect x="-300" y="282" width="1800" height="68" fill="#6a6258"/><path d="M-300,316 H1500" stroke="#e9e2c4" stroke-width="3" stroke-dasharray="22 18"/>${crowd}${houses}<g style="animation:drive 15s linear infinite">${cars}</g></g></g><rect width="1200" height="600" fill="#ffb060" opacity=".14"/>`,
-      caps:[['Chak 47 Shumali · Results night','From the helicopter the convoy is a black river of Land Cruisers, Prados and Vigos, flags snapping in the wind.',500],['Every rooftop is dancing.','Dhol on every street. Your face on every flag. Rose petals fall like rain on the Land Cruiser roof.',5400],['{N}, MNA','Elected to the National Assembly. The crowd lifts you onto their shoulders and will not put you down.',10600]]};
+      caps:[['Chak 16 WB, Vehari · Results night','From the helicopter the convoy is a black river of Land Cruisers, Prados and Vigos, flags snapping in the wind.',500],['Every rooftop is dancing.','Dhol on every street. Your face on every flag. Rose petals fall like rain on the Land Cruiser roof.',5400],['{N}, MNA','Elected to the National Assembly. The crowd lifts you onto their shoulders and will not put you down.',10600]]};
   },
   oath:()=>{
     let cols='';for(let i=0;i<5;i++){const w=34-i*5,h=420-i*48,xl=60+i*92,y=520-h-i*6;cols+=`<rect x="${xl}" y="${y}" width="${w}" height="${h}" fill="#e8dfcc"/><rect x="${1200-xl-w}" y="${y}" width="${w}" height="${h}" fill="#e8dfcc"/><rect x="${xl-4}" y="${y}" width="${w+8}" height="10" fill="#d9a93a"/><rect x="${1196-xl-w}" y="${y}" width="${w+8}" height="10" fill="#d9a93a"/>`;}
     let dig='',fl='';for(let r=0;r<4;r++)for(let j=0;j<4;j++){const s=.75+r*.28,y=392+r*56,o=30+r*70+j*58*s;for(const x of [480-o,720+o])dig+=person({x,y,s,skin:pick(SKIN),kam:pick(['#1d1d24','#2a2a33','#efe9da','#3a2a2a']),head:pick(['hair','jinnah','hair','chador']),hc:pick(['#120e0c','#4a4542','#6b2a2a']),must:Math.random()<.5?'#120e0c':null});}
     for(let i=0;i<22;i++)fl+=`<circle cx="${pick([R(60,420),R(780,1140)])}" cy="${R(330,560)}" r="${R(10,22)}" fill="#fff" style="opacity:0;animation:flash ${R(2,4)}s ${R(0,4)}s infinite"/>`;
-    return{kicker:'Cutscene · The Oath',fx:'gold',music:fanfare,
+    return{kicker:'Cutscene · The Oath',fx:'gold',music:()=>{fanfare();for(let i=0;i<9;i++)setTimeout(()=>sfx('shutter'),6600+i*R(250,700));},
       svg:`<defs><linearGradient id="hall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#140f1c"/><stop offset="1" stop-color="#3a2a22"/></linearGradient><linearGradient id="carp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a0f1c"/><stop offset="1" stop-color="#b0202f"/></linearGradient><radialGradient id="chand"><stop offset="0" stop-color="#fff6d8"/><stop offset=".4" stop-color="#ffd27a" stop-opacity=".6"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient></defs>
       <rect width="1200" height="600" fill="url(#hall)"/><path d="M470,330 V170 Q600,90 730,170 V330Z" fill="#2a2030" stroke="#d9a93a" stroke-width="3"/>${cols}
       ${[[380,70],[820,70],[600,40]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="80" fill="url(#chand)" style="animation:glow 3s ease-in-out infinite"/><path d="M${x-22},${y} L${x},${y+30} L${x+22},${y}Z" fill="#fff3c4" opacity=".8"/>`).join('')}
@@ -751,246 +1008,534 @@ const CS={
       <rect x="566" y="282" width="68" height="56" fill="#4a2a18" stroke="#d9a93a" stroke-width="2"/><circle cx="600" cy="308" r="13" fill="none" stroke="#d9a93a" stroke-width="3"/><rect x="580" y="274" width="40" height="9" rx="2" fill="#0b6b3a" stroke="#d9a93a"/>
       ${dig}${fl}
       <g style="animation:walkUp 8.5s cubic-bezier(.3,.1,.3,1) both">${person({x:0,y:0,s:1,skin:'#c08458',kam:'#121016',long:1,head:'jinnah',hc:'#5d5a57',back:1,shoe:'#0c0c0c'})}</g>`,
-      caps:[['Aiwan-e-Sadr, Islamabad','A triumphant, nationalistic score plays. In an immaculate black sherwani, the Numberdar walks slowly up the red carpet.',500],['“I, {N}, do solemnly swear…”','His hand rests on the holy book. A hundred camera shutters fire at once.',6600],['President of Pakistan','From a charpai under a banyan tree in Chak 47 to the highest office in the land.',11800]]};
+      caps:[['Aiwan-e-Sadr, Islamabad','A triumphant, nationalistic score plays. In an immaculate black sherwani, the Numberdar walks slowly up the red carpet.',500],['“I, {N}, do solemnly swear…”','His hand rests on the holy book. A hundred camera shutters fire at once.',6600],['President of Pakistan','From a charpai under a banyan tree in Chak 16 WB to the highest office in the land.',11800]]};
   }
 };
 
+/* ============ v2 CHARACTERS + CINEMATICS ============ */
+Object.assign(CH,{
+  bashiran:{name:'Bashiran Bibi',role:'Widow, owner of 12 acres at Murabba 14',skin:'#a8734a',kam:'#efe9da',head:'chador',hc:'#efe9da',bg:'#4a3a2a'},
+  patwari:{name:'Patwari Ghulam Nabi',role:'Keeper of the land register',skin:'#b98258',kam:'#cfc6ae',head:'cap',hc:'#3a3a3a',glasses:1,must:'#6c6a66',beard:'#6c6a66',bg:'#3a3a2a'},
+  hamza:{name:'Hamza',role:'Childhood friend, software engineer in Lahore',skin:'#c99068',kam:'#3a5f8a',head:'hair',hc:'#1b1512',beard:'#1b1512',bg:'#1f3a5a'},
+  danish:{name:'Danish',role:'Childhood friend, engineer in Frankfurt',skin:'#c48a60',kam:'#2b2f38',vest:'#1d2129',head:'hair',hc:'#2a1f18',beard:'#2a1f18',bg:'#2a2a3a'},
+  mureed:{name:'Sardar Mureed Joiya',role:'Elder of the Joiya Biradari, Malik Tori\'s ally',skin:'#a36a42',kam:'#2a2420',vest:'#5a4a3a',head:'turban',hc:'#3a3a3a',beard:'#e8e6e0',must:'#e8e6e0',stern:1,bg:'#3a1a1a'},
+  siraj:{name:'Haji Siraj Kamboh',role:'Elder of the Kamboh Biradari',skin:'#b07a4f',kam:'#e9e2d0',head:'cap',hc:'#f1ece0',beard:'#e8e6e0',bg:'#2f4a3a'},
+  rana:{name:'Rana Iftikhar',role:'Elder of the Rajput Biradari',skin:'#c68a5e',kam:'#f2efe6',head:'turban',hc:'#d4506a',must:'#1b1512',curl:1,bg:'#5a2a3a'},
+  player:{name:'You',role:'',skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c',curl:1,stern:1,bg:'#2a3a2a'}
+});
+Object.assign(VOICE,{mureed:135,siraj:180,rana:160});
+function pbox(id,x,y,w){return portrait(CH[id]).replace('<svg ',`<svg x="${x}" y="${y}" width="${w}" height="${w}" `).replace(/\bpg\b/g,'pg_'+id);}
+function gunshot(t){nz(t,.09,.55,'highpass',900);nz(t,.4,.45,'lowpass',700,.7,110);tone(110,t,.22,'sine',.3,50);if(Math.random()<.25)tone(2600,t+.05,.4,'sine',.025,700);}
+function gunfight(dur){if(!live())return;let t=now()+.3;const end=now()+dur;while(t<end){const n=1+Math.floor(R(0,4));for(let i=0;i<n;i++)gunshot(t+i*R(.08,.14));t+=R(.3,1);}}
+function gallopSound(dur){if(!live())return;const t0=now()+.1;for(let t=t0;t<t0+dur;t+=.48)[0,.09,.2].forEach(o=>nz(t+o,.06,.22,'lowpass',260));}
+function muz(x,y,dir,md,mt){return `<g transform="translate(${x} ${y}) scale(${dir} 1)"><line class="tracer" style="--md:${md}s;--mt:${mt}s" x1="0" y1="0" x2="640" y2="${R(-40,40)}" stroke="#ffd27a" stroke-width="1.6" opacity=".8"/><path class="muzzle" style="--md:${md}s;--mt:${mt}s" d="M0,0 L16,-6 L11,0 L18,5 L8,2 L4,9Z" fill="#fff2a0"/></g>`;}
+function skyG(id,a,b,c){return `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".6" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient>`;}
+function cotton(y0,n,w){let g='';for(let r=0;r<n;r++){const y=y0+r*24;g+=`<rect x="-60" y="${y}" width="${w||1320}" height="${12+r*2}" fill="${r%2?'#58772f':'#6a8a38'}"/>`;for(let x=0;x<(w||1200);x+=26+r*3)g+=`<circle cx="${x+R(-4,4)}" cy="${y+R(2,10+r)}" r="${1.5+r*.3}" fill="#f6f3ea"/>`;}return g;}
+function deraFar(x,y){let g=`<rect x="${x}" y="${y}" width="220" height="38" fill="#e6dccb"/>`;for(let i=0;i<220;i+=16)g+=`<rect x="${x+i}" y="${y-7}" width="8" height="8" fill="#e6dccb"/>`;return g+`<path d="M${x+100},${y+38} v-20 q10,-12 20,0 v20" fill="#2a2430"/><ellipse cx="${x-30}" cy="${y-6}" rx="60" ry="30" fill="#3f5e2c"/>`;}
+Object.assign(CS,{
+  intro:()=>({kicker:'Chak 16 WB · District Vehari',fx:'gold',sfx:[['rooster',600],['rooster',5600]],
+    svg:`<defs>${skyG('isk','#2c3a68','#e99a6a','#f8d9a0')}</defs><rect width="1200" height="600" fill="url(#isk)"/><circle cx="820" cy="300" r="56" fill="#ffe7a8" style="animation:sunUp 12s ease-out both"/>
+    <g style="--far:#4a5a3a;transform-origin:600px 300px;animation:pan 14s ease-in-out both">${trees()}${deraFar(500,296)}
+    <path d="M-60,340 L1260,334 L1260,352 L-60,358Z" fill="#6fa3bd"/><path d="M-60,349 L1260,343" stroke="#e6f4fa" stroke-width="2" class="flow"/>${cotton(360,10)}
+    <path d="M560,360 L640,360 L900,620 L380,620Z" fill="#b39468"/>
+    <rect x="70" y="330" width="80" height="44" fill="#b0603e"/><path d="M150,350 q16,2 20,22" stroke="#cfe8ff" stroke-width="7" fill="none" class="flow"/>
+    ${[0,1,2,3,4].map(i=>person({x:120+i*90,y:470+(i%2)*30,s:1,skin:pick(SKIN),head:'chador',hc:pick(DUP),arm:'sip',adelay:R(0,4),anim:'bob',delay:R(0,3)})).join('')}
+    <g class="cross" style="--t:20s;--d:-4s">${tractor(0,450,'#2f5fa8',0)}</g>
+    ${person({x:820,y:560,s:1.4,kam:'#cfc6ae',head:'turban',hc:'#efe8d5',beard:'#e8e6e0',anim:'bob'})}</g>`,
+    caps:[['Chak 16 WB, District Vehari','Cotton fields, a canal, a tubewell, and one Dera that everyone in the village knows.',500],['Every morning, the same question','Who will the Numberdar side with today?',5200],['Rise of the Numberdar','From this village to Islamabad. Your story starts at the Dera gate.',9800]]}),
+  land:()=>{
+    let furrows='';for(let y=390;y<600;y+=12)furrows+=`<path d="M420,${y} L1260,${y-14}" stroke="#6a4a2a" stroke-width="5"/>`;
+    let men='';for(let i=0;i<5;i++){men+=villager(120+i*42,470+(i%2)*14,1.15,{stick:1,anim:'bob'});men+=villager(1080-i*42,470+(i%2)*14,1.15,{stick:1,anim:'bob',flip:1,kam:pick(['#3a3a3a','#4a3a2a','#2a2a33']),head:'turban',hc:'#2a2a2a'});}
+    let dust='';for(let i=0;i<8;i++)dust+=`<ellipse cx="${200+i*70}" cy="${575+R(-8,8)}" rx="40" ry="16" fill="#c9a87a" style="opacity:0;animation:dustPuff 2.6s ease-out ${7+i*.15}s both"/>`;
+    return{kicker:'Cutscene · Qabza at Murabba 14',sfx:[['engine',4600],['horn',8200]],
+    svg:`<defs>${skyG('lsk','#5f86b0','#f0c08a','#f6dfb0')}</defs><rect width="1200" height="600" fill="url(#lsk)"/><g style="--far:#5a6a40">${trees()}</g><rect y="340" width="1200" height="260" fill="#7a6a3a"/>${cotton(372,9,600)}${furrows}
+    ${[0,1,2,3,4,5].map(i=>`<rect x="${560+i*2}" y="${380+i*36}" width="${8+i*2}" height="${22+i*5}" fill="#f2efe6"/><rect x="${560+i*2}" y="${380+i*36}" width="${8+i*2}" height="7" fill="#c0392b"/>`).join('')}
+    ${tractor(760,470,'#c0392b',1)}${tractor(980,450,'#c0392b',1)}${men}
+    <g style="animation:convoyIn 4s cubic-bezier(.2,.7,.3,1) 4.6s both">${car(390,590,{kind:'vigo',color:'#f1f1ee',flip:1,flag:PARTY})}${car(530,590,{kind:'lc',color:'#0c0c10',flip:1})}${car(670,590,{kind:'vigo',color:'#ecece8',flip:1,flag:PARTY})}</g>${dust}`,
+    caps:[['Murabba 14, at sunrise','Malik Tori\'s tractors ploughed across the boundary pillars overnight.',500],['Then the dust of your convoy','Three Vigos and a black Land Cruiser roll up the dirt track and stop between the two lines.',5200],['Nobody moves','Every lathi stays on the ground. Everyone waits to see what you will do.',10000]]};
+  },
+  flood:()=>{
+    let rain='';for(let i=0;i<170;i++){const x=R(-40,1260),y=R(-60,600);rain+=`<line x1="${x}" y1="${y}" x2="${x-5}" y2="${y+20}" stroke="#cfdcea" stroke-width="1.2" opacity=".55"/>`;}
+    let huts='';[90,260,430,640,820,1000].forEach((x,i)=>{const h=R(70,100);huts+=`<rect x="${x}" y="${470-h}" width="130" height="${h+60}" fill="${pick(['#8a6a4a','#7a5a3a','#9a7a52'])}"/><rect x="${x-6}" y="${462-h}" width="142" height="10" fill="#5a4030"/>`;for(let k=0;k<3;k++)huts+=person({x:x+25+k*40,y:462-h,s:.8,skin:pick(SKIN),kam:pick(CLOTH),head:k===1?'chador':'hair',hc:k===1?pick(DUP):'#1b1512',anim:'bob',delay:R(0,2)});});
+    return{kicker:'Cutscene · The Monsoon',sfx:[['rain',0],['thunder',1200],['thunder',6400],['rain',8800]],
+    svg:`<defs>${skyG('fsk','#232a34','#3e4652','#5a6068')}</defs><rect width="1200" height="600" fill="url(#fsk)"/><rect class="lflash" width="1200" height="600" fill="#dfe8ff"/>${huts}
+    <g class="rise-water"><rect y="420" width="1200" height="220" fill="#6b6a55" opacity=".93"/><path d="M0,440 H1200 M0,470 H1200 M0,505 H1200" stroke="#a8a890" stroke-width="2" class="flow" opacity=".6"/><g class="cross" style="--t:40s"><rect x="0" y="446" width="70" height="10" fill="#8a6a3a"/></g></g><g class="rainfall">${rain}</g>`,
+    caps:[['Third day of rain','The distributary breaks at 4 AM. Water moves through the low basti faster than people can run.',500],['The basti goes under','Families climb onto roofs with whatever they can carry. A goat. A tin trunk. A school bag.',5200],['Every eye turns to the Dera','Whatever the Numberdar decides tonight, the village will remember it.',10200]]};
+  },
+  it:()=>{
+    let code='';for(let i=0;i<9;i++)code+=`<rect class="typing-line" style="animation-delay:${i*.18}s" x="${215+R(0,30)}" y="${236+i*14}" width="${R(60,170)}" height="6" rx="3" fill="${pick(['#5db3e2','#8ccf73','#e9b44c','#d4506a','#c7c7d4'])}"/>`;
+    let city='';for(let i=0;i<18;i++){const x=60+i*60,h=R(80,240);city+=`<rect x="${x}" y="${360-h}" width="52" height="${h}" fill="#1c2a48"/>`;for(let k=0;k<6;k++)city+=`<rect x="${x+8+(k%3)*14}" y="${370-h+Math.floor(k/3)*26+10}" width="8" height="10" fill="#ffd27a" opacity="${R(.2,.8)}"/>`;}
+    let phones='';for(let i=0;i<80;i++)phones+=`<rect class="blinkdot" style="animation-delay:${R(0,1.4)}s" x="${R(20,1180)}" y="${R(400,590)}" width="5" height="8" rx="1" fill="#9fe0ff"/>`;
+    const card=(y,t,st,c)=>`<rect x="488" y="${y}" width="224" height="40" rx="6" fill="#ffffff"/><text x="500" y="${y+17}" font-family="Hind,sans-serif" font-size="12" font-weight="600" fill="#222">${t}</text><rect x="500" y="${y+23}" width="${st.length*6.4+14}" height="13" rx="6" fill="${c}"/><text x="507" y="${y+33}" font-family="Hind,sans-serif" font-size="9.5" fill="#fff">${st}</text>`;
+    return{kicker:'Cutscene · The Dera Helpline',sfx:[['type',300],['type',1700],['type',3100],['ping',5600],['ping',6000],['ping',6500],['cheer',10200]],
+    svg:`<rect width="1200" height="600" fill="#0d1220"/><g class="sceneA"><rect x="40" y="40" width="1120" height="330" fill="#121b30"/>${city}<rect x="100" y="420" width="1000" height="26" fill="#3a2a20"/>
+      ${[200,470,740].map((x,i)=>`<rect x="${x}" y="220" width="260" height="170" rx="6" fill="#111" stroke="#333" stroke-width="3"/><rect x="${x+8}" y="228" width="244" height="154" fill="#0b1a2a"/><rect x="${x+122}" y="390" width="16" height="30" fill="#222"/>`).join('')}${code}
+      <rect x="478" y="228" width="244" height="22" fill="${PARTY}"/><text x="490" y="244" font-family="Hind,sans-serif" font-weight="600" font-size="12" fill="#fff" letter-spacing="2">DERA HELPLINE</text>${[262,296,330].map((y,i)=>`<rect x="486" y="${y}" width="228" height="26" rx="4" fill="#16263a"/><rect x="640" y="${y+7}" width="64" height="12" rx="6" fill="${['#2fa38f','#e9b44c','#2fa38f'][i]}"/>`).join('')}
+      ${Array.from({length:22},()=>`<circle class="blinkdot" style="animation-delay:${R(0,1.2)}s" cx="${R(760,990)}" cy="${R(240,370)}" r="3" fill="#8ccf73"/>`).join('')}
+      <path d="M990,420 h26 l-4,-22 h-18z" fill="#c9b8a0"/><g class="smoke">${[0,1,2].map(i=>`<circle cx="1003" cy="392" r="5" fill="#ddd" style="animation-delay:${i*1.3}s"/>`).join('')}</g>
+      ${bodyOf('hamza',{x:600,y:640,s:2.6,back:1})}</g>
+    <g class="sceneB"><rect width="1200" height="600" fill="#0e1430"/>${deraFar(80,372)}${Array.from({length:14},(_,i)=>`<rect x="${300+i*64}" y="${R(340,380)}" width="54" height="80" fill="#1a1a2c"/>`).join('')}<rect y="410" width="1200" height="190" fill="#14121c"/>${phones}
+      <rect x="470" y="70" width="260" height="470" rx="30" fill="#111" stroke="#555" stroke-width="3"/><rect x="482" y="100" width="236" height="410" rx="8" fill="#f2f2f0"/><rect x="482" y="100" width="236" height="40" fill="${PARTY}"/><text x="600" y="126" text-anchor="middle" font-family="Hind,sans-serif" font-weight="600" font-size="14" fill="#fff" letter-spacing="2">DERA HELPLINE</text>
+      ${card(156,'#0001 · Canal turn, Mogha 7','RESOLVED','#2fa38f')}${card(204,'#0002 · Land record, Murabba 14','IN REVIEW','#e0a030')}${card(252,'#0003 · Electricity bill error','RESOLVED','#2fa38f')}${card(300,'#0004 · School roof repair','ASSIGNED','#5db3e2')}</g>`,
+    caps:[['Lahore, 2:14 AM','Hamza has not slept. Three monitors, one app: the Dera Helpline.',500],['Launch day in Chak 16 WB','Four hundred phones light up at once. The first complaint is about the canal.',5200],['Every faisla, on record','Canal turns, land records, police complaints. Every case gets a number, and nobody can lose the file again.',10000]]};
+  },
+  germany:()=>{
+    let towers='';[[620,150],[700,210],[770,120],[850,180],[930,240]].forEach(([x,h])=>{towers+=`<rect x="${x}" y="${420-h-60}" width="60" height="${h+60}" fill="#1c2a44"/>`;for(let k=0;k<h/20;k++)towers+=`<rect x="${x+6}" y="${370-h+k*20}" width="48" height="3" fill="#7fb0e0" opacity=".45"/>`;});
+    let houses='';for(let i=0;i<6;i++){const x=40+i*95;houses+=`<rect x="${x}" y="350" width="80" height="80" fill="${pick(['#c9a27c','#d8c0a0','#b88a6a','#e2d2b4'])}"/><path d="M${x-6},352 L${x+40},300 L${x+86},352Z" fill="#6a3a2a"/><path d="M${x+8},336 L${x+40},306 L${x+72},336" stroke="#fff" stroke-width="5" fill="none" opacity=".9"/>`;for(let k=0;k<4;k++)houses+=`<rect x="${x+10+(k%2)*36}" y="${364+Math.floor(k/2)*30}" width="14" height="16" fill="#ffd27a" opacity=".8"/>`;}
+    const flagPK=(x,y)=>`<rect x="${x}" y="${y}" width="36" height="24" fill="#0b6b3a"/><rect x="${x}" y="${y}" width="9" height="24" fill="#fff"/><circle cx="${x+24}" cy="${y+12}" r="6" fill="#fff"/><circle cx="${x+26}" cy="${y+11}" r="5.4" fill="#0b6b3a"/>`;
+    const flagDE=(x,y)=>`<rect x="${x}" y="${y}" width="36" height="8" fill="#111"/><rect x="${x}" y="${y+8}" width="36" height="8" fill="#d00"/><rect x="${x}" y="${y+16}" width="36" height="8" fill="#ffce00"/>`;
+    return{kicker:'Cutscene · The Friend in Germany',fx:'snow',fxDelay:4600,sfx:[['plane',700],['ping',6000],['cheer',10400]],
+    svg:`<defs>${skyG('gsk','#3a2a5a','#e0806a','#f6c08a')}</defs><g class="sceneA"><rect width="1200" height="600" fill="url(#gsk)"/><rect y="380" width="1200" height="100" fill="#2a2430"/>${Array.from({length:20},(_,i)=>`<rect x="${30+i*58}" y="400" width="40" height="22" fill="#ffd27a" opacity=".55"/>`).join('')}<text x="80" y="450" font-family="Hind,sans-serif" font-weight="600" font-size="20" fill="#e9b44c" letter-spacing="6">ALLAMA IQBAL INTERNATIONAL AIRPORT · LAHORE</text>
+      <rect y="480" width="1200" height="120" fill="#4a4652"/><path d="M0,540 H1200" stroke="#fff" stroke-width="4" stroke-dasharray="40 30"/>
+      <g class="fly"><g transform="translate(300 520)"><path d="M-120,0 Q-130,-14 -100,-16 L110,-16 Q140,-14 150,0 Q140,10 110,10 L-100,10 Q-126,10 -120,0Z" fill="#f2f2f2"/><path d="M-10,-4 L-60,40 L-30,40 L40,-4Z" fill="#d8d8d8"/><path d="M-100,-14 L-128,-56 L-108,-56 L-70,-14Z" fill="#0b6b3a"/>${Array.from({length:12},(_,i)=>`<circle cx="${-80+i*16}" cy="-6" r="3" fill="#2a3a5a"/>`).join('')}</g></g>
+      ${bodyOf('danish',{x:150,y:610,s:2.2,arm:'wave'})}<rect x="200" y="540" width="44" height="60" rx="5" fill="#7a1f2b"/></g>
+    <g class="sceneB"><rect width="1200" height="600" fill="#0f1730"/>${towers}${houses}<rect y="430" width="1200" height="170" fill="#dfe6ef"/><path d="M0,500 H1200 M0,512 H1200" stroke="#888" stroke-width="3"/>
+      <g class="cross" style="--t:16s"><rect x="0" y="440" width="220" height="64" rx="10" fill="#e8c020"/>${Array.from({length:6},(_,i)=>`<rect x="${12+i*34}" y="452" width="26" height="22" fill="#2a3a5a"/>`).join('')}</g>
+      <rect x="500" y="300" width="470" height="54" fill="#fff" stroke="#0b6b3a" stroke-width="3"/><text x="735" y="334" text-anchor="middle" font-family="Hind,sans-serif" font-weight="600" font-size="17" fill="#0b6b3a" letter-spacing="1">OVERSEAS PAKISTANIS FOR THE NUMBERDAR</text>${flagPK(458,315)}${flagDE(974,315)}
+      ${Array.from({length:6},(_,i)=>person({x:540+i*78,y:590,s:1.3,skin:pick(SKIN),kam:pick(['#2b2f38','#3a2a2a','#2a3a4a','#4a4a52']),head:'hair',hc:'#1b1512',anim:'cheer',delay:R(0,.8)})).join('')}
+      ${bodyOf('danish',{x:330,y:600,s:2.3,mic:1,anim:'bob'})}</g>`,
+    caps:[['Allama Iqbal Airport, Lahore','Five years ago, Danish left with two suitcases and a German grammar book.',500],['Frankfurt, December','Snow on the tram lines. Night shifts, language classes, and every Sunday a video call home.',5000],['"Ich bin dabei."','"I am in." Three hundred Pakistanis across Germany are ready to stand behind the Numberdar.',10000]]};
+  },
+  faceoff:()=>({kicker:'Cutscene · The Canal Bridge',sfx:[['engine',300],['horn',2600],['horn',3300],['boom',9800]],
+    svg:`<rect width="1200" height="600" fill="#0a0c1c"/>${Array.from({length:60},()=>`<circle class="twinkle" style="animation-delay:${R(0,3)}s" cx="${R(0,1200)}" cy="${R(0,250)}" r="${R(.6,1.6)}" fill="#fff"/>`).join('')}
+    <g class="sceneA"><rect y="330" width="1200" height="270" fill="#14121c"/><rect y="440" width="1200" height="60" fill="#1e3a4a"/><path d="M0,460 H1200 M0,478 H1200" stroke="#5a8aa0" stroke-width="1.5" class="flow" opacity=".5"/><rect x="440" y="420" width="320" height="40" fill="#5a5048"/>${Array.from({length:12},(_,i)=>`<rect x="${444+i*27}" y="400" width="5" height="20" fill="#7a6a5a"/>`).join('')}<rect x="440" y="398" width="320" height="4" fill="#7a6a5a"/>
+      <path d="M420,410 L600,380 L600,440Z" fill="#fff3c4" opacity=".28" class="pulse"/><path d="M780,410 L600,380 L600,440Z" fill="#ffe0c4" opacity=".28" class="pulse"/>
+      ${car(170,440,{kind:'lc',color:'#0c0c10',flip:1})}${car(300,440,{kind:'lc',color:'#0c0c10',flip:1,gd:1})}${car(430,440,{kind:'vigo',color:'#f1f1ee',flip:1,flag:PARTY})}
+      ${car(770,440,{kind:'vigo',color:'#6a1a1a'})}${car(900,440,{kind:'vigo',color:'#5a1616',gd:2})}${car(1030,440,{kind:'prado',color:'#1a1a1a'})}</g>
+    <g class="sceneB"><rect width="600" height="600" fill="#1a1216"/><rect x="600" width="600" height="600" fill="#120d16"/><g class="zoomP" style="animation-delay:4.6s">${pbox('player',236,110,350)}</g><g class="zoomP" style="animation-delay:4.6s">${pbox('afzal',614,110,350)}</g><path d="M600,0 V600" stroke="#e9b44c" stroke-width="3"/>
+      <text x="420" y="500" text-anchor="middle" font-family="Rozha One,Georgia,serif" font-size="24" fill="#e9b44c">${esc(S.name)}</text><text x="780" y="500" text-anchor="middle" font-family="Rozha One,Georgia,serif" font-size="24" fill="#e0607a">Malik Tori</text></g>`,
+    caps:[['The canal bridge, midnight','Malik Tori\'s convoy blocks one end of the bridge. Yours blocks the other.',500],['Headlights to headlights','Neither driver dims his lights. Neither convoy reverses.',5000],['The stare','Malik Tori steps out of his vehicle. So do you.',9800]]})
+});
+Object.assign(CS,{
+  election:()=>{
+    let q='';for(let i=0;i<10;i++){q+=person({x:120+i*34,y:520+(i%2)*6,s:1.05,skin:pick(SKIN),kam:pick(CLOTH),head:pick(['turban','cap','hair']),hc:pick(['#f4f1e8','#1b1512','#efe8d5']),beard:Math.random()<.5?pick(['#e8e6e0','#1b1512']):null,anim:'bob',delay:R(0,2)});q+=person({x:1080-i*34,y:520+(i%2)*6,s:1,skin:pick(SKIN),head:'chador',hc:pick(DUP),anim:'bob',delay:R(0,2)});}
+    let slips='';for(let i=0;i<4;i++)slips+=`<rect x="${592+i*5}" y="390" width="12" height="7" fill="#fff" style="animation:drop 2.4s ease-in ${i*.6}s infinite"/>`;
+    return{kicker:'Cutscene · Polling Day',sfx:[['crowd',0],['crowd',7000]],
+    svg:`<style>@keyframes drop{0%{transform:translateY(0);opacity:1}80%{transform:translateY(46px);opacity:1}100%{transform:translateY(46px);opacity:0}}</style><defs>${skyG('esk','#5f9fd0','#a9d1ea','#eadfc4')}</defs><rect width="1200" height="600" fill="url(#esk)"/>
+    <rect x="300" y="170" width="600" height="230" fill="#e9dcc0"/><rect x="290" y="160" width="620" height="16" fill="#b0603e"/>${Array.from({length:6},(_,i)=>`<rect x="${330+i*95}" y="220" width="50" height="70" fill="#3a5a6a"/>`).join('')}<rect x="440" y="120" width="320" height="34" fill="#0b6b3a"/><text x="600" y="143" text-anchor="middle" font-family="Hind,sans-serif" font-weight="600" font-size="14" fill="#fff" letter-spacing="1">GOVT. BOYS PRIMARY SCHOOL · CHAK 16 WB</text>
+    <rect y="400" width="1200" height="200" fill="#c9ad7c"/><rect x="520" y="420" width="160" height="12" fill="#6b3a24"/><rect x="530" y="432" width="8" height="50" fill="#6b3a24"/><rect x="662" y="432" width="8" height="50" fill="#6b3a24"/><rect x="570" y="380" width="60" height="42" fill="#dff0ff" opacity=".7" stroke="#8aa" stroke-width="2"/>${slips}
+    ${person({x:500,y:500,s:1.2,kam:'#5a6a3a',head:'beret',hc:'#2a3a2a',must:'#111',rifle:1,uniform:1})}${person({x:720,y:500,s:1.2,kam:'#5a6a3a',head:'beret',hc:'#2a3a2a',must:'#111',rifle:1,uniform:1})}${q}`,
+    caps:[['Polling day','Government Boys Primary School, Chak 16 WB. The queues started before sunrise.',500],['One thumb, one stamp','Old men who have not left the village in years. Daughters voting for the first time.',5200],['The boxes are sealed at 5 PM','Now the count begins.',10000]]};
+  },
+  assembly:()=>{
+    let rows='';for(let r=0;r<5;r++){const rad=180+r*70;rows+=`<path d="M${600-rad},${560-r*8} A${rad},${rad*.45} 0 0 1 ${600+rad},${560-r*8}" stroke="#2f6b4f" stroke-width="26" fill="none"/>`;for(let a=0;a<=1;a+=.06){const ang=Math.PI*(1-a),x=600+Math.cos(ang)*rad,y=560-r*8-Math.sin(ang)*rad*.45-16;rows+=`<g class="cheer" style="animation-delay:${R(0,.9)}s"><circle cx="${x}" cy="${y}" r="7" fill="${pick(SKIN)}"/><path d="M${x-9},${y+14} q9,-12 18,0z" fill="${pick(['#f4f1e8','#1d1d24','#2a2a33','#efe9da'])}"/></g>`;}}
+    return{kicker:'Cutscene · The National Assembly',sfx:[['thump',800],['thump',2200],['applause',5600],['thump',9000]],
+    svg:`<rect width="1200" height="600" fill="#2a2018"/><rect x="0" y="0" width="1200" height="140" fill="#1a1410"/>${Array.from({length:10},(_,i)=>`<circle cx="${60+i*120}" cy="40" r="30" fill="url(#chand2)"/>`).join('')}<defs><radialGradient id="chand2"><stop offset="0" stop-color="#ffe7a8" stop-opacity=".9"/><stop offset="1" stop-color="#ffb04a" stop-opacity="0"/></radialGradient></defs>
+    <rect x="520" y="60" width="160" height="160" fill="#0b6b3a" stroke="#d9a93a" stroke-width="4"/><circle cx="600" cy="120" r="30" fill="none" stroke="#d9a93a" stroke-width="4"/><rect x="540" y="210" width="120" height="60" fill="#4a2a18"/>${rows}
+    ${person({x:600,y:640,s:2.6,skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c',arm:'orate'})}`,
+    caps:[['National Assembly of Pakistan','Islamabad. The member from Vehari is called to take his oath.',500],['Desks thump','Members from both sides bang their desks. In the gallery, Master Rafiq is crying into his ledger.',5200],['{N}, MNA','The boy from Chak 16 WB is now a Member of the National Assembly.',10000]]};
+  },
+  rally:()=>{
+    let crowd='';for(let r=0;r<6;r++)for(let x=-20;x<1240;x+=26){const y=420+r*32;crowd+=`<g class="cheer" style="animation-delay:${R(0,.9)}s"><circle cx="${x+R(-5,5)}" cy="${y}" r="${9+r}" fill="#120c14"/><path d="M${x-14-r},${y+30} q${14+r},-26 ${28+2*r},0z" fill="#120c14"/>${Math.random()<.25?`<rect x="${x+8}" y="${y-30}" width="4" height="7" fill="#cfefff"/>`:''}${Math.random()<.15?`<g class="flagw"><path d="M${x},${y-10} v-34 h18 v12 h-18" fill="${PARTY}" stroke="#ddd"/></g>`:''}</g>`;}
+    return{kicker:'Cutscene · The Water Speech',fx:'mixed',sfx:[['cheer',300],['dhol',700],['cheer',5000],['cheer',9500]],
+    svg:`<rect width="1200" height="600" fill="#0b0912"/>${[300,600,900].map((x,i)=>`<path class="sweep" style="animation-delay:${-i*1.6}s" d="M${x-10},0 L${x-140},600 L${x+140},600 L${x+10},0Z" fill="#fff3c4" opacity=".09"/>`).join('')}
+    <rect x="360" y="220" width="480" height="150" fill="${PARTY}" stroke="#e9b44c" stroke-width="5"/><text x="600" y="300" text-anchor="middle" font-family="Noto Nastaliq Urdu,serif" font-size="40" fill="#fff">پانی پانی</text><rect x="300" y="370" width="600" height="60" fill="#2a1d14"/>
+    ${person({x:600,y:372,s:1.9,skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c',arm:'orate',mic:1})}${crowd}`,
+    caps:[['"Pani! Pani!"','Twenty thousand people chant one word: water.',500],['The clip goes viral','Phones go up across the ground. By midnight, all of Vehari has seen it.',5200],['The water speech','For the first time, Malik Tori\'s people look worried.',10000]]};
+  },
+  neza:()=>{
+    let stands='';for(let r=0;r<4;r++)for(let x=0;x<1200;x+=18)stands+=`<circle class="cheer" style="animation-delay:${R(0,.9)}s" cx="${x+R(-3,3)}" cy="${250+r*22}" r="7" fill="${pick(['#f4f1e8','#d4506a','#e9b44c','#2fa38f','#1b1512','#b8476a','#4f7f9e'])}"/>`;
+    let bunt='';for(let i=0;i<=40;i++){const x=i*30;bunt+=`<path d="M${x-8},${60+Math.sin(i/3)*6} L${x+8},${60+Math.sin(i/3)*6} L${x},${76+Math.sin(i/3)*6}Z" fill="${['#d4506a','#e9b44c','#2fa38f','#fff'][i%4]}"/>`;}
+    return{kicker:'Cutscene · Neza Bazi at the Mela',fx:'confetti',fxDelay:5000,music:()=>{gallopSound(7);setTimeout(()=>{sfx('cheer');dhol(3);},5000);},
+    svg:`<style>@keyframes pegFly{to{transform:translate(150px,-160px) rotate(-220deg);opacity:0}}</style><defs>${skyG('nsk','#6a8ac0','#f0c08a','#ffe0a8')}</defs><rect width="1200" height="600" fill="url(#nsk)"/><path d="M0,60 Q600,90 1200,60" stroke="#ddd" fill="none"/>${bunt}
+    <rect y="230" width="1200" height="110" fill="#6a4a2a"/>${stands}<rect y="340" width="1200" height="260" fill="#d8b47a"/><path d="M0,520 H1200" stroke="#c49a5a" stroke-width="3" stroke-dasharray="20 14"/>
+    ${person({x:90,y:440,s:1.3,kam:'#e9b44c',head:'turban',hc:'#d4506a',must:'#111',arm:'scrub'})}<ellipse cx="112" cy="408" rx="14" ry="10" fill="#8a3a2a" stroke="#e9b44c" stroke-width="2"/>${person({x:150,y:446,s:1.3,kam:'#2fa38f',head:'turban',hc:'#e9b44c',arm:'scrub',adelay:.2})}<ellipse cx="172" cy="414" rx="14" ry="10" fill="#8a3a2a" stroke="#e9b44c" stroke-width="2"/>
+    <g style="animation:pegFly 1.4s ease-out 5s both"><rect x="790" y="438" width="8" height="26" fill="#8a5a30"/></g>
+    <g style="animation:rideIn 7.5s linear .3s both">${horse({x:0,y:500,s:1.25,gait:'gallop',color:'#4a2a18',decor:1,saddle:'#7a1f2b',lance:1,rider:{skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'turban',hc:'#d4506a',must:'#120e0c'}})}</g>`,
+    caps:[['The Mela at Chak 16 WB','Every spring the Rajputs hold the neza bazi. Fifty horsemen, one wooden peg, and the whole district watching.',500],['Sultan at full gallop','You lower the lance. The crowd goes silent.',4300],['The peg is on your lance!','The dhol erupts. Rajput elders throw their turbans in the air.',8200]]};
+  },
+  ambush:()=>{
+    let cane='';for(let x=640;x<1220;x+=7)cane+=`<path d="M${x},560 q${R(-6,6)},-${R(120,200)} ${R(-14,14)},-${R(200,260)}" stroke="${pick(['#1f3a1a','#24441e','#2a4a22'])}" stroke-width="3" fill="none"/>`;
+    let enemy='';[[720,430],[820,410],[930,440],[1040,420],[1130,450]].forEach(([x,y],i)=>{enemy+=person({x,y,s:1.1,flip:1,kam:'#141414',head:'turban',hc:'#141414',gun:1});enemy+=muz(x-44,y-33,-1,R(0,1.4),R(.7,1.3));});
+    let ours='';[[230,470],[360,480],[480,470]].forEach(([x,y],i)=>{ours+=person({x,y,s:1.15,kam:'#b9a27c',head:'cap',hc:'#4a3a22',must:'#151010',gun:1});ours+=muz(x+46,y-35,1,R(0,1.4),R(.7,1.2));});
+    let sparks='';for(let i=0;i<14;i++)sparks+=`<circle class="spark" style="--md:${R(0,2)}s;--mt:${R(.8,1.6)}s" cx="${R(100,620)}" cy="${R(470,540)}" r="2.5" fill="#ffd27a"/>`;
+    return{kicker:'Cutscene · Ambush on the Canal Road',music:()=>gunfight(8.5),sfx:[['engine',0]],
+    svg:`<rect width="1200" height="600" fill="#080a16"/>${Array.from({length:50},()=>`<circle cx="${R(0,1200)}" cy="${R(0,230)}" r="${R(.6,1.4)}" fill="#fff" opacity=".6"/>`).join('')}<circle cx="980" cy="90" r="26" fill="#e8ecff" opacity=".8"/>
+    <g style="animation:shake .18s steps(2) 16"><rect y="380" width="1200" height="220" fill="#1a1712"/><rect y="440" width="640" height="70" fill="#2a2620"/>${cane}
+    ${car(170,520,{kind:'lc',color:'#0c0c10',flip:1})}<path d="M110,470 l14,12 m-6,-14 l-4,18" stroke="#cfe8ff" stroke-width="1.4"/>${car(330,520,{kind:'vigo',color:'#d8d8d4',flip:1})}${car(520,520,{kind:'vigo',color:'#d8d8d4',flip:1})}
+    <path d="M520,486 L720,460 L720,540Z" fill="#fff3c4" opacity=".18"/>${ours}${enemy}${sparks}<g class="smoke">${[0,1,2,3].map(i=>`<circle cx="${640+i*90}" cy="380" r="14" fill="#555" style="animation-delay:${i*.9}s"/>`).join('')}</g></g>`,
+    caps:[['Canal road, 11:40 PM','A tractor-trolley blocks the road. Then the first shots come out of the sugarcane.',500],['Sher Muhammad returns fire','Your guards drop behind the Vigos. Muzzle flashes light up the cane field like lightning.',5000],['Then silence','The attackers vanish toward the Joiya settlement. One guard is wounded. Everyone else is alive.',10200]]};
+  },
+  chase:()=>{
+    let grass='';for(let x=-20;x<1240;x+=9)grass+=`<path d="M${x},600 q${R(-8,8)},-${R(60,110)} ${R(-20,20)},-${R(110,150)}" stroke="${pick(['#b8a060','#a89050','#c8b070'])}" stroke-width="2.4" fill="none"/>`;
+    const dac={skin:'#8c5a3a',kam:'#1a1a1a',head:'turban',hc:'#111',must:'#111'};
+    return{kicker:'Cutscene · Chase in the Kacha',music:()=>{gallopSound(10);setTimeout(()=>gunfight(6),1500);},
+    svg:`<defs>${skyG('csk','#3a4a7a','#d08a6a','#f0c090')}</defs><rect width="1200" height="600" fill="url(#csk)"/><rect y="330" width="1200" height="270" fill="#a88a5a"/><rect y="380" width="1200" height="60" fill="#5a8aa0"/><path d="M0,400 H1200 M0,420 H1200" stroke="#cfe8f2" stroke-width="2" class="flow" opacity=".6"/>
+    <g style="animation:rideIn 10s linear both">${horse({x:200,y:520,s:1,gait:'gallop',color:'#2a1a12',rider:dac})}${horse({x:60,y:540,s:1,gait:'gallop',color:'#3a2a1a',rider:dac,gun:1,fire:.4})}</g>
+    <g style="animation:rideIn 10s linear 1.2s both">${horse({x:-120,y:530,s:1.15,gait:'gallop',color:'#4a2a18',decor:1,saddle:'#7a1f2b',gun:1,fire:0,rider:{skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c'}})}${horse({x:-280,y:515,s:1,gait:'gallop',color:'#6b3f22',gun:1,fire:.7,rider:{kam:'#b9a27c',head:'cap',hc:'#4a3a22',must:'#151010'}})}${horse({x:-420,y:540,s:1,gait:'gallop',color:'#5a3420',gun:1,fire:.2,rider:{kam:'#b9a27c',head:'cap',hc:'#4a3a22',beard:'#6c6a66'}})}</g>${grass}`,
+    caps:[['The kacha, before dawn','Dacoits from the river belt took a Kamboh farmer\'s cattle and his son. You did not wait for the police.',500],['Sultan at full gallop','Twelve riders behind you. The dacoits fire back over their shoulders.',4800],['At the river crossing','The dacoits let go of the stolen cattle and swim for it. The boy runs to his father.',10000]]};
+  },
+  peace:()=>{
+    const el=[['rasool','Jatt'],['ditta','Arain'],['rana','Rajput'],['mureed','Joiya'],['siraj','Kamboh']];
+    return{kicker:'Cutscene · The Grand Jirga',fx:'petals',fxDelay:9000,music:()=>{dhol(2);setTimeout(()=>sfx('applause'),9800);},
+    svg:`<defs>${skyG('psk','#4a3a6a','#e0905a','#ffd59a')}</defs><rect width="1200" height="600" fill="url(#psk)"/><circle cx="600" cy="330" r="90" fill="#ffd98a"/><rect x="100" y="300" width="1000" height="110" fill="#e6dccb"/><rect y="400" width="1200" height="200" fill="#8a6a4a"/><rect x="140" y="470" width="920" height="40" fill="#7a1f2b" stroke="#d9a93a" stroke-width="3"/>
+    ${person({x:600,y:450,s:1.7,skin:'#c08458',kam:'#f6f3ea',vest:'#2b2a30',head:'hair',hc:'#120e0c',must:'#120e0c'})}
+    <path d="M590,500 q10,-30 20,0z" fill="#b8862a"/><rect x="597" y="440" width="6" height="30" fill="#6a4a2a"/><g class="smoke">${[0,1,2].map(i=>`<circle cx="600" cy="436" r="6" fill="#ddd" style="animation-delay:${i*1.3}s"/>`).join('')}</g>
+    ${el.map(([id,t],i)=>{const x=[180,380,600,820,1020][i];return bodyOf(id,{x,y:510,s:1.7,seated:1,arm:'wave',adelay:9+i*.15})+`<text x="${x}" y="560" text-anchor="middle" font-family="Hind,sans-serif" font-weight="600" font-size="18" letter-spacing="2" fill="#e9b44c">${t.toUpperCase()}</text>`;}).join('')}`,
+    caps:[['The Grand Jirga','For the first time in thirty years, the elders of all five biradaris sit under one roof.',500],['Jatt, Arain, Rajput, Joiya, Kamboh','One hookah goes around the circle. Nobody refuses it.',5000],['The dushmani ends tonight','The Joiya and Kamboh elders tie each other\'s turbans. The whole Dera stands and claps.',10000]]};
+  }
+});
+const EVSFX={sho:'siren',flood:'thunder',politician:'dhol',jalsa:'cheer',media:'car',isb:'car',general:'car',scandal:'gavel',vote:'applause',friend_it:'car',germany:'phone',feud:'boom',dacoits:'horn',mela:'dhol'};
+
 /* ============ STORY ============ */
+/* Characters speak Punjabi (Roman script) with an English subtitle; choices stay in English. */
+function electionScore(s){const f=s.flags;return s.izzat+s.taluqat*.5+(f.ticket?12:0)+(s.jatt+s.arain+s.rajput+s.joiya+s.kamboh-250)/8+(f.app?6:0)+(f.social?5:0)+(f.germany?8:0)+(f.danishHome?4:0)+(f.solar?4:0)+(f.pact?4:0)+(f.hero?5:0)+(f.peace?8:0)-(f.rigged?12:0)-(s.khauf>70?10:0);}
+function presScore(s){const f=s.flags;return s.izzat+s.taluqat+(f.bloc?10:0)+(f.minister?8:0)+(f.germany?5:0)+(f.app?5:0)-(s.khauf>70?15:0);}
 const EV={
 /* ---- Stage 1: The Village Dera ---- */
-water:{title:'Faisla · The Stolen Water',set:'dera',mood:'dawn',cam:'wide',loc:'Chak 47 Shumali · Dera courtyard · 7:12 AM',
+water:{title:`Faisla · The Stolen Water`,set:'dera',mood:'dawn',cam:'wide',cut:'intro',loc:`Chak 16 WB, Vehari · Dera courtyard · 7:12 AM`,
   cast:{rasool:'L1',asif:'L2',ditta:'R1',yaqoob:'R2',zainab:'R3'},
   lines:[
-    ['nar','Fajr has passed. Sixty villagers wait under the banyan tree, sipping doodh-patti from clay cups. Gul Khan polishes the Land Cruiser\'s mirror for the third time. At the gate, Sher Muhammad sorts every face into ours and not ours.'],
-    ['nar','You step onto the veranda in starched white, a charcoal waistcoat and Peshawari chappals. The courtyard falls silent row by row. "Numberdar Sahib aa gaye."'],
-    ['rafiq','Sahib, a heavy matter today. Ghulam Rasool\'s people and Allah Ditta\'s people. Canal water. A little blood has been spilled. So far.'],
-    ['rasool','Last night was OUR wari at the mogha! Allah Ditta\'s sons broke our bund at 2 AM and hit my Asif with a dang. I want an FIR. I want them in the thana!'],
-    ['asif','Say the word, Numberdar Sahib, and I will settle this myself.'],
-    ['ditta','Allah is my witness, Sahib. For three years the Chaudhry has taken extra water. He paid the irrigation SDO to change the schedule. My wheat is dying.'],
-    ['zainab','Here is the warabandi schedule from 1998, Sahib. Our turn is the longer one. It is written.'],
-    ['rafiq','Jatts hold 2,200 votes here, Arains 1,400. Ghulam Rasool is close to Malik Sher Afzal. And SHO Tariq Bhatti is waiting to hear whose side you are on before he writes any FIR.']],
+    ['nar',`Fajr has passed. Sixty villagers wait under the banyan tree, sipping doodh-patti from clay cups. Gul Khan polishes the Land Cruiser's mirror for the third time. At the gate, Sher Muhammad sorts every face into ours and not ours.`],
+    ['nar',`You step onto the veranda in starched white, a charcoal waistcoat and Peshawari chappals. The courtyard falls silent row by row. "Numberdar Sahib aa gaye."`],
+    ['rafiq',`Numberdar Sahib, aj masla bhaari ae. Ghulam Rasool te Allah Ditte de bande aaye ne. Nehri paani da rola ae. Thora khoon vi dul gaya ae... hale tak.`,`Sahib, a heavy matter today. Ghulam Rasool's people and Allah Ditta's people. Canal water. A little blood has been spilled. So far.`],
+    ['rasool',`Kal raat saadi wari si mogay te! Allah Ditte de puttraan ne raat do vajay saada bannaa torh ditta, te mere Asif nu dang maarya. Main parcha karaana ae! Ehnaan nu thaane bhejo!`,`Last night was OUR turn at the outlet! Allah Ditta's sons broke our embankment at 2 AM and hit my Asif with an iron staff. I want an FIR. Send them to the police station!`],
+    ['asif',`Numberdar Sahib, tusi bas ik vaari keh deo, main aape nibed lainaan.`,`Just say the word once, Numberdar Sahib, and I'll settle it myself.`],
+    ['ditta',`Allah gawah ae, Sahib. Tinn saal ton Chaudhry vadh paani lainda pya ae. Ohne SDO nu paise de ke wari badalwa layi. Meri kanak sukk rahi ae.`,`Allah is my witness, Sahib. For three years the Chaudhry has taken extra water. He paid the irrigation SDO to change the schedule. My wheat is drying up.`],
+    ['zainab',`Sahib, eh 1998 di warabandi ae. Saadi wari lammi ae. Likhya hoya ae.`,`Sahib, this is the 1998 water schedule. Our turn is the longer one. It is written down.`],
+    ['rafiq',`Sahib, Jattaan de ethay 2,200 vote ne, Araeenaan de 1,400. Ghulam Rasool, Malik Tori da yaar ae. Te SHO Tariq Bhatti udeek reha ae ke tusi kidhar ho, phir parcha likhe ga.`,`Sahib, the Jatts have 2,200 votes here, the Arains 1,400. Ghulam Rasool is Malik Tori's friend. And SHO Tariq Bhatti is waiting to see whose side you take before he writes any FIR.`]],
   choices:[
-    {l:'The law of the document',d:'Restore Allah Ditta\'s wari by the 1998 schedule. His sons pay daand to Asif for the wound.',fx:{izzat:8,arain:20,jatt:-15},
-     r:[['rasool','So this is the Numberdar\'s justice. A piece of paper over a Jatt\'s blood.'],['ditta','May Allah keep your Dera full, Sahib.'],['rafiq','Sahib... Ghulam Rasool\'s car just turned toward Malik Sher Afzal\'s village.']]},
-    {l:'The generous patron',d:'Pay Rs 15 lakh from your own pocket for a new tubewell on Allah Ditta\'s land, then ask both elders to embrace.',fx:{paisa:-.15,izzat:15,jatt:8,arain:12},cut:'faisla',
-     r:[['rasool','A tubewell? Then there is no water left to fight over.'],['ditta','Eleven years, Ghulam Rasool. Eleven years we have not shared a hookah.']]},
-    {l:'The iron hand',d:'Phone SHO Bhatti in front of everyone: no FIR unless you say so. The next family to spill blood loses its water rights.',fx:{khauf:15,taluqat:8,izzat:-3},
-     r:[['sho','Ji, Numberdar Sahib. Whatever you say. No FIR.'],['nar','Asif drops his eyes. In the back row, an old man mutters something and spits into the dust.']]}],
+    {l:`The law of the document`,d:`Restore Allah Ditta's turn by the 1998 schedule. His sons pay daand to Asif for the wound.`,fx:{izzat:8,arain:20,jatt:-15},
+     r:[['rasool',`Achha, eh ae Numberdar da insaaf? Ik kaagaz, Jatt de khoon ton bhaari ho gaya?`,`So this is the Numberdar's justice? A piece of paper outweighs a Jatt's blood?`],['ditta',`Allah tuhada Dera sada bharya rakhe, Sahib.`,`May Allah keep your Dera full forever, Sahib.`],['rafiq',`Sahib... Ghulam Rasool di gaddi Malik Tori de pind val mur gayi ae.`,`Sahib... Ghulam Rasool's car just turned toward Malik Tori's village.`]]},
+    {l:`The generous patron`,d:`Pay Rs 15 lakh from your own pocket for a new tubewell on Allah Ditta's land, then ask both elders to embrace.`,fx:{paisa:-.15,izzat:15,jatt:8,arain:12},cut:'faisla',
+     r:[['rasool',`Tubewell? Phir te larn layi paani hi nahin bachya.`,`A tubewell? Then there's no water left to fight over.`],['ditta',`Yaaraan saal, Ghulam Rasool. Yaaraan saal asaan ikathe hukka nahin peeta.`,`Eleven years, Ghulam Rasool. Eleven years we haven't shared a hookah.`]]},
+    {l:`The iron hand`,d:`Phone SHO Bhatti in front of everyone: no FIR unless you say so. The next family to spill blood loses its water rights.`,fx:{khauf:15,taluqat:8,izzat:-3},
+     r:[{who:'sho',t:`Ji Numberdar Sahib, jiven tusi kaho. Koi parcha nahin.`,en:`Yes, Numberdar Sahib, as you say. No FIR.`,sfx:'phone'},['nar',`Asif drops his eyes. In the back row, an old man mutters something and spits into the dust.`]]}],
   next:'sho'},
 
-sho:{title:'The Thana Calls',set:'dera',mood:'noon',cam:'gate',loc:'Dera gate · 12:40 PM',cast:{sho:'L1',sherm:'R1'},
+sho:{title:`The Thana Calls`,set:'dera',mood:'noon',cam:'gate',loc:`Dera gate · 12:40 PM`,cast:{sho:'L1',sherm:'R1'},
   lines:[
-    ['nar','A police mobile rolls through the gate, siren off, lights on. Inspector Tariq Bhatti steps out, adjusts his cap, and accepts a glass of lassi before he says a word.'],
-    ['sho','Numberdar Sahib, a small thing. Kala Dogar, cattle thief, three FIRs in Bhalwal. My informer says he is sleeping at your tubewell on the canal road.'],
-    ['rafiq','Sahib, Kala Dogar is Haji Bashir\'s nephew. Haji Bashir brought 300 votes to your late father.'],
-    ['sho','The DPO is pressing me. Either I take him, or someone pays for the new mobile\'s tyres and I write that the informer was wrong. Your choice, of course.']],
+    ['nar',`A police mobile rolls through the gate, siren off, lights on. Inspector Tariq Bhatti steps out, adjusts his cap, and accepts a glass of lassi before he says a word.`],
+    ['sho',`Numberdar Sahib, ik nikki jehi gal ae. Kala Dogar, dangar chor, Mailsi wich tinn parchay. Mera mukhbar kehnda ae oh tuhade canal road waale tubewell te sutta pya ae.`,`Numberdar Sahib, a small matter. Kala Dogar, cattle thief, three FIRs in Mailsi. My informer says he's sleeping at your tubewell on the canal road.`],
+    ['rafiq',`Sahib, Kala Dogar, Haji Bashir da bhateeja ae. Haji Bashir ne tuhade marhoom abba nu 300 vote ditte san.`,`Sahib, Kala Dogar is Haji Bashir's nephew. Haji Bashir brought 300 votes to your late father.`],
+    ['sho',`DPO sahib sir te charhe hoye ne. Ya main ohnu lai jaanwaan, ya koi navi mobile de tyraan da kharcha de deve te main likh dewaan ke mukhbar ghalat si. Marzi tuhadi.`,`The DPO is on my back. Either I take him, or someone pays for the new mobile's tyres and I write that the informer was wrong. Your choice.`]],
   choices:[
-    {l:'Hand him over',d:'Let the law take Kala Dogar. Tell Haji Bashir the Dera does not shelter thieves.',fx:{taluqat:12,izzat:5,khauf:-3,jatt:-5},
-     r:[['sho','Bahut meharbani. The DPO will hear your name today.'],['rafiq','Haji Bashir left without finishing his tea, Sahib.']]},
-    {l:'Pay for the "tyres"',d:'Rs 30 lakh to the SHO\'s tyre fund. Kala Dogar stays, and Haji Bashir owes you.',fx:{paisa:-.3,taluqat:6,khauf:5,jatt:6},
-     r:[['sho','The informer must have been mistaken.'],['nar','The envelope disappears into his uniform pocket. Sher Muhammad does not blink.']]},
-    {l:'Hold your own jirga',d:'Summon the cattle owners. If Kala Dogar returns the animals and pays, he walks free under your guarantee.',fx:{izzat:12,taluqat:-6},
-     r:[['nar','By Asr, eleven buffaloes walk back down the canal road. The farmers touch your knees.'],['sho','You are doing my job now, Numberdar Sahib. Some people at the thana will not like that.']]}],
+    {l:`Hand him over`,d:`Let the law take Kala Dogar. Tell Haji Bashir the Dera does not shelter thieves.`,fx:{taluqat:12,izzat:5,khauf:-3,jatt:-5},
+     r:[['sho',`Bari meharbani. DPO sahib nu ajj hi tuhada naa pahunch jaaye ga.`,`Many thanks. The DPO will hear your name today.`],['rafiq',`Sahib, Haji Bashir chah adhi chhad ke chala gaya.`,`Sahib, Haji Bashir left with his tea half finished.`]]},
+    {l:`Pay for the "tyres"`,d:`Rs 30 lakh to the SHO's tyre fund. Kala Dogar stays, and Haji Bashir owes you.`,fx:{paisa:-.3,taluqat:6,khauf:5,jatt:6},
+     r:[['sho',`Lagda ae mukhbar nu ghalat-fehmi ho gayi si.`,`Looks like my informer was mistaken.`],['nar',`The envelope disappears into his uniform pocket. Sher Muhammad does not blink.`]]},
+    {l:`Hold your own jirga`,d:`Summon the cattle owners. If Kala Dogar returns the animals and pays, he walks free under your guarantee.`,fx:{izzat:12,taluqat:-6},
+     r:[['nar',`By Asr, eleven buffaloes walk back down the canal road. The farmers touch your knees.`],['sho',`Numberdar Sahib, hun tusi meri naukri karan lag paye o. Thaane wich kuj bandiyaan nu eh changa nahin lagna.`,`Now you're doing my job, Numberdar Sahib. Some people at the station won't like that.`]]}],
+  next:'land'},
+
+land:{title:`Qabza at Murabba 14`,set:'fields',mood:'dawn',cam:'wide',cut:'land',loc:`Murabba 14 · The canal fields · 6:30 AM`,cast:{bashiran:'L1',patwari:'R1',rafiq:'R2'},
+  lines:[
+    ['nar',`Malik Tori's tractors ploughed through the boundary pillars overnight. Twelve acres of Bashiran Bibi's land now carry his furrows.`],
+    ['bashiran',`Numberdar Sahib, mere bande di zameen ae. Baaran kille. Mere puttar Dubai ne. Main hor kidde kol jaawaan?`,`Numberdar Sahib, this is my late husband's land. Twelve acres. My sons are in Dubai. Who else can I go to?`],
+    ['patwari',`Sahib, intiqal... intiqal wich March wich Malik Tori de naa bai likhi hoyi ae. Mere register wich ae. Daskhat te angoothe samet.`,`Sahib, the transfer record... it shows a sale to Malik Tori in March. It's in my register. Signed and thumb-printed.`],
+    ['bashiran',`Main zindagi wich kade kuj nahin vechya! Mainu te apna naa likhna nahin aaonda, daskhat kiven kar ditte?`,`I have never sold anything in my life! I can't even write my own name, so how did I sign?`],
+    ['rafiq',`Sahib, patwari har Jummeraat Malik Tori de Dere te roti khaanda ae. Saara pind jaanda ae.`,`Sahib, the patwari eats dinner at Malik Tori's Dera every Thursday. The whole village knows it.`]],
+  choices:[
+    {l:`Take back the land today`,d:`Send your tractors and Sher Muhammad's men to plough the furrows back. Possession is nine-tenths of the law.`,fx:{khauf:14,izzat:6,taluqat:-4,joiya:-8},
+     r:[['nar',`By noon your tractors have re-ploughed the boundary. Malik Tori's Joiya men watch from the canal bank and do not move. Not yet.`]]},
+    {l:`Check the computerized record`,d:`Take Bashiran Bibi to the Arazi Record Centre in Vehari and compare the patwari's register with the computer.`,fx:{izzat:12,taluqat:6,paisa:-.05},
+     r:[['patwari',`Sahib... computer wich... shayad koi hor entry hove...`,`Sahib... the computer... might have a different entry...`],['nar',`The computer shows no sale. The register was altered by hand. The Assistant Commissioner suspends the patwari by evening.`],['bashiran',`Allah tuhanu sada izzat deve, puttar.`,`May Allah always keep you honoured, son.`]]},
+    {l:`Pay her the full price`,d:`Pay Bashiran Bibi for all 12 acres yourself and let Malik Tori keep the land for now.`,fx:{paisa:-1.2,izzat:4,khauf:-4},
+     r:[['bashiran',`Tusi bare dil waale o, Sahib. Par Malik Tori agle baaran kille vi mangu ga.`,`You have a big heart, Sahib. But Malik Tori will want the next twelve acres too.`]]}],
+  next:'mela'},
+
+mela:{title:`The Mela and the Neza Bazi`,set:'fields',mood:'golden',cam:'wide',loc:`The spring mela · Chak 16 WB`,cast:{rana:'L1',rafiq:'R1'},
+  lines:[
+    ['nar',`Spring. The mela on the edge of the village: dhol, wooden swings, jalebi stalls, and fifty horsemen with lances. The Rajput biradari runs the neza bazi.`],
+    ['rana',`Numberdar Sahib, sau saal ton saadi biradari neza bazi karwaundi ae. Is saal Malik Tori vi apni ghori lai ke aaya ae. Kehnda ae, Numberdar sirf gaddiyaan wich baithda ae, ghore te nahin.`,`Numberdar Sahib, for a hundred years our biradari has run the tent-pegging. This year Malik Tori brought his mare too. He says the Numberdar only sits in cars, never on a horse.`],
+    ['rafiq',`Sahib, tuhada Sultan taiyaar ae. Par neza bazi wich haddiyaan vi tuttdiyaan ne.`,`Sahib, your horse Sultan is ready. But bones get broken in neza bazi.`]],
+  choices:[
+    {l:`Ride Sultan yourself`,d:`Take the lance and ride in the neza bazi in front of the whole district.`,fx:{izzat:14,rajput:15,khauf:4},cut:'neza',
+     r:[['rana',`Shabaash! Ajj ton Rajput biradari tuhadi ae, Numberdar Sahib.`,`Bravo! From today the Rajput biradari is yours, Numberdar Sahib.`],['nar',`Malik Tori's mare misses the peg. He leaves the mela before the prize-giving.`]]},
+    {l:`Sponsor the prizes`,d:`Rs 25 lakh for a motorcycle, a buffalo and gold medals for the winners.`,fx:{paisa:-.25,izzat:6,rajput:10},
+     r:[['rana',`Bari meharbani. Par lok kehnde ne, asal sardar ghore te baithda ae.`,`Many thanks. But people say a real chief sits on a horse.`]]},
+    {l:`Bet against Malik Tori`,d:`Put Rs 50 lakh on a Rajput rider against Malik Tori's mare. Double or nothing.`,fx:s=>{const w=s.rajput>=60||s.izzat>=60;s.flags.betWon=w;return w?{paisa:.5,izzat:4,rajput:6}:{paisa:-.5,izzat:-4};},
+     r:[{who:'nar',t:`The Rajput rider lifts the peg cleanly. Malik Tori pays up in front of everyone.`,when:s=>s.flags.betWon},{who:'nar',t:`Malik Tori's mare takes the peg. He counts your money slowly, in front of everyone.`,when:s=>!s.flags.betWon}]}],
   next:'rumor'},
 
-rumor:{title:'Whispers in the Biradari',set:'dera',mood:'dusk',cam:'faisla',loc:'Dera courtyard · Maghrib',cast:{rafiq:'L1',sherm:'R1'},
+rumor:{title:`Whispers in the Biradari`,set:'dera',mood:'dusk',cam:'faisla',loc:`Dera courtyard · Maghrib`,cast:{rafiq:'L1',sherm:'R1'},
   lines:[
-    ['nar','Maghrib. The lanterns on the gate are lit. A cold wind moves through the banyan leaves.'],
-    ['sherm','Sahib. Malik Sher Afzal\'s men were at the Jatt chaupal last night. They are saying you sold the canal water to the sugar mill and kept the money.'],
-    ['rafiq','It is a lie, but it is moving fast. Three families have already taken down your poster.'],
-    ['sherm','Give me six men and two Vigos. By morning nobody in that chaupal will remember the rumor.']],
+    ['nar',`Maghrib. The lanterns on the gate are lit. A cold wind moves through the banyan leaves.`],
+    ['sherm',`Sahib. Malik Tori de bande kal raat Jattaan di chaupal te san. Keh rahe san ke tusi nehri paani shugar mill nu vech ke paise apni jeb wich paa laye.`,`Sahib. Malik Tori's men were at the Jatt chaupal last night. They're saying you sold canal water to the sugar mill and pocketed the money.`],
+    ['rafiq',`Jhooth ae, par bari tezi naal phail reha ae. Tinn gharaan ne tuhada poster laah ditta ae.`,`It's a lie, but it's spreading fast. Three families have already taken down your poster.`],
+    ['sherm',`Mainu chhe bande te do Vigo deo. Subah tak us chaupal wich kise nu eh gal yaad nahin rahegi.`,`Give me six men and two Vigos. By morning nobody in that chaupal will remember the rumour.`]],
   choices:[
-    {l:'Hold a jalsa in the chowk',d:'Bring the mill records, the canal schedule and a sound system. Answer the lie in public.',fx:{paisa:-.5,izzat:12,jatt:8},
-     r:[['nar','Two thousand people. You read the sugar mill\'s payment ledger aloud, line by line. By the end, the Jatt elders are nodding.']]},
-    {l:'Send Sher Muhammad',d:'The Vigos roll out at midnight. No blood. Just a message.',fx:{khauf:20,izzat:-6,jatt:-4},
-     r:[['nar','Headlights sweep the Jatt chaupal at 2 AM. Doors stay shut. By sunrise the rumor has stopped. So has the chatter in your own courtyard.']]},
-    {l:'Invite Sher Afzal to dinner',d:'Seat your rival at your own dastarkhwan, in front of the whole village.',fx:{izzat:6,taluqat:8,khauf:-5},
-     r:[['afzal','Numberdar, your biryani is better than your politics.'],['nar','He laughs. He eats. With two hundred witnesses watching, the rumor has nowhere left to stand.']]}],
+    {l:`Hold a jalsa in the chowk`,d:`Bring the mill records, the canal schedule and a sound system. Answer the lie in public.`,fx:{paisa:-.5,izzat:12,jatt:8},
+     r:[['nar',`Two thousand people. You read the sugar mill's payment ledger aloud, line by line. By the end, the Jatt elders are nodding.`]]},
+    {l:`Send Sher Muhammad`,d:`The Vigos roll out at midnight. No blood. Just a message.`,fx:{khauf:20,izzat:-6,jatt:-4,joiya:-4},
+     r:[['nar',`Headlights sweep the Jatt chaupal at 2 AM. Doors stay shut. By sunrise the rumour has stopped. So has the chatter in your own courtyard.`]]},
+    {l:`Invite Malik Tori to dinner`,d:`Seat your rival at your own dastarkhwan, in front of the whole village.`,fx:{izzat:6,taluqat:8,khauf:-5,joiya:4},
+     r:[['afzal',`Numberdar, tuhadi biryani tuhadi siyasat ton changi ae.`,`Numberdar, your biryani is better than your politics.`],['nar',`He laughs. He eats. With two hundred witnesses watching, the rumour has nowhere left to stand.`]]}],
+  next:'friend_it'},
+
+friend_it:{title:`Eid, and an Old Friend`,set:'dera',mood:'golden',cam:'faisla',loc:`Dera courtyard · Eid-ul-Fitr`,cast:{hamza:'L1',rafiq:'R1'},
+  lines:[
+    ['nar',`Eid-ul-Fitr. The Dera smells of sheer khurma and new clothes. A Corolla with Lahore number plates stops at the gate.`],
+    ['hamza',`Oye Numberdar! Yaad ae Government Primary School wich tera hisaab da kaam kaun nakal karda si? Hun main software banaunda haan. Lahore, Arfa Tower, team lead.`,`Hey Numberdar! Remember who copied your maths homework at the Government Primary School? Now I write software. Lahore, Arfa Tower, team lead.`],
+    ['hamza',`Main soch reha si. Tera adha din gum hoyiyaan shikayataan wich langh janda ae: nehri wari, zameen da record, police. Mainu do mahine de, main Dere layi app bana dewaan ga. Har case da number hovega.`,`I've been thinking. Half your day goes on complaints that get lost: canal turns, land records, police. Give me two months and I'll build the Dera an app. Every case gets a number.`],
+    ['rafiq',`Sahib, app? Adha pind hale vi Nokia chalaanda ae.`,`Sahib, an app? Half the village still uses Nokia phones.`],
+    ['hamza',`Baaki adhe kol WhatsApp ae, Master ji. Shuru karan layi kaafi ae.`,`The other half has WhatsApp, Master ji. That's enough to start.`]],
+  choices:[
+    {l:`Build the Dera Helpline`,d:`Fund Hamza's team: Rs 40 lakh for a complaint and faisla tracking app with a WhatsApp line.`,fx:{paisa:-.4,izzat:10,taluqat:6},flag:'app',cut:'it',
+     r:[['hamza',`Do mahine. Te pehli shikayat nehri paani di honi chahidi ae.`,`Two months. And the first complaint has to be about canal water.`]]},
+    {l:`Run my social media`,d:`Ask Hamza to run your Facebook and TikTok for the coming elections.`,fx:{izzat:6,taluqat:4,paisa:-.15},flag:'social',
+     r:[['hamza',`Tere jalse de clip Vehari de har phone te honge. Bas gaana main chunaanga.`,`Your jalsa clips will be on every phone in Vehari. I'm just choosing the music.`]]},
+    {l:`Just enjoy Eid`,d:`Politics can wait. Spend the day eating and playing cards like old times.`,fx:{izzat:4,khauf:-3},
+     r:[['nar',`You lose four games of rung and laugh more than you have in a year. Hamza drives back to Lahore with a degh of biryani in the boot.`]]}],
   next:'flood'},
 
-flood:{title:'The Monsoon Breaks',set:'dera',mood:'storm',cam:'crowd',loc:'Chak 47 · Third day of rain',cast:{rafiq:'L1',zainab:'R1'},
+flood:{title:`The Monsoon Breaks`,set:'dera',mood:'storm',cam:'crowd',cut:'flood',loc:`Chak 16 WB · Third day of rain`,cast:{rafiq:'L1',zainab:'R1'},
   lines:[
-    ['nar','Three days of rain. The distributary bursts near the low basti. Mud houses are going under. Women carry children on their shoulders through waist-deep water.'],
-    ['rafiq','Sahib, 400 families. And the embankment by your own sugarcane is weak too. We have men and tractors for one place, not both.'],
-    ['zainab','Numberdar Sahib, the basti school roof has fallen. The children are on the mosque roof.']],
+    ['rafiq',`Sahib, chaar sau ghar. Te tuhadi kamad waala bannaa vi kamzor ae. Saade kol bande te tractor ik jagah layi ne, dowaan layi nahin.`,`Sahib, four hundred families. And the embankment by your sugarcane is weak too. We have men and tractors for one place, not both.`],
+    ['zainab',`Numberdar Sahib, basti de school di chhat dig gayi ae. Bachay masjid di chhat te ne.`,`Numberdar Sahib, the basti school roof has collapsed. The children are on the mosque roof.`]],
   choices:[
-    {l:'Open the Dera',d:'Turn the Dera into a relief camp. Tractors to the basti, deghs of daal on the fire, all from your own pocket.',fx:{paisa:-1,izzat:18,arain:10,jatt:5},
-     r:[['nar','By night, 1,100 people sleep under your banyan tree. Gul Khan drives the Land Cruiser through floodwater with nine children in the back.']]},
-    {l:'Call in Islamabad',d:'Ring the sitting MNA and the Deputy Commissioner. Get army boats and relief funds here, with your name on the banner.',fx:{taluqat:12,izzat:6},req:s=>s.taluqat>=25,rt:"Ta'aluqat 25",
-     r:[['nar','At dawn, two army boats arrive. The relief banners read: "Courtesy of Numberdar Sahib."']]},
-    {l:'Save your fields',d:'The cane pays for the Dera. Hold your embankment. The basti can wait for the government.',fx:{paisa:.6,izzat:-14,khauf:6,arain:-12},
-     r:[['nar','Your cane survives. A photo of children huddled on the mosque roof under plastic sheets is shared 40,000 times.']]}],
+    {l:`Open the Dera`,d:`Turn the Dera into a relief camp. Tractors to the basti, deghs of daal on the fire, all from your own pocket.`,fx:{paisa:-1,izzat:18,arain:10,jatt:5,kamboh:5},
+     r:[['nar',`By night, 1,100 people sleep under your banyan tree. Gul Khan drives the Land Cruiser through floodwater with nine children in the back.`]]},
+    {l:`Call in Islamabad`,d:`Ring the sitting MNA and the Deputy Commissioner. Get army boats and relief funds here, with your name on the banner.`,fx:{taluqat:12,izzat:6},req:s=>s.taluqat>=25,rt:`Ta'aluqat 25`,
+     r:[['nar',`At dawn, two army boats arrive. The relief banners read: "Courtesy of Numberdar Sahib."`]]},
+    {l:`Save your fields`,d:`The cane pays for the Dera. Hold your embankment. The basti can wait for the government.`,fx:{paisa:.6,izzat:-14,khauf:6,arain:-12},
+     r:[['nar',`Your cane survives. A photo of children huddled on the mosque roof under plastic sheets is shared 40,000 times.`]]}],
+  next:'feud'},
+
+feud:{title:`Dushmani on the Canal Road`,set:'dera',mood:'night',cam:'faisla',cut:'ambush',loc:`Dera courtyard · After midnight`,cast:{sherm:'L1',siraj:'R1'},
+  lines:[
+    ['nar',`Back at the Dera, a doctor stitches the guard's arm by lantern light. The Land Cruiser has eleven bullet holes.`],
+    ['sherm',`Sahib, eh Mureed Joiya de bande san. Main aawaz pehchaan layi. Malik Tori ne ehnaan nu bheja si.`,`Sahib, those were Mureed Joiya's men. I recognised the voices. Malik Tori sent them.`],
+    ['siraj',`Numberdar Sahib, tees saal ton Joiya saade naal dushmani rakhde ne. Saade tinn puttar is dushmani wich gaye. Hun tuhade te vi goli chal gayi. Hun ki karna ae?`,`Numberdar Sahib, the Joiyas have kept a blood feud with us for thirty years. We lost three sons to it. Now they've fired on you too. What now?`],
+    ['rafiq',`Sahib, je asi badla laiye te eh dushmani agle tees saal chale gi. Te je chup rahiye, lok kehnge Numberdar dar gaya.`,`Sahib, if we take revenge this feud will run another thirty years. If we stay quiet, people will say the Numberdar got scared.`]],
+  choices:[
+    {l:`Strike back tonight`,d:`Sher Muhammad takes twenty men and the Vigos to the Joiya settlement before dawn.`,fx:{khauf:20,izzat:-4,joiya:-15,kamboh:10,taluqat:-6},
+     r:[['nar',`Shots echo across the cane fields until Fajr. Nobody is killed, but by morning every Joiya gate has a bullet mark. The police register cases against both sides.`]]},
+    {l:`File the FIR and go to court`,d:`Name Mureed Joiya's men in an FIR, push the DPO for arrests, and let the law work.`,fx:{taluqat:8,izzat:6,joiya:-6},
+     r:[['nar',`Four of Mureed Joiya's men are arrested within a week. Malik Tori pays for their lawyers.`]]},
+    {l:`Call a jirga of all five biradaris`,d:`Invite the elders of the Jatts, Arains, Rajputs, Joiyas and Kambohs to end the dushmani at your Dera.`,req:s=>s.izzat>=60,rt:`Izzat 60`,fx:{izzat:16,khauf:-8,joiya:22,kamboh:12,jatt:5,arain:5,rajput:5},flag:'peace',cut:'peace',
+     r:[['mureed',`Numberdar, asi Malik Tori di jang lard rahe saan, apni nahin. Ajj ton eh dushmani khatam.`,`Numberdar, we were fighting Malik Tori's war, not our own. From today this feud is over.`],['siraj',`Allah tuhanu lammi umar deve.`,`May Allah give you a long life.`]]}],
   next:'politician'},
 
-politician:{title:'A Guest from Lahore',set:'dera',mood:'golden',cam:'faisla',loc:'Dera courtyard · Golden hour',cast:{begum:'L1',rafiq:'R1'},
+politician:{title:`A Guest from Lahore`,set:'dera',mood:'golden',cam:'faisla',loc:`Dera courtyard · Golden hour`,cast:{begum:'L1',rafiq:'R1'},
   lines:[
-    ['nar','A line of white Land Cruisers kicks up dust on the canal road. Dhol players start up at the gate. Begum Shahnaz Durrani, chairperson of the Pakistan Awami Ittehad, steps out in a cream dupatta.'],
-    ['begum','Numberdar Sahib. From Sargodha to Lahore, people say one thing: the road to this National Assembly seat runs through your Dera.'],
-    ['begum','The party needs a winner here. The ticket can be yours. The party also has expenses. Two crore to the party fund, and your Biradari\'s full support.'],
-    ['rafiq','Sahib, without a ticket we fight Malik Sher Afzal and the party machine at the same time.']],
+    ['nar',`A line of white Land Cruisers kicks up dust on the canal road. Dhol players start up at the gate. Begum Shahnaz Durrani, chairperson of the Pakistan Awami Ittehad, steps out in a cream dupatta.`],
+    ['begum',`Numberdar Sahib, Vehari ton Lahore tak lok ikko gal karde ne: is seat da raasta tuhade Dere ton langhda ae.`,`Numberdar Sahib, from Vehari to Lahore people say one thing: the road to this seat runs through your Dera.`],
+    ['begum',`Party nu ethay jittan waala banda chahida ae. Ticket tuhada ho sakda ae. Party de kharche vi ne. Do crore party fund wich, te tuhadi biradari di poori himayat.`,`The party needs a winner here. The ticket can be yours. The party has expenses too. Two crore to the party fund, and your biradari's full support.`],
+    ['rafiq',`Sahib, ticket ton baghair asi Malik Tori te party machine dowaan naal larange.`,`Sahib, without a ticket we fight Malik Tori and the party machine at the same time.`]],
   choices:[
-    {l:'Pay for the ticket',d:'Rs 2 crore to the party fund. The PAI machine is yours.',fx:{paisa:-2,taluqat:20},flag:'ticket',
-     r:[['begum','Welcome to the PAI family. The notification will be out by Friday.']]},
-    {l:'Offer votes, not cash',d:'Promise 40,000 Biradari votes across three constituencies. Not one rupee.',fx:{taluqat:15,izzat:5},flag:'ticket',req:s=>s.izzat>=55,rt:'Izzat 55',
-     r:[['begum','A Numberdar who bargains with votes instead of cash. Fine. The ticket is yours.']]},
-    {l:'Run independent',d:'Thank her, refuse, and tell the village you belong to no one but them.',fx:{izzat:12,taluqat:-8},
-     r:[['begum','Independents usually come to us after they win, Numberdar Sahib. We will be waiting.']]}],
+    {l:`Pay for the ticket`,d:`Rs 2 crore to the party fund. The PAI machine is yours.`,fx:{paisa:-2,taluqat:20},flag:'ticket',
+     r:[['begum',`PAI family wich khush aamdeed. Jumme tak notification aa jaaye ga.`,`Welcome to the PAI family. The notification will be out by Friday.`]]},
+    {l:`Offer votes, not cash`,d:`Promise 40,000 biradari votes across three constituencies. Not one rupee.`,fx:{taluqat:15,izzat:5},flag:'ticket',req:s=>s.izzat>=55,rt:`Izzat 55`,
+     r:[['begum',`Numberdar jehra paise di thaan vote naal saudaa karda ae. Theek ae. Ticket tuhada.`,`A Numberdar who bargains with votes instead of cash. Fine. The ticket is yours.`]]},
+    {l:`Run independent`,d:`Thank her, refuse, and tell the village you belong to no one but them.`,fx:{izzat:12,taluqat:-8},
+     r:[['begum',`Azad umeedwar aksar jittan ton baad saade kol aaonde ne, Numberdar Sahib. Asi udeekange.`,`Independents usually come to us after they win, Numberdar Sahib. We'll be waiting.`]]}],
   next:'jalsa'},
 
 /* ---- Stage 2: The MNA Campaign ---- */
-jalsa:{stage:2,title:'The First Jalsa',set:'jalsa',mood:'dusk',cam:'stage',loc:'Company Bagh ground, Sargodha · 40 days to polling',
+jalsa:{stage:2,title:`The First Jalsa`,set:'jalsa',mood:'dusk',cam:'stage',loc:`Stadium ground, Vehari · 40 days to polling`,
   lines:[
-    ['nar','The stage is up: twelve speaker stacks, light rigs, and a banner of your face eighteen feet tall. Your election symbol is the tubewell.'],
-    ['rafiq','Sahib, a problem. Malik Sher Afzal has hired 70 buses for his own jalsa across the canal, at the same hour. Half our chairs are empty.']],
-  ask:'How do you fill the ground?',
+    ['nar',`The stage is up: twelve speaker stacks, light rigs, and a banner of your face eighteen feet tall. Your election symbol is the tubewell.`],
+    ['rafiq',`Sahib, ik masla ae. Malik Tori ne apne jalse layi 70 busaan kiraye te laiyaan ne, isse waqt nehar de us paar. Saadiyaan adhiyaan kursiyaan khaali ne.`,`Sahib, a problem. Malik Tori has hired 70 buses for his own jalsa across the canal at the same hour. Half our chairs are empty.`]],
+  ask:`How do you fill the ground?`,
   choices:[
-    {l:'Buses and biryani',d:'Rs 1.5 crore: ninety buses and a degh of biryani for every union council.',fx:{paisa:-1.5,izzat:10,jatt:5},
-     r:[['nar','By 9 PM the ground is packed. Half the crowd is still eating when you take the microphone.']]},
-    {l:'Speak about water',d:'Forget the chairs. Talk about the 1998 warabandi, the bribed SDO, and a tubewell for every village.',fx:{izzat:14,arain:10},
-     r:[['nar','Phones go up. Someone live-streams it. By midnight the clip has 300,000 views, and the empty chairs are not in it.']]},
-    {l:'Bring a star singer',d:'Rs 80 lakh for a famous Punjabi folk singer. They come for the music and stay for you.',fx:{paisa:-.8,izzat:8,khauf:-3},
-     r:[['nar','The dhol runs until 2 AM. Old men dance in their chadors. Between songs, the crowd chants your name.']]}],
+    {l:`Buses and biryani`,d:`Rs 1.5 crore for ninety buses and a degh of biryani for every union council.`,fx:{paisa:-1.5,izzat:10,jatt:5},
+     r:[['nar',`By 9 PM the ground is packed. Half the crowd is still eating when you take the microphone.`]]},
+    {l:`Speak about water`,d:`Forget the chairs. Talk about the 1998 warabandi, the bribed SDO, and a tubewell for every village.`,fx:{izzat:14,arain:10},cut:'rally',
+     r:[['nar',`Someone live-streams it. By midnight the clip has 300,000 views, and the empty chairs are not in it.`]]},
+    {l:`Bring a star singer`,d:`Rs 80 lakh for a famous Punjabi folk singer. They come for the music and stay for you.`,fx:{paisa:-.8,izzat:8,khauf:-3},
+     r:[['nar',`The dhol runs until 2 AM. Old men dance in their chadors. Between songs, the crowd chants your name.`]]}],
+  next:'germany'},
+
+germany:{title:`A Call from Germany`,set:'fields',mood:'dusk',cam:'wide',cut:'germany',loc:`The canal bank · Maghrib`,cast:{rafiq:'R1'},
+  lines:[
+    ['nar',`Dusk by the canal. Your phone buzzes: a video call from Frankfurt. Danish, your friend since your kabaddi days, is wrapped in a winter jacket with snow behind him.`],
+    ['danish',`Guten Abend, Numberdar Sahib! Haan, hun main German bolda haan. Panj saal raat diyaan shiftaan te grammar diyaan classaan, banda sab kuj sikh janda ae.`,`Good evening, Numberdar Sahib! Yes, I speak German now. Five years of night shifts and grammar classes teach you everything.`],
+    ['danish',`Sun. Germany wich Vehari te Multan de tinn sau bande ne. Ohnaan ne tera paani waala bhashan vekhya. Oh madad karna chaunde ne.`,`Listen. There are three hundred people from Vehari and Multan in Germany. They watched your water speech. They want to help.`],
+    ['danish',`Asi campaign layi paise bhej sakde haan. Ya main chhuti lai ke wapas aa jaanwaan te tere naal pind pind phiraan. Ya dowein, je tu pyaar naal kahein.`,`We can send money for the campaign. Or I take leave, fly home and go village to village with you. Or both, if you ask nicely.`],
+    ['rafiq',`Sahib, bahar gaye munde de har union council wich rishtedaar ne. Jadon Germany ton phone aaonda ae, saara ghar sunda ae.`,`Sahib, boys working abroad have relatives in every union council. When a call comes from Germany, the whole house listens.`]],
+  choices:[
+    {l:`Accept the overseas fund`,d:`Danish's network sends Rs 1.2 crore, legally, through the bank.`,fx:{paisa:1.2,taluqat:6},flag:'germany',
+     r:[['danish',`Somvaar nu transfer ho jaayegi. Har euro di bank raseed. Tere mukhaalif zaroor check karange.`,`The transfer goes on Monday. A bank receipt for every euro. Your opponents will definitely check.`]]},
+    {l:`Bring Danish home`,d:`Ask him to fly back and lead the campaign in the villages.`,fx:{izzat:12,jatt:5,arain:5,kamboh:5},flag:['germany','danishHome'],
+     r:[['danish',`Jummeraat nu Lahore airport. Gul Khan nu bhejin, Land Cruiser nahin. Main aam bande wangoon aana chaunda haan.`,`Thursday, Lahore airport. Send Gul Khan, not the Land Cruiser. I want to arrive like an ordinary person.`]]},
+    {l:`German solar tubewells`,d:`Ask him to bring a German solar engineering partner to put solar pumps on 50 tubewells.`,fx:{izzat:10,taluqat:10,paisa:-.5},flag:['germany','solar'],req:s=>s.taluqat>=30,rt:`Ta'aluqat 30`,
+     r:[['danish',`Solar pump, German engineer, Pakistani frame. Kisaan da diesel bachega, te har pump te tera naa.`,`Solar pumps, German engineers, Pakistani frames. Farmers save on diesel, and your name is on every pump.`]]}],
   next:'media'},
 
-media:{title:'Breaking News',set:'dera',mood:'noon',cam:'faisla',loc:'Dera courtyard · 26 days to polling',cast:{saima:'L1',rafiq:'R1'},
+media:{title:`Breaking News`,set:'dera',mood:'noon',cam:'faisla',loc:`Dera courtyard · 26 days to polling`,cast:{saima:'L1',rafiq:'R1'},
   lines:[
-    ['nar','A white Suzuki with a channel logo stops at the gate. Saima Qureshi, the most-watched crime reporter in Punjab, walks in with a cameraman.'],
-    {who:'saima',t:'I have a video, Numberdar Sahib. Your Vigos at the Jatt chaupal, 2 AM. Do you want to comment before it airs at nine?',when:s=>s.khauf>=45},
-    {who:'saima',t:'I have documents saying your family\'s land records were altered in 2009. Do you want to comment before it airs at nine?',when:s=>s.khauf<45}],
+    ['nar',`A white Suzuki with a channel logo stops at the gate. Saima Qureshi, the most-watched crime reporter in Punjab, walks in with a cameraman.`],
+    {who:'saima',t:`Mere kol ik video ae, Numberdar Sahib. Tuhadiyaan Vigo, Jattaan di chaupal, raat de do vaje. Nau vaje chalan ton pehlaan kuj kehna chaunde o?`,en:`I have a video, Numberdar Sahib. Your Vigos at the Jatt chaupal, 2 AM. Anything to say before it airs at nine?`,when:s=>s.khauf>=45},
+    {who:'saima',t:`Mere kol kaagaz ne ke 2009 wich tuhade khaandaan de zameen record badle gaye san. Nau vaje chalan ton pehlaan kuj kehna chaunde o?`,en:`I have documents saying your family's land records were altered in 2009. Anything to say before it airs at nine?`,when:s=>s.khauf<45}],
   choices:[
-    {l:'Sit for a full interview',d:'Answer every question on camera. No edits, no conditions.',fx:{izzat:10,khauf:-6},
-     r:[['saima','I have interviewed forty politicians. You are the first one who did not ask me to switch the camera off.']]},
-    {l:'Buy the bulletin',d:'Rs 1 crore of "advertising" for the channel. The story disappears.',fx:{paisa:-1,taluqat:6,izzat:-5},
-     r:[['nar','At nine, the channel runs a cooking segment. Saima Qureshi posts one line: "Some stories are expensive."']]},
-    {l:'Make a call',d:'Have a friend in the ministry ask about the channel\'s licence renewal.',fx:{khauf:12,taluqat:4,izzat:-4},req:s=>s.taluqat>=40,rt:"Ta'aluqat 40",
-     r:[['nar','The story is pulled. Saima is moved to the weather desk. Every reporter in the district now has your number saved.']]}],
+    {l:`Sit for a full interview`,d:`Answer every question on camera. No edits, no conditions.`,fx:{izzat:10,khauf:-6},
+     r:[['saima',`Main chaali siyasatdaanaan da interview kitta ae. Tusi pehle o jinhaan camera band karan nu nahin kiha.`,`I've interviewed forty politicians. You're the first who didn't ask me to switch the camera off.`]]},
+    {l:`Buy the bulletin`,d:`Rs 1 crore of "advertising" for the channel. The story disappears.`,fx:{paisa:-1,taluqat:6,izzat:-5},
+     r:[['nar',`At nine, the channel runs a cooking segment. Saima Qureshi posts one line: "Some stories are expensive."`]]},
+    {l:`Make a call`,d:`Have a friend in the ministry ask about the channel's licence renewal.`,fx:{khauf:12,taluqat:4,izzat:-4},req:s=>s.taluqat>=40,rt:`Ta'aluqat 40`,
+     r:[['nar',`The story is pulled. Saima is moved to the weather desk. Every reporter in the district now has your number saved.`]]},
+    {l:`Show her the Helpline records`,d:`Every land record and complaint since launch is logged in Hamza's app. Give her full access.`,fx:{izzat:12,khauf:-4},req:s=>s.flags.app,rt:`the Dera Helpline`,
+     r:[['saima',`Baaran hazaar case, taareekhaan samet. Eh story te hun tuhade haq wich ban gayi ae.`,`Twelve thousand cases, with dates. This story is now in your favour.`]]}],
+  next:'dacoits'},
+
+dacoits:{title:`Dacoits in the Kacha`,set:'fields',mood:'dawn',cam:'wide',loc:`The river belt · Before dawn`,cast:{siraj:'L1',sherm:'R1'},
+  lines:[
+    ['nar',`Before dawn, a rider gallops up to the Dera. Dacoits from the river belt hit a Kamboh basti in the night.`],
+    ['siraj',`Numberdar Sahib! Daakuaan ne mere bhateeje de das dangar khol laye, te ohde puttar nu vi chukk ke lai gaye. Darya wal nasse ne.`,`Numberdar Sahib! Dacoits took ten of my nephew's cattle and kidnapped his son. They've run toward the river.`],
+    ['sherm',`Sahib, police nu pahunchan wich chaar ghante lagne ne. Ghore taiyaar ne. Kacha wich gaddi nahin jaandi.`,`Sahib, the police need four hours to get here. The horses are ready. No car can drive into the kacha.`]],
+  choices:[
+    {l:`Ride after them on Sultan`,d:`Lead twelve riders into the kacha yourself.`,fx:{izzat:16,khauf:8,kamboh:15},flag:'hero',cut:'chase',
+     r:[['siraj',`Allah tuhanu sada salaamat rakhe. Kamboh biradari eh ehsaan kade nahin bhulle gi.`,`May Allah always keep you safe. The Kamboh biradari will never forget this.`],['nar',`By noon the boy is home and the cattle are back in their pens. The story spreads faster than any jalsa.`]]},
+    {l:`Send the police with your vehicles`,d:`Lend the police your Vigos and drivers and let them handle it.`,fx:{taluqat:10,izzat:4,kamboh:5},
+     r:[['nar',`The police recover the cattle by evening. The boy is released two days later.`]]},
+    {l:`Pay the ransom quietly`,d:`Rs 40 lakh through a middleman. Nobody gets hurt.`,fx:{paisa:-.4,izzat:3,kamboh:6},
+     r:[['siraj',`Munda te ghar aa gaya, Numberdar Sahib. Par daaku hun jaande ne ke paisa kitthon milda ae.`,`The boy is home, Numberdar Sahib. But now the dacoits know where the money comes from.`]]}],
+  next:'faceoff'},
+
+faceoff:{title:`Face-off on the Canal Bridge`,set:'fields',mood:'night',cam:'bridge',cut:'faceoff',loc:`The canal bridge · Midnight`,cast:{afzal:'L1',sherm:'R1'},
+  lines:[
+    ['afzal',`Numberdar. Is nehar de do kinaare ne. Tu apne te reh, main apne te, te tinn hafte baad lok faisla karange.`,`Numberdar. This canal has two banks. You stay on yours, I'll stay on mine, and in three weeks the people decide.`],
+    ['afzal',`Ya phir... paisa zaaya karna chhad. Baith ja. Main tere bandiyaan nu district council diyaan seataan dila dewaanga. Sab da faida.`,`Or... stop wasting money. Withdraw. I'll get your people the district council seats. Everybody wins.`],
+    ['sherm',`Sahib, ohde bandiyaan de hath chaadraan de thalle ne. Saadiyaan de vi.`,`Sahib, his men have their hands under their chadors. So do ours.`]],
+  choices:[
+    {l:`Refuse with a stare`,d:`Say nothing. Hold his eyes until he looks away, then tell your drivers to move forward.`,fx:{khauf:10,izzat:8},
+     r:[['nar',`Ten long seconds. Malik Tori looks away first. His convoy reverses off the bridge, and every driver on both sides saw it.`]]},
+    {l:`Offer a clean contest`,d:`Shake his hand in front of both convoys: no violence, no rigging, and both sides accept the result.`,fx:{izzat:12,khauf:-6,joiya:6},flag:'pact',
+     r:[['afzal',`Saaf larai. Theek ae. Vekhange haar ke vi tainu eh asool changa lagda ae ke nahin.`,`A clean fight. Fine. Let's see if you still like these rules when you lose.`]]},
+    {l:`Take the deal`,d:`Withdraw from the race in exchange for district council seats.`,fx:{paisa:1,izzat:-10},next:'end_deal'}],
   next:'rigging'},
 
-rigging:{title:'Election Eve',set:'dera',mood:'night',cam:'gate',loc:'Dera gate · The night before polling',cast:{sho:'L1',sherm:'R1'},
+rigging:{title:`Election Eve`,set:'dera',mood:'night',cam:'gate',loc:`Dera gate · The night before polling`,cast:{sho:'L1',sherm:'R1'},
   lines:[
-    ['nar','Generators hum. Your workers stack voter slips and pack lunch boxes for 214 polling stations.'],
-    ['sho','I am here as a friend, Numberdar Sahib. Sher Afzal\'s men will try to stuff boxes at Stations 112 and 113 after 3 PM. My constables are posted there. They can look the other way, for him or for you.'],
-    ['sherm','Sahib, we can have forty men at 112 by sunrise.']],
+    ['nar',`Generators hum. Your workers stack voter slips and pack lunch boxes for 214 polling stations.`],
+    ['sho',`Main dost ban ke aaya haan, Numberdar Sahib. Malik Tori de bande 112 te 113 number station te tinn vajay ton baad thappe laaun di koshish karange. Mere sipahi othay ne. Oh akkhaan band kar sakde ne, ohde layi ya tuhade layi.`,`I've come as a friend, Numberdar Sahib. Malik Tori's men will try to stuff boxes at Stations 112 and 113 after 3 PM. My constables are posted there. They can look away, for him or for you.`],
+    ['sherm',`Sahib, asi subah tak 112 te chaali bande khare kar sakde haan.`,`Sahib, we can have forty men at 112 by sunrise.`]],
   choices:[
-    {l:'Agents and cameras',d:'Rs 50 lakh for trained polling agents, lawyers and phone cameras at every station.',fx:{paisa:-.5,izzat:10},
-     r:[['nar','At 3:20 PM, a video from Station 112 shows Sher Afzal\'s men with a sack of stamped ballots. Every channel has it by four.']]},
-    {l:"Accept the SHO's help",d:'Let his constables look the other way, in your direction.',fx:{taluqat:10,izzat:-10,khauf:8},flag:'rigged',
-     r:[['sho','Consider it done. Remember who your friends were tonight.']]},
-    {l:'Go to the Returning Officer',d:'Drive to the RO at midnight with the press and demand Rangers at the sensitive stations.',fx:{izzat:8,taluqat:5,khauf:-4},req:s=>s.taluqat>=30,rt:"Ta'aluqat 30",
-     r:[['nar','The RO signs the order at 1:40 AM. Rangers take positions at 112 and 113 before dawn.']]}],
+    {l:`Agents and cameras`,d:`Rs 50 lakh for trained polling agents, lawyers and phone cameras at every station.`,fx:{paisa:-.5,izzat:10},
+     r:[['nar',`At 3:20 PM, a video from Station 112 shows Malik Tori's men with a sack of stamped ballots. Every channel has it by four.`]]},
+    {l:`Accept the SHO's help`,d:`Let his constables look the other way, in your direction.`,fx:{taluqat:10,izzat:-10,khauf:8},flag:'rigged',
+     r:[['sho',`Ho gaya samjho. Yaad rakhna ajj raat tuhade dost kaun san.`,`Consider it done. Remember who your friends were tonight.`]]},
+    {l:`Go to the Returning Officer`,d:`Drive to the RO at midnight with the press and demand Rangers at the sensitive stations.`,fx:{izzat:8,taluqat:5,khauf:-4},req:s=>s.taluqat>=30,rt:`Ta'aluqat 30`,
+     r:[['nar',`The RO signs the order at 1:40 AM. Rangers take positions at 112 and 113 before dawn.`]]}],
   next:'count'},
 
-count:{title:'Results Night',set:'jalsa',mood:'night',cam:'wide',loc:'Your constituency · Polls closed at 5 PM',
+count:{title:`Results Night`,set:'jalsa',mood:'night',cam:'wide',cut:'election',loc:`Your constituency · Polls closed at 5 PM`,
   lines:[
-    ['nar','Every television in the Dera is on. Unofficial results arrive station by station.'],
-    {who:'nar',t:'One channel is running footage of constables stepping aside at Station 113. The Election Commission has asked for the tapes.',when:s=>s.flags.rigged},
-    ['rafiq','180 of 214 stations counted, Sahib. It is close. Very close.']],
-  ask:'The last 34 stations are being counted.',
-  choices:[{l:'Wait for the final count',d:'Nothing left to do but sit on your chair and drink your tea.',
-    next:s=>(s.izzat+s.taluqat*.5+(s.flags.ticket?12:0)+(s.jatt+s.arain-100)/5-(s.flags.rigged?12:0)-(s.khauf>70?10:0))>=95?'mna_win':'mna_lose'}]},
+    ['nar',`Every television in the Dera is on. Unofficial results arrive station by station.`],
+    {who:'nar',t:`One channel is running footage of constables stepping aside at Station 113. The Election Commission has asked for the tapes.`,when:s=>s.flags.rigged},
+    {who:'danish',t:`Numberdar, Germany waale saare jaag rahe ne! Frankfurt wich vi TV laga hoya ae.`,en:`Numberdar, everyone in Germany is awake! The TV is on in Frankfurt too.`,when:s=>s.flags.germany},
+    ['rafiq',`Sahib, 214 wichon 180 station gin laye ne. Bara nerre da muqabla ae. Bahut nerre.`,`Sahib, 180 of 214 stations counted. It's close. Very close.`]],
+  ask:`The last 34 stations are being counted.`,
+  choices:[{l:`Wait for the final count`,d:`Nothing left to do but sit in your chair and drink your tea.`,next:s=>electionScore(s)>=105?'mna_win':'mna_lose'}]},
 
-mna_win:{title:'Victory',set:'jalsa',mood:'night',cam:'stage',loc:'Your constituency · Results night',cut:'mna',
-  lines:[['rafiq','Sahib... you won by 23,418 votes. Malik Sher Afzal has gone home without speaking to the press.'],['nar','The notification arrives at 3 AM. Gul Khan has already washed the Land Cruiser for Islamabad.']],
-  ask:'Islamabad is waiting.',
-  choices:[{l:'Leave for Islamabad',d:'Take the oath as MNA and enter the National Assembly.',fx:{izzat:10,taluqat:10},next:'isb'}]},
+mna_win:{title:`Victory`,set:'jalsa',mood:'night',cam:'stage',loc:`Your constituency · Results night`,cut:'mna',
+  lines:[
+    ['rafiq',`Sahib... tusi 23,418 votaan naal jitt gaye! Malik Tori press naal gal kitte baghair ghar chala gaya.`,`Sahib... you won by 23,418 votes! Malik Tori went home without speaking to the press.`],
+    {who:'danish',t:`Ich bin so stolz! Main kiha si na, yaar!`,en:`I'm so proud! Didn't I tell you, my friend!`,when:s=>s.flags.germany},
+    {who:'hamza',t:`Helpline te ik ghante wich das hazaar mubarakaan aa gaiyaan ne!`,en:`Ten thousand congratulations came in on the Helpline in one hour!`,when:s=>s.flags.app},
+    ['nar',`The notification arrives at 3 AM. Gul Khan has already washed the Land Cruiser for Islamabad.`]],
+  ask:`Islamabad is waiting.`,
+  choices:[{l:`Leave for Islamabad`,d:`Take the oath as MNA and enter the National Assembly.`,fx:{izzat:10,taluqat:10},cut:'assembly',next:'isb'}]},
 
-mna_lose:{title:'Defeat by 3,112 Votes',set:'dera',mood:'dusk',cam:'faisla',loc:'Dera courtyard · The morning after',cast:{rafiq:'L1'},
-  lines:[['nar','The courtyard is half empty. The tea boy pours cups nobody drinks.'],['rafiq','Sahib, Malik Sher Afzal won by 3,112 votes. There were problems at nine stations. We could petition.']],
+mna_lose:{title:`Defeat by 3,112 Votes`,set:'dera',mood:'dusk',cam:'faisla',loc:`Dera courtyard · The morning after`,cast:{rafiq:'L1'},
+  lines:[
+    ['nar',`The courtyard is half empty. The tea boy pours cups nobody drinks.`],
+    ['rafiq',`Sahib, Malik Tori 3,112 votaan naal jitt gaya. Nau stationaan te gadbad si. Asi petition kar sakde haan.`,`Sahib, Malik Tori won by 3,112 votes. There were problems at nine stations. We could file a petition.`]],
   choices:[
-    {l:'Petition and fight again',d:'File an election petition. When the court orders a re-poll, campaign from the first jalsa.',fx:{paisa:-1,izzat:5},next:'jalsa'},
-    {l:'Accept defeat with grace',d:'Congratulate Sher Afzal publicly, rebuild trust, and run again in the by-election.',fx:{izzat:12,khauf:-8},next:'jalsa'},
-    {l:'Retire to the Dera',d:'Islamabad can keep its politics. Chak 47 is yours.',next:'end_village'}]},
+    {l:`Petition and fight again`,d:`File an election petition. When the court orders a re-poll, campaign from the first jalsa.`,fx:{paisa:-1,izzat:5},next:'jalsa'},
+    {l:`Accept defeat with grace`,d:`Congratulate Malik Tori publicly, rebuild trust, and run again in the by-election.`,fx:{izzat:12,khauf:-8},next:'jalsa'},
+    {l:`Retire to the Dera`,d:`Islamabad can keep its politics. Chak 16 WB is yours.`,next:'end_village'}]},
 
 /* ---- Stage 3: The Presidency ---- */
-isb:{stage:3,title:'The Coalition',set:'isb',mood:'isb',cam:'road',loc:'Islamabad · Parliament Lodges',cast:{begum:'L1',rafiq:'R1'},
+isb:{stage:3,title:`The Coalition`,set:'isb',mood:'isb',cam:'road',loc:`Islamabad · Parliament Lodges`,cast:{begum:'L1',rafiq:'R1'},
   lines:[
-    ['nar','Islamabad. The Margalla Hills are dark against the sky. Your Land Cruiser is now one of forty black vehicles outside Parliament, and none of their drivers are impressed.'],
-    {who:'begum',t:'The coalition is two seats short. You have quietly gathered eight independents who listen to you. The party needs them, Numberdar Sahib.',when:s=>s.flags.ticket},
-    {who:'begum',t:'We said independents come to us after they win. The coalition is two seats short, and you have quietly gathered eight members who listen to you.',when:s=>!s.flags.ticket},
-    ['rafiq','Sahib, they are offering the Ministry of Water and Power.']],
+    ['nar',`Islamabad. The Margalla Hills are dark against the sky. Your Land Cruiser is now one of forty black vehicles outside Parliament, and none of their drivers are impressed.`],
+    {who:'begum',t:`Coalition nu do seataan ghatt ne. Tusi chupke naal aath azad member apne naal kar laye ne. Party nu ohnaan di lorr ae, Numberdar Sahib.`,en:`The coalition is two seats short. You've quietly gathered eight independent members. The party needs them, Numberdar Sahib.`,when:s=>s.flags.ticket},
+    {who:'begum',t:`Asi kiha si na, azad member jittan ton baad saade kol aaonde ne. Coalition nu do seataan ghatt ne, te aath member tuhadi gal mannde ne.`,en:`We said independents come to us after they win. The coalition is two seats short, and eight members listen to you.`,when:s=>!s.flags.ticket},
+    ['rafiq',`Sahib, oh Pani te Bijli di wazaarat de rahe ne.`,`Sahib, they're offering the Ministry of Water and Power.`]],
   choices:[
-    {l:'Take the ministry',d:'Join the coalition as Federal Minister for Water and Power.',fx:{taluqat:20,izzat:4},flag:'minister',
-     r:[['begum','Minister Sahib. The oath is at the President House on Monday.']]},
-    {l:'Stay in opposition',d:'Sit on the opposition benches and become the loudest voice for farmers and water.',fx:{izzat:15,taluqat:-5},
-     r:[['nar','Your first speech in the Assembly runs eleven minutes. The farmers\' unions play it in every village square.']]},
-    {l:'Form your own bloc',d:'Turn your eight into a forward bloc. Every close vote now passes through your Dera.',fx:{taluqat:15,khauf:8,izzat:5},flag:'bloc',req:s=>s.taluqat>=50,rt:"Ta'aluqat 50",
-     r:[['begum','You learned fast, Numberdar Sahib. Too fast for some people.']]}],
+    {l:`Take the ministry`,d:`Join the coalition as Federal Minister for Water and Power.`,fx:{taluqat:20,izzat:4},flag:'minister',
+     r:[['begum',`Wazir Sahib. Somvaar nu Aiwan-e-Sadr wich halaf.`,`Minister Sahib. The oath is at the President House on Monday.`]]},
+    {l:`Stay in opposition`,d:`Sit on the opposition benches and become the loudest voice for farmers and water.`,fx:{izzat:15,taluqat:-5},
+     r:[['nar',`Your first speech in the Assembly runs eleven minutes. The farmers' unions play it in every village square.`]]},
+    {l:`Form your own bloc`,d:`Turn your eight into a forward bloc. Every close vote now passes through your Dera.`,fx:{taluqat:15,khauf:8,izzat:5},flag:'bloc',req:s=>s.taluqat>=50,rt:`Ta'aluqat 50`,
+     r:[['begum',`Tusi bahut tez sikh gaye o, Numberdar Sahib. Kuj bandiyaan layi zyada hi tez.`,`You learned fast, Numberdar Sahib. Too fast for some people.`]]}],
   next:'general'},
 
-general:{title:'Tea at Army House',set:'isb',mood:'golden',cam:'road',loc:'Rawalpindi · A private invitation',cast:{general:'L1'},
+general:{title:`Tea at Army House`,set:'isb',mood:'golden',cam:'road',loc:`Rawalpindi · A private invitation`,cast:{general:'L1'},
   lines:[
-    ['nar','An invitation arrives on thick cream card. No agenda. A staff car is sent for you instead of your own.'],
-    ['general','Numberdar Sahib, the country needs stable people. People who understand that some files are better left closed.'],
-    ['general','There is talk of you for higher office. Stability would help that talk. Instability would not.']],
+    ['nar',`An invitation arrives on thick cream card. No agenda. A staff car is sent for you instead of your own.`],
+    ['general',`Numberdar Sahib, mulk nu mazboot bandiyaan di lorr ae. Ohnaan bandiyaan di jehre samajhde ne ke kuj filaan band hi changiyaan ne.`,`Numberdar Sahib, the country needs stable people. People who understand that some files are better left closed.`],
+    ['general',`Tuhada naa uchi kursi layi lia ja reha ae. Istehkaam is gal nu agge vadhaunda ae. Bechaini nahin.`,`Your name is being mentioned for higher office. Stability helps that talk. Trouble does not.`]],
   choices:[
-    {l:'Pledge cooperation',d:'Assure him that you are a stable man.',fx:{taluqat:20,izzat:-8},r:[['general','Good. We understand each other.']]},
-    {l:'Civilian supremacy, politely',d:'Tell him the Constitution decides who rises, and you will defend it in Parliament.',fx:{izzat:15,taluqat:-10},r:[['general','Brave. Let us see whether it is also wise.']]},
-    {l:'Find a middle path',d:'Propose a joint civil-military committee on water security, chaired by you.',fx:{taluqat:12,izzat:6},req:s=>s.izzat>=60,rt:'Izzat 60',
-     r:[['general','Water. Yes. Everyone agrees on water. Send me the draft.']]}],
+    {l:`Pledge cooperation`,d:`Assure him that you are a stable man.`,fx:{taluqat:20,izzat:-8},r:[['general',`Changa. Asi ik doje nu samajh gaye.`,`Good. We understand each other.`]]},
+    {l:`Civilian supremacy, politely`,d:`Tell him the Constitution decides who rises, and you will defend it in Parliament.`,fx:{izzat:15,taluqat:-10},r:[['general',`Dalair o. Vekhange siyaane vi o ke nahin.`,`Brave. Let's see if you're also wise.`]]},
+    {l:`Find a middle path`,d:`Propose a joint civil-military committee on water security, chaired by you.`,fx:{taluqat:12,izzat:6},req:s=>s.izzat>=60,rt:`Izzat 60`,
+     r:[['general',`Paani. Haan. Paani te sab mannde ne. Draft bhejo.`,`Water. Yes. Everyone agrees on water. Send me the draft.`]]}],
   next:'diplomacy'},
 
-diplomacy:{title:'The Dam Deal',set:'isb',mood:'isb',cam:'wide',loc:'Islamabad · Foreign Office',cast:{envoy:'L1',rafiq:'R1'},
+diplomacy:{title:`The Dam Deal`,set:'isb',mood:'isb',cam:'wide',loc:`Islamabad · Foreign Office`,cast:{envoy:'L1',rafiq:'R1'},
   lines:[
-    ['nar','A foreign development fund offers six billion dollars for a new dam on the Indus. The signing is in four days, and the whole capital is watching who steers it.'],
-    ['envoy','The money is ready, Minister. We ask only for thirty years of management rights over the hydropower revenue.'],
-    ['rafiq','Sahib, the farmers\' unions will say you sold the river.']],
+    ['nar',`A foreign development fund offers six billion dollars for a new dam on the Indus. The signing is in four days, and the whole capital is watching who steers it.`],
+    ['envoy',`The money is ready, Minister. We ask only for thirty years of management rights over the hydropower revenue.`],
+    ['rafiq',`Sahib, kisaan unionaan kehngiyaan ke tusi darya vech ditta.`,`Sahib, the farmers' unions will say you sold the river.`]],
   choices:[
-    {l:'Sign as written',d:'Six billion dollars, a ribbon-cutting, and thirty years of foreign management.',fx:{taluqat:15,izzat:-10},r:[['envoy','A historic day, Minister. My government will remember your name.']]},
-    {l:'Renegotiate hard',d:'Cut management rights to twelve years and guarantee canal water for farmers first.',fx:{izzat:12,taluqat:6},req:s=>s.izzat>=50,rt:'Izzat 50',
-     r:[['envoy','You negotiate like a village elder. I mean that as a compliment. Twelve years.']]},
-    {l:'Reject it publicly',d:'Announce that the Indus is not for lease.',fx:{izzat:15,taluqat:-12},r:[['nar','The farmers cheer. The finance ministry does not return your calls for a week.']]}],
+    {l:`Sign as written`,d:`Six billion dollars, a ribbon-cutting, and thirty years of foreign management.`,fx:{taluqat:15,izzat:-10},r:[['envoy',`A historic day, Minister. My government will remember your name.`]]},
+    {l:`Renegotiate hard`,d:`Cut management rights to twelve years and guarantee canal water for farmers first.`,fx:{izzat:12,taluqat:6},req:s=>s.izzat>=50,rt:`Izzat 50`,
+     r:[['envoy',`You negotiate like a village elder. I mean that as a compliment. Twelve years.`]]},
+    {l:`Reject it publicly`,d:`Announce that the Indus is not for lease.`,fx:{izzat:15,taluqat:-12},r:[['nar',`The farmers cheer. The finance ministry does not return your calls for a week.`]]},
+    {l:`Bring in Danish's German partners`,d:`A German engineering consortium Danish works with builds the dam with a Pakistani firm, with no management rights attached.`,fx:{izzat:12,taluqat:12},req:s=>s.flags.germany,rt:`a friend in Germany`,
+     r:[['danish',`Main kiha si na, German engineeraan nu aukha darya bahut pasand ae.`,`Told you, German engineers love a difficult river.`]]}],
   next:'scandal'},
 
-scandal:{title:'The Tapes',set:'isb',mood:'isb',cam:'road',loc:'Senate of Pakistan · Live session',cast:{afzal:'L1',saima:'R1'},
+scandal:{title:`The Tapes`,set:'isb',mood:'isb',cam:'road',loc:`Senate of Pakistan · Live session`,cast:{afzal:'L1',saima:'R1'},
   lines:[
-    ['nar','Malik Sher Afzal, now a Senator, holds up a USB stick on the Senate floor.'],
-    ['afzal','Recordings from the Numberdar\'s own Dera. Let the nation hear how he really rules.'],
-    {who:'nar',t:'Some of those recordings are of midnight trips by your Vigos.',when:s=>s.khauf>=50},
-    {who:'nar',t:'Most of those recordings are of tubewells, compensation, and two old men embracing.',when:s=>s.khauf<50},
-    ['saima','Every channel is waiting for your response, Numberdar Sahib. I can give you the 9 PM slot, live.']],
+    ['nar',`Malik Tori, now a Senator, holds up a USB stick on the Senate floor.`],
+    ['afzal',`Numberdar de apne Dere diyaan recordingaan. Qaum sune ke oh asal wich kiven hakoomat karda ae.`,`Recordings from the Numberdar's own Dera. Let the nation hear how he really rules.`],
+    {who:'nar',t:`Some of those recordings are of midnight trips by your Vigos.`,when:s=>s.khauf>=50},
+    {who:'nar',t:`Most of those recordings are of tubewells, compensation, and two old men embracing.`,when:s=>s.khauf<50},
+    ['saima',`Har channel tuhade jawab di udeek wich ae, Numberdar Sahib. Main tuhanu nau vajay da slot de sakdi haan, live.`,`Every channel is waiting for your answer, Numberdar Sahib. I can give you the 9 PM slot, live.`]],
   choices:[
-    {l:'Release every tape yourself',d:'Put all 400 hours of Dera recordings online. Let the people judge.',fx:s=>s.khauf<50?{izzat:18}:{izzat:-6,khauf:-10},
-     r:[{who:'nar',t:'The nation watches you settle water disputes, pay for tubewells and turn away bribes. Sher Afzal\'s gamble backfires.',when:s=>s.khauf<50},{who:'nar',t:'The tapes are ugly in places. But nobody can say you hid them.',when:s=>s.khauf>=50}]},
-    {l:'Go live with Saima',d:'One hour, live, every question answered.',fx:{izzat:10},r:[['saima','That was the highest-rated hour in the channel\'s history.']]},
-    {l:'Make the tapes disappear',d:'Rs 2 crore and a few calls. The USB stick is "lost" by the Senate secretariat.',fx:{paisa:-2,taluqat:8,izzat:-8},r:[['nar','The stick vanishes. The rumor does not.']]}],
+    {l:`Release every tape yourself`,d:`Put all 400 hours of Dera recordings online. Let the people judge.`,fx:s=>s.khauf<50?{izzat:18}:{izzat:-6,khauf:-10},
+     r:[{who:'nar',t:`The nation watches you settle water disputes, pay for tubewells and turn away bribes. Malik Tori's gamble backfires.`,when:s=>s.khauf<50},{who:'nar',t:`The tapes are ugly in places. But nobody can say you hid them.`,when:s=>s.khauf>=50}]},
+    {l:`Go live with Saima`,d:`One hour, live, every question answered.`,fx:{izzat:10},r:[['saima',`Eh channel di tareekh da sab ton zyada vekhya gaya ghanta si.`,`That was the most-watched hour in the channel's history.`]]},
+    {l:`Make the tapes disappear`,d:`Rs 2 crore and a few calls. The USB stick is "lost" by the Senate secretariat.`,fx:{paisa:-2,taluqat:8,izzat:-8},r:[['nar',`The stick vanishes. The rumour does not.`]]},
+    {l:`Publish the Helpline records`,d:`Hamza's app has every faisla logged with dates and outcomes. Publish the whole database.`,fx:{izzat:16,khauf:-5},req:s=>s.flags.app,rt:`the Dera Helpline`,
+     r:[['hamza',`Baaran hazaar case. Search karo, jo labhna ae labh lo.`,`Twelve thousand cases. Search them. Find whatever you want.`]]}],
   next:'vote'},
 
-vote:{title:'The Electoral College',set:'isb',mood:'isb',cam:'wide',loc:'Parliament House · Presidential election',cast:{begum:'L1',rafiq:'R1'},
+vote:{title:`The Electoral College`,set:'isb',mood:'isb',cam:'wide',loc:`Parliament House · Presidential election`,cast:{begum:'L1',rafiq:'R1'},
   lines:[
-    ['nar','The President\'s term has ended. The electoral college gathers: the Senate, the National Assembly, and the four provincial assemblies.'],
-    ['begum','The coalition will nominate you if the numbers hold. Some members want assurances. Some want envelopes.'],
-    ['rafiq','Sahib, this is the last faisla. After this, the Dera is the whole country.']],
-  ask:'How do you win the vote?',
+    ['nar',`The President's term has ended. The electoral college gathers: the Senate, the National Assembly, and the four provincial assemblies.`],
+    ['begum',`Je ginti poori rahi te coalition tuhada naa dewegi. Kuj member yaqeen dihaani mangde ne. Kuj lifaafe.`,`If the numbers hold, the coalition will nominate you. Some members want assurances. Some want envelopes.`],
+    ['rafiq',`Sahib, eh aakhri faisla ae. Is ton baad Dera poora mulk ban jaanda ae.`,`Sahib, this is the last faisla. After this, the Dera becomes the whole country.`]],
+  ask:`How do you win the vote?`,
   choices:[
-    {l:'Win them with your record',d:'Ask for every vote on what you did: the tubewells, the flood, the water.',fx:{izzat:8}},
-    {l:'Distribute envelopes',d:'Rs 3 crore across the provincial assemblies.',fx:{paisa:-3,taluqat:10,izzat:-8}},
-    {l:'Call in every favour',d:'The SHO\'s DPO, the party, the general, the envoy. Every debt comes due today.',fx:{taluqat:12,khauf:5}}],
-  next:s=>(s.izzat+s.taluqat+(s.flags.bloc?10:0)+(s.flags.minister?8:0)-(s.khauf>70?15:0))>=150?'oath':'end_kingmaker'},
+    {l:`Win them with your record`,d:`Ask for every vote on what you did: the tubewells, the flood, the water.`,fx:{izzat:8}},
+    {l:`Distribute envelopes`,d:`Rs 3 crore across the provincial assemblies.`,fx:{paisa:-3,taluqat:10,izzat:-8}},
+    {l:`Call in every favour`,d:`The SHO's DPO, the party, the general, the envoy. Every debt comes due today.`,fx:{taluqat:12,khauf:5}}],
+  next:s=>presScore(s)>=155?'oath':'end_kingmaker'},
 
 /* ---- events & endings ---- */
-rebellion:{title:'Trouble at the Gate',set:'dera',mood:'dusk',cam:'gate',loc:'Dera gate',cast:{sherm:'R1',rafiq:'L1'},
-  lines:[['nar','Two hundred villagers stand at the Dera gate, chanting. They are tired of Vigos at midnight and men who lower their eyes.'],['sherm','Sahib. Say the word.'],['rafiq','Sahib, if this spreads, the Biradaris will not stand with us.']],
+rebellion:{title:`Trouble at the Gate`,set:'dera',mood:'dusk',cam:'gate',loc:`Dera gate`,cast:{rafiq:'L1',sherm:'R1'},
+  lines:[
+    ['nar',`Two hundred villagers stand at the Dera gate, chanting. They are tired of Vigos at midnight and men who lower their eyes.`],
+    ['sherm',`Sahib. Hukam karo.`,`Sahib. Give the order.`],
+    ['rafiq',`Sahib, je eh gal phail gayi, biradariyaan saade naal nahin kharhangiyaan.`,`Sahib, if this spreads, the biradaris won't stand with us.`]],
   choices:[
-    {l:'Walk out alone and listen',d:'No guards. Sit on the ground with them and hear every complaint.',fx:{khauf:-25,izzat:8}},
-    {l:'Pay compensation',d:'Rs 50 lakh to every family with a grievance.',fx:{paisa:-.5,khauf:-15,izzat:3}},
-    {l:'Break it up',d:'Sher Muhammad clears the gate.',fx:{khauf:10,izzat:-15,taluqat:-5}}],
+    {l:`Walk out alone and listen`,d:`No guards. Sit on the ground with them and hear every complaint.`,fx:{khauf:-25,izzat:8}},
+    {l:`Pay compensation`,d:`Rs 50 lakh to every family with a grievance.`,fx:{paisa:-.5,khauf:-15,izzat:3}},
+    {l:`Break it up`,d:`Sher Muhammad clears the gate.`,fx:{khauf:10,izzat:-15,taluqat:-5}}],
   next:s=>s.flags.after||'sho'},
 
-oath:{title:'The Oath',set:'isb',mood:'golden',cam:'wide',loc:'Aiwan-e-Sadr, Islamabad',cut:'oath',lines:[['nar','The anthem ends. Somewhere in Chak 47, Gul Khan is crying and polishing a Land Cruiser nobody will drive today.']],
-  end:{ur:'صدرِ پاکستان',title:'President {N}',text:'You rose from a charpai under a banyan tree to the President House. Chak 47 Shumali celebrates for nine days.'}},
-end_kingmaker:{title:'The Kingmaker',set:'isb',mood:'isb',cam:'wide',loc:'Parliament House',lines:[['nar','The numbers fall short by eleven votes. But the man who wins needed your bloc to get that close, and everyone in Islamabad knows it.']],
-  end:{ur:'بادشاہ گر',title:'The Kingmaker',text:'You did not take the oath, but no government in Islamabad will form without a visit to your Dera.'}},
-end_village:{title:'Lord of Chak 47',set:'dera',mood:'golden',cam:'faisla',loc:'Chak 47 Shumali',lines:[['nar','You go back to your chair under the banyan tree. The faislas continue. The village prospers.']],
-  end:{ur:'چک 47 کا مالک',title:'Lord of Chak 47',text:'Islamabad forgets your name. Chak 47 never does.'}},
-ruin_paisa:{title:'Bankrupt',set:'dera',mood:'storm',cam:'cars',loc:'Dera courtyard',lines:[['nar','The bank sends men for the Land Cruiser. Gul Khan hands over the keys and walks home on foot.']],
-  end:{ur:'دیوالیہ',title:'The Empty Garage',text:'Your Paisa ran out. Without money, a Numberdar is just a man with a big house.'}},
-ruin_izzat:{title:'The Empty Dera',set:'dera',mood:'dusk',cam:'faisla',loc:'Dera courtyard',lines:[['nar','One morning nobody comes. The charpais under the banyan tree stay empty. The tea goes cold.']],
-  end:{ur:'خالی ڈیرہ',title:'The Empty Dera',text:'Your Izzat is gone. The village has found another chair to sit in front of.'}}
+oath:{title:`The Oath`,set:'isb',mood:'golden',cam:'wide',loc:`Aiwan-e-Sadr, Islamabad`,cut:'oath',lines:[['nar',`The anthem ends. In Chak 16 WB, Gul Khan is crying and polishing a Land Cruiser nobody will drive today.`]],
+  end:{ur:'صدرِ پاکستان',title:`President {N}`,text:`You rose from a charpai under a banyan tree in Chak 16 WB to the President House. The village celebrates for nine days.`}},
+end_kingmaker:{title:`The Kingmaker`,set:'isb',mood:'isb',cam:'wide',loc:`Parliament House`,lines:[['nar',`The numbers fall short by eleven votes. But the man who wins needed your bloc to get that close, and everyone in Islamabad knows it.`]],
+  end:{ur:'بادشاہ گر',title:`The Kingmaker`,text:`You did not take the oath, but no government in Islamabad will form without a visit to your Dera.`}},
+end_village:{title:`Lord of Chak 16 WB`,set:'dera',mood:'golden',cam:'faisla',loc:`Chak 16 WB, Vehari`,lines:[['nar',`You go back to your chair under the banyan tree. The faislas continue. The village prospers.`]],
+  end:{ur:'چک 16 ڈبلیو بی کا مالک',title:`Lord of Chak 16 WB`,text:`Islamabad forgets your name. Chak 16 WB never does.`}},
+end_deal:{title:`The Deal`,set:'fields',mood:'night',cam:'bridge',loc:`The canal bridge`,lines:[['nar',`You shake Malik Tori's hand on the bridge. Your people get their district council seats. He gets the National Assembly.`]],
+  end:{ur:'سودا',title:`The Deal`,text:`You traded the National Assembly for district seats. The village is quiet, and Malik Tori rules it from Islamabad.`}},
+ruin_paisa:{title:`Bankrupt`,set:'dera',mood:'storm',cam:'cars',loc:`Dera courtyard`,lines:[['nar',`The bank sends men for the Land Cruiser. Gul Khan hands over the keys and walks home.`]],
+  end:{ur:'دیوالیہ',title:`The Empty Garage`,text:`Your Paisa ran out. Without money, a Numberdar is just a man with a big house.`}},
+ruin_izzat:{title:`The Empty Dera`,set:'dera',mood:'dusk',cam:'faisla',loc:`Dera courtyard`,lines:[['nar',`One morning nobody comes. The charpais under the banyan tree stay empty. The tea goes cold.`]],
+  end:{ur:'خالی ڈیرہ',title:`The Empty Dera`,text:`Your Izzat is gone. The village has found another chair to sit in front of.`}}
 };
 
 /* ============ BOOT ============ */
 function boot(d){
-  buildScene();leaves();bind();
+  buildScene();leaves();ambInit();bind();
   if(d&&d.S)S=Object.assign(DEF(),d.S);
   renderHUD();setScene(EV[S.ev]||EV.water);
   $('#portrait').innerHTML=portrait(CH.nar);$('#who').textContent=CH.nar.name;$('#role').textContent=CH.nar.role;
