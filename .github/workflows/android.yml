@@ -52,6 +52,13 @@ jobs:
             echo "::notice::No ANDROID_KEYSTORE_BASE64 secret set. The release bundle will be unsigned; see PLAYSTORE.md."
           fi
 
+      # Android only installs an update over an app signed with the same key, so keep one debug key for every build.
+      - name: Reuse the debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: android-debug-keystore-v1
+
       - name: Build debug APK and release bundle
         working-directory: android
         env:

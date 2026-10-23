@@ -35,30 +35,43 @@ To host it, enable **GitHub Pages** for this repository (Settings → Pages → 
 - **Saving:** autosave after every scene, three manual save slots, Load game on the title screen, and New game.
 - **Seven endings.**
 
-## Play it yourself: missions
+## Battles in the story
 
-The story now includes action missions you control directly. You can also replay any of them from **Missions ⚔** in the header:
+Gunfights are chapters of the campaign, not a separate mode. When the story reaches one, a short in-game cutscene plays: letterbox bars, a title card in Urdu and English, the camera on the crop field as Malik Tori's men push out of it, and Sher Muhammad's voice. Then you take control. Win or lose, the result changes your stats and the story continues, and you can try again if you lose.
 
-- **Hamla — Attack on the Dera:** a night defence. Malik Tori's gunmen come in waves and take cover behind a hay bale, a Vigo and a tractor-trolley. You fight from behind your Land Cruiser alongside Sher Muhammad, your guards, and two dogs who charge the attackers.
-- **Ghaat — Canal Road Ambush:** your convoy is pinned down by gunmen in the sugarcane. Fight back from behind the cars.
-- **Pichha — Chase the Dacoits:** ride Sultan at full gallop through the river belt. Jump logs, ditches and thorn bushes, and shoot three mounted dacoits before they reach the river.
-- **Pind di Sair — Walk the Village:** walk or ride Sultan around Chak 16 WB. Talk to villagers and kids, sit with the elders at the chaupal, have chai at the dhaba, and meet the village dogs and horses.
+- **Qabza: Murabba 14** (Stage 1, dawn): gunmen come out of the sugarcane to take back Bashiran Bibi's land. Fight from behind your tractor and trolley, beside the canal and Tubewell No. 4.
+- **Ghaat: The Canal Road** (Stage 2, night): your convoy is pinned down. The Land Cruiser and Prado headlights cut through the dark while men fire from the cane.
+- **Hamla: Attack on the Dera** (Stage 2, 2 AM): defend the haveli gate with Sher Muhammad, a guard on the watchtower and your dogs. A pickup full of gunmen drives in with its lights on.
+- **Polling Station 112** (Stage 2, election day): two pickups of ballot stuffers and men from the cotton fields try to seize the ECP boxes at the village school.
+- **Qafla: Kashmir Highway** (Stage 3, Islamabad at night): gunmen in the green belt open fire on your motorcade, with a police escort and the city skyline behind you.
 
-Characters in missions are fully rigged, with hips, knees and elbows. They have real walk, run, crouch and jump cycles, aim their rifles with IK-posed arms, take cover, and fall when hit (no gore). Horses gallop, canter and jump. Dogs trot, wag their tails and bark.
+How they look and play:
+
+- Depth: crops stand in rows. Enemies push through the cane (it rustles and parts), fire from inside it, and step out onto the open ground.
+- Detailed vehicles: Land Cruiser, Prado, Hilux, police car, Massey Ferguson tractors and a truck-art trolley. They have turning wheels, working headlights, bullet holes and cracked glass.
+- Detailed weapons: Kalashnikov, G3, M4 and 12-bore, with recoil, muzzle flashes, smoke, ejected shells and tracers.
+- Night lighting: the dark is lit only by moonlight, lamps, headlights and muzzle flashes.
+- Hits by material: sparks off metal, glass shards, wood splinters, straw and dust. Headshots, a kill feed and a slow-motion final kill.
+- Your guards are your real mulazim from the Dera screen, by name. Sher Muhammad shouts orders in Punjabi.
+
+You can replay battles you have reached from **Battles ⚔** in the header. Two more missions are there too:
+
+- **Pichha: Chase the Dacoits:** ride Sultan at full gallop and shoot three mounted dacoits before they reach the river.
+- **Pind di Sair: Walk the Village:** walk or ride around Chak 16 WB and talk to people.
 
 **Controls:**
 - **Keyboard and mouse:** A/D or ←/→ to move, Shift to run, S to take cover, Space to jump, mouse to aim, click to fire, R to reload, E to talk or ride, Esc to pause.
-- **Phones:** on-screen buttons, with automatic aim.
+- **Phones:** on-screen buttons (move, run, cover, jump, reload, fire) with automatic aim. Tap to skip a cutscene.
 
 In story scenes, characters now walk in from the side in profile and then turn to face you. Villagers, children, dogs and horses walk past in the foreground.
 
 ## Android app / Google Play
 
-**Install on your phone:** open https://github.com/bilalmalik7/16-WB/releases/download/android-latest/Numberdar.apk in the phone's browser, then open the downloaded file. Android asks once to allow installs from your browser. Every push to main updates this link with the newest build.
+**Install on your phone:** open https://github.com/bilalmalik7/16-WB/releases/download/android-latest/Numberdar.apk in the phone's browser, then open the downloaded file. Android asks once to allow installs from your browser. Every push to main updates this link with the newest build. Updates install over the previous version (if you installed a build from before 23 October 2026, uninstall it once first).
 
 The repository is also an Android app (Capacitor). Every push builds a test APK and a Play Store bundle in **Actions → Android build**. [PLAYSTORE.md](PLAYSTORE.md) walks through signing, the Play Console, the store listing (graphics are in `store/`), the privacy policy (`privacy.html`) and the content-rating answers.
 
-On phones held in landscape, the game switches to a full-screen layout: the scene fills the screen, dialogue sits bottom-left and choices sit on the right. In the app, voices use the phone's own text-to-speech engine, and the back button pauses missions and closes menus.
+On phones held in landscape, the game switches to a full-screen layout: the scene fills the screen, dialogue sits bottom-left, choices sit on the right, and the header buttons fold into a ☰ Menu. In the app, voices use the phone's own text-to-speech engine, and the back button pauses missions and closes menus.
 
 Fonts (Rozha One, Hind, Noto Nastaliq Urdu) are bundled under the SIL Open Font License so the app works offline.
 
