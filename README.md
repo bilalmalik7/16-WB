@@ -33,6 +33,23 @@ To host it, enable **GitHub Pages** for this repository (Settings → Pages → 
 - **Saving:** autosave after every scene, three manual save slots, Load game on the title screen, and New game.
 - **Seven endings.**
 
+## Play it yourself: missions
+
+The story now includes action missions you control directly. You can also replay any of them from **Missions ⚔** in the header:
+
+- **Hamla — Attack on the Dera:** a night defence. Malik Tori's gunmen come in waves and take cover behind a hay bale, a Vigo and a tractor-trolley. You fight from behind your Land Cruiser alongside Sher Muhammad, your guards, and two dogs who charge the attackers.
+- **Ghaat — Canal Road Ambush:** your convoy is pinned down by gunmen in the sugarcane. Fight back from behind the cars.
+- **Pichha — Chase the Dacoits:** ride Sultan at full gallop through the river belt. Jump logs, ditches and thorn bushes, and shoot three mounted dacoits before they reach the river.
+- **Pind di Sair — Walk the Village:** walk or ride Sultan around Chak 16 WB. Talk to villagers and kids, sit with the elders at the chaupal, have chai at the dhaba, and meet the village dogs and horses.
+
+Characters in missions are fully rigged, with hips, knees and elbows. They have real walk, run, crouch and jump cycles, aim their rifles with IK-posed arms, take cover, and fall when hit (no gore). Horses gallop, canter and jump. Dogs trot, wag their tails and bark.
+
+**Controls:**
+- **Keyboard and mouse:** A/D or ←/→ to move, Shift to run, S to take cover, Space to jump, mouse to aim, click to fire, R to reload, E to talk or ride, Esc to pause.
+- **Phones:** on-screen buttons, with automatic aim.
+
+In story scenes, characters now walk in from the side in profile and then turn to face you. Villagers, children, dogs and horses walk past in the foreground.
+
 ## Controls
 
 Click or press Space to advance dialogue. Press 1–4 to pick a choice.
