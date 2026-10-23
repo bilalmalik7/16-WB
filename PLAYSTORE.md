@@ -75,6 +75,6 @@ Full description, a starting point you can edit:
 ## Notes
 
 - Target SDK is 36 (Android 16) and minimum SDK is 24 (Android 7). The game is landscape and full-screen. Android 16 lets tablets and foldables override the orientation, and the game's layout handles portrait too.
-- Voices use the phone's text-to-speech engine. Punjabi uses the best available of `pa-IN`, `ur-PK` or `hi-IN`. Installing "Speech Services by Google" with Urdu or Hindi voice data gives the best result.
+- Voices use the phone's text-to-speech engine. Every character line is stored in script, not just Roman letters. The app speaks Gurmukhi with a Punjabi voice (`pa-IN`), Urdu script with an Urdu voice (`ur-PK`/`ur-IN`), or Devanagari with a Hindi voice (`hi-IN`), whichever the phone has. It never reads Punjabi with an English voice. If none is installed, characters use voice sounds and the game says which voice to install (Settings → Text-to-speech → Speech Services by Google → install Urdu, Punjabi or Hindi voice data).
 - The "Let Claude write what happens" and Claude-judged faisla features need the claude.ai artifact and are not available in the app. In the app, typed decisions use the offline judge.
 - Each push builds a higher `versionCode` (the Actions run number), which Play requires for every new upload.
