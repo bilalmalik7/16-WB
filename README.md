@@ -54,6 +54,8 @@ In story scenes, characters now walk in from the side in profile and then turn t
 
 ## Android app / Google Play
 
+**Install on your phone:** open https://github.com/bilalmalik7/16-WB/releases/download/android-latest/Numberdar.apk in the phone's browser, then open the downloaded file. Android asks once to allow installs from your browser. Every push to main updates this link with the newest build.
+
 The repository is also an Android app (Capacitor). Every push builds a test APK and a Play Store bundle in **Actions → Android build**. [PLAYSTORE.md](PLAYSTORE.md) walks through signing, the Play Console, the store listing (graphics are in `store/`), the privacy policy (`privacy.html`) and the content-rating answers.
 
 On phones held in landscape, the game switches to a full-screen layout: the scene fills the screen, dialogue sits bottom-left and choices sit on the right. In the app, voices use the phone's own text-to-speech engine, and the back button pauses missions and closes menus.
