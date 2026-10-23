@@ -3,3 +3,4 @@ www/index.html
 *.keystore
 *.jks
 keystore.properties
+www/privacy.html
