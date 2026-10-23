@@ -18,6 +18,7 @@ To host it, enable **GitHub Pages** for this repository (Settings → Pages → 
   - a face-off with Malik Tori on the canal bridge
   - elections and Islamabad power politics
 - **Your own faisla:** at any decision, type what you want to do in your own words. In the claude.ai artifact, Claude judges it and writes the consequences. Elsewhere, an offline judge interprets it. Between days you can also let Claude invent a brand-new situation from your current state.
+- **Realistic characters:** missions and story scenes use a rigged figure with adult proportions, rounded shading on every limb, a detailed side-view face, a kameez that swings with momentum, and a walk based on real gait data with planted feet.
 - **Living characters:** articulated bodies with elbows, hands and chappals, shaded faces with eyes, brows and noses. They breathe, look around, nod and gesture while speaking, and walk into scenes.
 - **Spoken dialogue:** characters speak aloud through your browser's speech engine. Each character has their own voice (male or female, plus their own pitch and speed). The header switches between Punjabi voices, English voices and off. Lines are Roman Punjabi with optional English subtitles.
 - **The estate (Dera ⌂):**
@@ -49,6 +50,14 @@ Characters in missions are fully rigged, with hips, knees and elbows. They have 
 - **Phones:** on-screen buttons, with automatic aim.
 
 In story scenes, characters now walk in from the side in profile and then turn to face you. Villagers, children, dogs and horses walk past in the foreground.
+
+## Android app / Google Play
+
+The repository is also an Android app (Capacitor). Every push builds a test APK and a Play Store bundle in **Actions → Android build**. [PLAYSTORE.md](PLAYSTORE.md) walks through signing, the Play Console, the store listing (graphics are in `store/`), the privacy policy (`privacy.html`) and the content-rating answers.
+
+On phones held in landscape, the game switches to a full-screen layout: the scene fills the screen, dialogue sits bottom-left and choices sit on the right. In the app, voices use the phone's own text-to-speech engine, and the back button pauses missions and closes menus.
+
+Fonts (Rozha One, Hind, Noto Nastaliq Urdu) are bundled under the SIL Open Font License so the app works offline.
 
 ## Controls
 

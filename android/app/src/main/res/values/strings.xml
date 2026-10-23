@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Rise of the Numberdar</string>
+    <string name="title_activity_main">Rise of the Numberdar</string>
+    <string name="package_name">com.bilalmalik7.numberdar</string>
+    <string name="custom_url_scheme">com.bilalmalik7.numberdar</string>
+</resources>

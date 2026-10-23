@@ -1,0 +1,9 @@
+{
+  "appId": "com.bilalmalik7.numberdar",
+  "appName": "Rise of the Numberdar",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#15111f",
+    "allowMixedContent": false
+  }
+}
